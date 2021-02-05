@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Satisfy:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+      
+    
+      
+    
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    save_scroll: false,
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},
+    path: 'search.xml',
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="系统架构系统技术挑战与方案互联网系统面临怎样的挑战? 需要面对高并发用户，大流量访问  Google 日均 PV 数 35 亿，日均 IP 访问数 3 亿 微信在线用户数 10 亿 天猫双十一活动一天交易额 3000 亿   高可用  系统 7×24 小时不间断服务，大型互联网站的宕机事件通常会成为新闻焦点   需要存储、管理海量数据  Facebook 每周上传的照片数目接近10亿  百度收录的">
+<meta name="keywords" content="架构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统架构演化">
+<meta property="og:url" content="https://liule8.github.io/2020/11/15/系统架构演化/index.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="系统架构系统技术挑战与方案互联网系统面临怎样的挑战? 需要面对高并发用户，大流量访问  Google 日均 PV 数 35 亿，日均 IP 访问数 3 亿 微信在线用户数 10 亿 天猫双十一活动一天交易额 3000 亿   高可用  系统 7×24 小时不间断服务，大型互联网站的宕机事件通常会成为新闻焦点   需要存储、管理海量数据  Facebook 每周上传的照片数目接近10亿  百度收录的">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://image.leonote.cn//20201115101239.png">
+<meta property="og:image" content="http://image.leonote.cn//20201115101557.png">
+<meta property="og:image" content="http://image.leonote.cn//20201115101756.png">
+<meta property="og:image" content="http://image.leonote.cn//20201115101928.png">
+<meta property="og:image" content="http://image.leonote.cn//20201115102022.png">
+<meta property="og:image" content="http://image.leonote.cn//20201115102252.png">
+<meta property="og:image" content="http://image.leonote.cn//20201115102505.png">
+<meta property="og:image" content="http://image.leonote.cn//20201115102618.png">
+<meta property="og:image" content="http://image.leonote.cn//20201115102720.png">
+<meta property="og:image" content="http://image.leonote.cn//20201115102805.png">
+<meta property="og:image" content="http://image.leonote.cn//20201115102903.png">
+<meta property="og:image" content="http://image.leonote.cn//20201115102933.png">
+<meta property="og:image" content="http://image.leonote.cn//20201115105842.png">
+<meta property="og:updated_time" content="2020-11-15T03:01:53.337Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="系统架构演化">
+<meta name="twitter:description" content="系统架构系统技术挑战与方案互联网系统面临怎样的挑战? 需要面对高并发用户，大流量访问  Google 日均 PV 数 35 亿，日均 IP 访问数 3 亿 微信在线用户数 10 亿 天猫双十一活动一天交易额 3000 亿   高可用  系统 7×24 小时不间断服务，大型互联网站的宕机事件通常会成为新闻焦点   需要存储、管理海量数据  Facebook 每周上传的照片数目接近10亿  百度收录的">
+<meta name="twitter:image" content="http://image.leonote.cn//20201115101239.png">
+  <link rel="alternate" href="/atom.xml" title="Leo's notes" type="application/atom+xml">
+  <link rel="canonical" href="https://liule8.github.io/2020/11/15/系统架构演化/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>系统架构演化 | Leo's notes</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <a href="https://github.com/LIULE8" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leo's notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/11/15/系统架构演化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Leo Liu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leo's notes">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">系统架构演化
+
+            
+          </h1>
+        
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-11-15 12:47:26 / 修改时间：03:01:53" itemprop="dateCreated datePublished" datetime="2020-11-15T12:47:26Z">2020-11-15</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/架构/" itemprop="url" rel="index"><span itemprop="name">架构</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>3.9k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>4 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="系统架构"><a href="#系统架构" class="headerlink" title="系统架构"></a>系统架构</h1><h2 id="系统技术挑战与方案"><a href="#系统技术挑战与方案" class="headerlink" title="系统技术挑战与方案"></a>系统技术挑战与方案</h2><h3 id="互联网系统面临怎样的挑战"><a href="#互联网系统面临怎样的挑战" class="headerlink" title="互联网系统面临怎样的挑战?"></a>互联网系统面临怎样的挑战?</h3><ul>
+<li><p>需要面对<strong>高并发</strong>用户，<strong>大流量</strong>访问</p>
+<ul>
+<li>Google 日均 PV 数 35 亿，日均 IP 访问数 3 亿</li>
+<li>微信在线用户数 10 亿</li>
+<li>天猫双十一活动一天交易额 3000 亿</li>
+</ul>
+</li>
+<li><p><strong>高可用</strong></p>
+<ul>
+<li>系统 7×24 小时不间断服务，大型互联网站的<strong>宕机</strong>事件通常会成为新闻焦点</li>
+</ul>
+</li>
+<li><p>需要存储、管理<strong>海量数据</strong></p>
+<ul>
+<li>Facebook 每周上传的照片数目接近10亿 </li>
+<li>百度收录的网页数目有数百亿 </li>
+<li>Google 有近百万台服务器为全球用户提供服务</li>
+</ul>
+</li>
+<li><p>用户分布广泛，<strong>网络情况复杂</strong></p>
+<ul>
+<li>许多大型互联网都是为全球用户提供服务的，用户分布范围广，各地网络情况千差万别。 在国内，有各个运营商网络互通难的问题。而中美光缆的数次故障，也让一些对国外用户依赖较大的网站不得不考虑在海外建立数据中心</li>
+</ul>
+</li>
+<li><p>安全环境恶劣</p>
+<ul>
+<li>由于互联网的开放性，使得互联网站更容易受到攻击，大型网站几乎每天都会遇到黑客攻击情况。2011年国内多个重要网站泄露用户密码，让普通用户也直面一次互联网安全问题</li>
+</ul>
+</li>
+<li><p><strong>需求快速变更，发布频繁</strong></p>
+<ul>
+<li>和传统软件的版本发布频率不同，互联网产品为快速适应市场，满足用户需求，其产品发布频率也是极高的。Office 的产品版本以年为单位发布，而一般大型网站的产品每周都有新版本发布上线，至于中小型网站的发布就更频繁了，有时候一天会发布几十次</li>
+</ul>
+</li>
+<li><p>渐进式发展</p>
+<ul>
+<li>不同于传统软件产品或者企业应用系统，一开始就规划好全部的功能和非功能需求，几 乎所有的大型互联网站都是从一个小网站开始，渐进的发展起来的。</li>
+<li>好的互联网产品都是慢慢运营出来的，不是一开始就开发好的。那些刚建立就投入巨资， 有巨大背景的网站，后来发展都很惨淡。</li>
+</ul>
+</li>
+</ul>
+<h3 id="应对高并发挑战的两个技术方向"><a href="#应对高并发挑战的两个技术方向" class="headerlink" title="应对高并发挑战的两个技术方向"></a>应对高并发挑战的两个技术方向</h3><h4 id="垂直伸缩"><a href="#垂直伸缩" class="headerlink" title="垂直伸缩"></a>垂直伸缩</h4><p>​    通过<strong>升级硬件和网络吞吐能力</strong>可以实现垂直伸缩。由于不需要改变应用架构，所以通常 被认为是<strong>最简单的短期伸缩性方案</strong>。 </p>
+<ul>
+<li>通过使用 RAID（独立冗余磁盘阵列）增加 I/O 吞吐能力</li>
+<li>通过切换到 SSD（固态硬盘）改善 I/O 访问速度</li>
+<li>通过增加内存减少 I/O 操作</li>
+<li>通过升级网络接口或者增加网络接口提高网络吞吐能力</li>
+<li>更新服务器使用更多处理器或者更多超线程</li>
+</ul>
+<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><p>达到某个程度后，增加计算能力需要的更多的花费。</p>
+<ul>
+<li>垂直伸缩有物理极限。</li>
+<li>操作系统的设计或者应用程序自身制约着垂直伸缩最多只能达到某个点。</li>
+</ul>
+<p><img src="http://image.leonote.cn//20201115101239.png" alt></p>
+<h4 id="水平伸缩"><a href="#水平伸缩" class="headerlink" title="水平伸缩"></a>水平伸缩</h4><p>水平伸缩是指通过增加服务器提升计算能力的一类架构方法。 </p>
+<p>水平伸缩被认为是伸缩性的圣杯，水平伸缩可以克服垂直伸缩带来的单位计算成本随计算 能力增加而迅速飙升的问题。</p>
+<p>另外，水平伸缩总是可以增加更多服务器，这样，就不会像垂直伸缩那样遭遇到单台服 务器的极限。</p>
+<p><img src="http://image.leonote.cn//20201115101557.png" alt></p>
+<h2 id="互联网架构演化"><a href="#互联网架构演化" class="headerlink" title="互联网架构演化"></a>互联网架构演化</h2><h3 id="第零阶段：最简单的互联网应用架构"><a href="#第零阶段：最简单的互联网应用架构" class="headerlink" title="第零阶段：最简单的互联网应用架构"></a>第零阶段：最简单的互联网应用架构</h3><p>一台服务器里面完成所有的事情</p>
+<p><img src="http://image.leonote.cn//20201115101756.png" alt></p>
+<h3 id="第一阶段：应用数据分离"><a href="#第一阶段：应用数据分离" class="headerlink" title="第一阶段：应用数据分离"></a>第一阶段：应用数据分离</h3><p><img src="http://image.leonote.cn//20201115101928.png" alt></p>
+<h3 id="第二阶段：使用缓存改善系统性能"><a href="#第二阶段：使用缓存改善系统性能" class="headerlink" title="第二阶段：使用缓存改善系统性能"></a>第二阶段：使用缓存改善系统性能</h3><p><img src="http://image.leonote.cn//20201115102022.png" alt></p>
+<h3 id="第三阶段：使用应用服务器集群改善系统的并发处理能力"><a href="#第三阶段：使用应用服务器集群改善系统的并发处理能力" class="headerlink" title="第三阶段：使用应用服务器集群改善系统的并发处理能力"></a>第三阶段：使用应用服务器集群改善系统的并发处理能力</h3><p><img src="http://image.leonote.cn//20201115102252.png" alt></p>
+<h3 id="第四阶段：数据库读写分离"><a href="#第四阶段：数据库读写分离" class="headerlink" title="第四阶段：数据库读写分离"></a>第四阶段：数据库读写分离</h3><p><img src="http://image.leonote.cn//20201115102505.png" alt></p>
+<h3 id="第五阶段：使用反向代理和-CDN-加速网站响应"><a href="#第五阶段：使用反向代理和-CDN-加速网站响应" class="headerlink" title="第五阶段：使用反向代理和 CDN 加速网站响应"></a>第五阶段：使用反向代理和 CDN 加速网站响应</h3><p><img src="http://image.leonote.cn//20201115102618.png" alt></p>
+<h3 id="第六阶段：使用分布式文件系统和分布式数据库系统"><a href="#第六阶段：使用分布式文件系统和分布式数据库系统" class="headerlink" title="第六阶段：使用分布式文件系统和分布式数据库系统"></a>第六阶段：使用分布式文件系统和分布式数据库系统</h3><p><img src="http://image.leonote.cn//20201115102720.png" alt></p>
+<h3 id="第七阶段：使用-NoSQL-和搜索引擎"><a href="#第七阶段：使用-NoSQL-和搜索引擎" class="headerlink" title="第七阶段：使用 NoSQL 和搜索引擎"></a>第七阶段：使用 NoSQL 和搜索引擎</h3><p><img src="http://image.leonote.cn//20201115102805.png" alt></p>
+<h3 id="第八阶段：业务拆分"><a href="#第八阶段：业务拆分" class="headerlink" title="第八阶段：业务拆分"></a>第八阶段：业务拆分</h3><p><img src="http://image.leonote.cn//20201115102903.png" alt></p>
+<h3 id="第九阶段：微服务及中台化"><a href="#第九阶段：微服务及中台化" class="headerlink" title="第九阶段：微服务及中台化"></a>第九阶段：微服务及中台化</h3><p><img src="http://image.leonote.cn//20201115102933.png" alt></p>
+<h3 id="第十阶段-大数据与智能化"><a href="#第十阶段-大数据与智能化" class="headerlink" title="第十阶段 大数据与智能化"></a>第十阶段 大数据与智能化</h3><h2 id="互联网架构模式"><a href="#互联网架构模式" class="headerlink" title="互联网架构模式"></a>互联网架构模式</h2><p>每一个模式描述了一个在我们周围不断重复发生的问题以及该问题解决方案的核心。这 样，你就能一次又一次的使用该方案而不必做重复工作。 </p>
+<p>模式的关键在于模式的可重复性，问题与场景的可重复性带来解决方案的可重复使用。</p>
+<p>互联网架构模式就是试图去描述那些为解决互联网系统高性能、高可用、易扩展、可伸 缩、安全等目标，被很多互联网应用重复使用的一些解决方案，这些解决方案是互联网 软件系统的重要组成部分。</p>
+<h3 id="分层"><a href="#分层" class="headerlink" title="分层"></a>分层</h3><p>分层是企业应用系统中最常见的一种架构模式，将系统在横向维度上切分成几个部分， 每个部分负责一部分相对比较单一的职责，然后通过上层对下层依赖和调用组成一个完 整的系统。</p>
+<h3 id="分割"><a href="#分割" class="headerlink" title="分割"></a>分割</h3><p>如果说分层是将软件在横向方面进行切分，那么分割就是在纵向方面对软件进行切分。 系统越大，功能越复杂，服务和数据处理的种类也越多，将这些不同的功能和服务分割开来，包装成高内聚低耦合的模块单元，一方面有助于软件的开发和维护；另一方面， 便于不同模块的分布式部署，提高网站的并发处理能力和功能扩展能力。</p>
+<h3 id="分布式"><a href="#分布式" class="headerlink" title="分布式"></a>分布式</h3><p>对于大型网站，<strong>分层和分割的一个主要目的是为了切分后的模块便于分布式部署</strong>，就是将不同模块部署在不同的服务器上，通过远程调用协同工作。分布式意味着解决同样的问题可以使用更多的计算机，计算机越多，CPU、内存、存储资源也就越多，能够处理的并发访问和数据量就越大。</p>
+<ul>
+<li>分布式应用和服务 </li>
+<li>分布式静态资源 </li>
+<li>分布式数据和存储 </li>
+<li>分布式计算</li>
+</ul>
+<h3 id="集群"><a href="#集群" class="headerlink" title="集群"></a>集群</h3><p>使用分布式虽然已经将分层和分割后的模块独立部署，但是对于用户访问集中的模块， 比如网站的首页，还需要将独立部署的服务器集群化，即多台服务器部署相同应用构成一个集群，通过负载均衡设备共同对外提供服务。 </p>
+<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>缓存就是将数据存放在距离计算最近的位置以加快处理速度。<strong>缓存是改善软件性能的第一手段</strong>，现代 CPU 越来越快的一个重要因素就是使用了更多的缓存，在复杂的软件设计中，缓存几乎无处不在。大型网站架构设计在很多方面都使用了缓存设计。</p>
+<ul>
+<li>CDN </li>
+<li>反向代理 </li>
+<li>本地缓存 </li>
+<li>远程缓存 </li>
+</ul>
+<h3 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h3><p>计算机软件发展的一个重要目标和驱动力是<strong>降低软件耦合性</strong>。事物之间越少直接关系， 那么就越少被彼此影响，越可以独立发展。大型网站架构中，系统解耦合的手段除了前面提到的分层、分割、分布等手段，还有一个重要手段是异步，就是将一个业务操作分成多个阶段，每个阶段之间<strong>通过共享数据而不是直接调用</strong>的方法进行协作。 </p>
+<ul>
+<li>提高系统可用性 </li>
+<li>加快网站响应速度 </li>
+<li>消除并发访问高峰 </li>
+</ul>
+<h3 id="冗余"><a href="#冗余" class="headerlink" title="冗余"></a>冗余</h3><p>互联网应用需要 7×24 小时连续运行，但是服务器总有可能会出现故障，特别是服务器规模比较大的时候，<strong>服务器宕机是必然事件</strong>。要想保证在服务器宕机的情况下网站依然可以继续服务，数据不会丢失，就需要<strong>一定程度的服务器冗余运行，数据冗余备份</strong>。 </p>
+<h3 id="自动化"><a href="#自动化" class="headerlink" title="自动化"></a>自动化</h3><p>在无人值守的情况下网站可以正常运行，一切都可以自动化是网站的理想状态。目前互联网的自动化架构设计主要集中在运维方面。 </p>
+<h3 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h3><p>互联网的开放特性使得其从诞生起就面对巨大的安全挑战，网站在安全架构方面也积累了许多模式：通过密码和手机校验码进行<strong>身份认证</strong>；登录、交易等操作需要对网络通讯进行<strong>加密</strong>，网站服务器上存储的敏感数据如用户信息等也进行加密处理；为了防止机器人程序滥用网络资源供给网站，网站使用<strong>验证码</strong>进行识别；对于常见的用于攻击网站的 XSS 攻击，SQL 注入，进行<strong>编码转换</strong>等相应处理；对于垃圾信息、敏感信息进行<strong>过滤</strong>； 对转账交易等重要操作根据交易模式和交易信息进行<strong>风险控制</strong>。</p>
+<h2 id="如何衡量一个系统的架构设计"><a href="#如何衡量一个系统的架构设计" class="headerlink" title="如何衡量一个系统的架构设计"></a>如何衡量一个系统的架构设计</h2><h3 id="高性能"><a href="#高性能" class="headerlink" title="高性能"></a>高性能</h3><p>性能是互联网的一个重要指标，除非是没得选择，否则用户无法忍受一个响应缓慢的应用。一个打开缓慢应用会导致严重的用户流失，很多时候系统性能问题是系统架构升级优化的触发器。可以说性能是互联网系统架构设计的一个重要方面，任何架构设计方案都必须考虑可能会带来的性能问题。 </p>
+<p>也正是因为性能问题几乎无处不在，所以优化网站性能的手段也非常多，从用户端到数据库，从代码到机房部署，<strong>影响用户请求的所有环节都可以进行性能优化</strong>。</p>
+<h3 id="高可用"><a href="#高可用" class="headerlink" title="高可用"></a>高可用</h3><p>因为互联网分布式系统使用的服务器硬件通常是普通的商用服务器，这些服务器的设计目标本身并不保证高可用，也就是说，很有可能会出现服务器硬件故障，也就是俗称的服务器宕机。大型互联网系统通常都会有上万台服务器，每天都必定会有一些服务器宕机，因此<strong>系统高可用架构设计的前提是必然会出现服务器宕机</strong>，而高可用设计的目标就是当服务器宕机的时候，服务或者应用依然可用。 系统高可用的主要手段是<strong>冗余</strong>，应用部署在多台服务器上同时提供访问，数据存储在多台服务器上互相备份，任何一台服务器宕机都不会影响应用的整体可用，也不会导致数据丢失。</p>
+<h3 id="可伸缩"><a href="#可伸缩" class="headerlink" title="可伸缩"></a>可伸缩</h3><p>大型互联网应用通过集群的方式将多台服务器组成一个整体共同提供服务。所谓伸缩性是指<strong>通过不断向集群中加入服务器的手段来缓解不断上升的用户并发访问压力和不断增长的数据存储需求</strong>。 </p>
+<p>衡量架构伸缩性的<strong>主要标准</strong>就是</p>
+<ul>
+<li>是否可以用多台服务器构建集群</li>
+<li>是否容易向集群中添加新的服务器</li>
+<li>加入新的服务器后是否可以提供和原来的服务器无差别的服务</li>
+<li>集群中可容纳的总的服务器数量是否有限制</li>
+</ul>
+<h3 id="可扩展"><a href="#可扩展" class="headerlink" title="可扩展"></a>可扩展</h3><p>不同于其他架构要素主要关注非功能性需求，<strong>扩展性架构直接关注系统的功能需求</strong>。互联网应用快速发展，功能不断扩展，如何设计系统的架构使其能够快速响应需求变化， 是系统可扩展架构主要的目的。 </p>
+<p>衡量系统架构扩展性好坏的主要标准就是在系统增加新的业务产品时</p>
+<ul>
+<li>是否可以实现<strong>对现有产品透明无影响</strong>，不需要任何改动或者很少改动既有业务功能就可以上线新产品。</li>
+<li>不同产品之间是否很<strong>少耦合</strong>，一个产品改动对其他产品无影响，其他产品和功能不需要 受牵连进行改动。 </li>
+</ul>
+<p>可扩展架构的主要手段是<strong>事件驱动架构</strong>和<strong>分布式服务</strong>。</p>
+<h3 id="安全-1"><a href="#安全-1" class="headerlink" title="安全"></a>安全</h3><p>互联网是开放的，任何人在任何地方都可以访问系统。系统的安全架构就是保护系统不受恶意访问和攻击，保护网站的重要数据不被窃取。 </p>
+<p>衡量系统安全架构的标准就是针对现存和潜在的各种攻击与窃密手段，是否有可靠的应对策略。</p>
+<h2 id="互联网架构技术"><a href="#互联网架构技术" class="headerlink" title="互联网架构技术"></a>互联网架构技术</h2><p><img src="http://image.leonote.cn//20201115105842.png" alt></p>
+<h3 id="前端架构"><a href="#前端架构" class="headerlink" title="前端架构"></a>前端架构</h3><ul>
+<li>App 及 Web 开发技术</li>
+<li>浏览器及 HTTP 优化技术</li>
+<li>CDN</li>
+<li>动静分离</li>
+<li>图片服务</li>
+<li>反向代理</li>
+<li>DNS</li>
+</ul>
+<h3 id="网关及应用层架构"><a href="#网关及应用层架构" class="headerlink" title="网关及应用层架构"></a>网关及应用层架构</h3><ul>
+<li>网关架构</li>
+<li>负载均衡</li>
+<li>动态页面静态化</li>
+<li>业务拆分 </li>
+</ul>
+<h3 id="服务层架构"><a href="#服务层架构" class="headerlink" title="服务层架构"></a>服务层架构</h3><ul>
+<li>微服务框架</li>
+<li>分布式消息队列</li>
+<li>分布式缓存</li>
+<li>分布式一致性（锁）服务 </li>
+</ul>
+<h3 id="存储层架构"><a href="#存储层架构" class="headerlink" title="存储层架构"></a>存储层架构</h3><ul>
+<li>分布式文件</li>
+<li>分布式关系数据库</li>
+<li>NoSQL 数据库 </li>
+</ul>
+<h3 id="后台架构"><a href="#后台架构" class="headerlink" title="后台架构"></a>后台架构</h3><ul>
+<li>大数据平台</li>
+<li>搜索引擎</li>
+<li>推荐引擎</li>
+<li>数据仓库 </li>
+</ul>
+<h3 id="运维与安全"><a href="#运维与安全" class="headerlink" title="运维与安全"></a>运维与安全</h3><ul>
+<li>数据采集与展示 </li>
+<li>数据监控与报警 </li>
+<li>攻击与防护</li>
+<li>数据加密与解密</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        
+  <div class="my_post_copyright">
+    <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+    <!-- JS库 sweetalert 可修改路径 -->
+    <script src="//cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <p><span>本文标题:</span><a href="/2020/11/15/系统架构演化/">系统架构演化</a></p>
+    <p><span>文章作者:</span><a href="/" title="访问 Leo Liu 的个人博客">Leo Liu</a></p>
+    <p><span>发布时间:</span>2020年11月15日 - 12:11</p>
+    <p><span>最后更新:</span>2020年11月15日 - 03:11</p>
+    <p><span>原始链接:</span><a href="/2020/11/15/系统架构演化/" title="系统架构演化">https://liule8.github.io/2020/11/15/系统架构演化/</a>
+      <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://liule8.github.io/2020/11/15/系统架构演化/"  aria-label="复制成功！"></i></span>
+    </p>
+    <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">(CC BY-NC-ND 4.0)</a> 转载请保留原文链接及作者。</p>
+  </div>
+  <script>
+      var clipboard = new Clipboard('.fa-clipboard');
+      $(".fa-clipboard").click(function(){
+          clipboard.on('success', function(){
+              swal({
+                  title: "",
+                  text: '复制成功',
+                  icon: "success",
+                  showConfirmButton: true
+              });
+          });
+      });
+  </script>
+
+
+       </div>
+    
+
+    
+      <div>
+        <div>
+  
+    <div style="text-align:center;color:#cccccc;font-size:14px;">
+      <span>-------- 本文结束 </span>
+      <i class="fa fa-rocket"></i>
+      <span> 感谢您的阅读 --------</span>
+    </div>
+  
+</div>
+
+      </div>
+    
+
+    <footer class="post-footer">
+          
+        
+        <div class="post-tags">
+            <a href="/tags/架构/" rel="tag"><i class="fa fa-tag"></i> 架构</a>
+          
+        </div>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+              <a href="/2020/11/13/SpringDataJpa自定义参数解析器/" rel="next" title="Spring Data Jpa 自定义参数解析器">
+                <i class="fa fa-chevron-left"></i> Spring Data Jpa 自定义参数解析器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+              <a href="/2020/11/17/SpringDataJpa处理生产环境多数据源的问题/" rel="prev" title="Spring Data Jpa 处理生产环境多数据源的问题">
+                Spring Data Jpa 处理生产环境多数据源的问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.png"
+      alt="Leo Liu">
+  <p class="site-author-name" itemprop="name">Leo Liu</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/LIULE8" title="GitHub &rarr; https://github.com/LIULE8" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:leo.liu.scau@gmail.com" title="E-Mail &rarr; mailto:leo.liu.scau@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+          
+            <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+            <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+            <div class="widget-wrap">
+              <h5 class="widget-title">Tag Cloud</h5>
+              <div id="myCanvasContainer" class="widget tagcloud">
+                <canvas width="250" height="250" id="resCanvas" style="width: 180px">
+                  <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Annotation/">Annotation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Auditing/">Auditing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORF/">CORF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataSource/">DataSource</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Defining-Query-Methods/">Defining Query Methods</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECMAScript/">ECMAScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Entity-注解/">Entity 注解</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JPA/">JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Join/">Join</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jrebel/">Jrebel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mixin/">Mixin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Oracle/">Oracle</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Properties/">Properties</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RestTemplate/">RestTemplate</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/">Spring</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-ElasticSearch/">Spring Data ElasticSearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-JPA/">Spring Data JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-Jpa/">Spring Data Jpa</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Security/">Spring Security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Springboot/">Springboot</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/String/">String</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Time/">Time</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transaction/">Transaction</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UML/">UML</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vue/">Vue</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOL/">WOL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jar/">jar</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm/">npm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nvm/">nvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pageable/">pageable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/plantuml/">plantuml</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/">redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/乐观锁/">乐观锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/云服务器/">云服务器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同源策略/">同源策略</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/架构/">架构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注解/">注解</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/浏览器/">浏览器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/索引/">索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/缓存/">缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义返回值/">自定义返回值</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计模式/">设计模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/跨域/">跨域</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/运维/">运维</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/防止多次提交/">防止多次提交</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/集合/">集合</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面向对象设计原则/">面向对象设计原则</a><span class="tag-list-count">1</span></li></ul>
+                </canvas>
+              </div>
+            </div>
+          
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#系统架构"><span class="nav-number">1.</span> <span class="nav-text">系统架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#系统技术挑战与方案"><span class="nav-number">1.1.</span> <span class="nav-text">系统技术挑战与方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#互联网系统面临怎样的挑战"><span class="nav-number">1.1.1.</span> <span class="nav-text">互联网系统面临怎样的挑战?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应对高并发挑战的两个技术方向"><span class="nav-number">1.1.2.</span> <span class="nav-text">应对高并发挑战的两个技术方向</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#垂直伸缩"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">垂直伸缩</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#缺点"><span class="nav-number">1.1.2.1.1.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#水平伸缩"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">水平伸缩</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#互联网架构演化"><span class="nav-number">1.2.</span> <span class="nav-text">互联网架构演化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第零阶段：最简单的互联网应用架构"><span class="nav-number">1.2.1.</span> <span class="nav-text">第零阶段：最简单的互联网应用架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第一阶段：应用数据分离"><span class="nav-number">1.2.2.</span> <span class="nav-text">第一阶段：应用数据分离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二阶段：使用缓存改善系统性能"><span class="nav-number">1.2.3.</span> <span class="nav-text">第二阶段：使用缓存改善系统性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三阶段：使用应用服务器集群改善系统的并发处理能力"><span class="nav-number">1.2.4.</span> <span class="nav-text">第三阶段：使用应用服务器集群改善系统的并发处理能力</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四阶段：数据库读写分离"><span class="nav-number">1.2.5.</span> <span class="nav-text">第四阶段：数据库读写分离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第五阶段：使用反向代理和-CDN-加速网站响应"><span class="nav-number">1.2.6.</span> <span class="nav-text">第五阶段：使用反向代理和 CDN 加速网站响应</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第六阶段：使用分布式文件系统和分布式数据库系统"><span class="nav-number">1.2.7.</span> <span class="nav-text">第六阶段：使用分布式文件系统和分布式数据库系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第七阶段：使用-NoSQL-和搜索引擎"><span class="nav-number">1.2.8.</span> <span class="nav-text">第七阶段：使用 NoSQL 和搜索引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第八阶段：业务拆分"><span class="nav-number">1.2.9.</span> <span class="nav-text">第八阶段：业务拆分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第九阶段：微服务及中台化"><span class="nav-number">1.2.10.</span> <span class="nav-text">第九阶段：微服务及中台化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第十阶段-大数据与智能化"><span class="nav-number">1.2.11.</span> <span class="nav-text">第十阶段 大数据与智能化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#互联网架构模式"><span class="nav-number">1.3.</span> <span class="nav-text">互联网架构模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#分层"><span class="nav-number">1.3.1.</span> <span class="nav-text">分层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分割"><span class="nav-number">1.3.2.</span> <span class="nav-text">分割</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式"><span class="nav-number">1.3.3.</span> <span class="nav-text">分布式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集群"><span class="nav-number">1.3.4.</span> <span class="nav-text">集群</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存"><span class="nav-number">1.3.5.</span> <span class="nav-text">缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异步"><span class="nav-number">1.3.6.</span> <span class="nav-text">异步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#冗余"><span class="nav-number">1.3.7.</span> <span class="nav-text">冗余</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动化"><span class="nav-number">1.3.8.</span> <span class="nav-text">自动化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安全"><span class="nav-number">1.3.9.</span> <span class="nav-text">安全</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何衡量一个系统的架构设计"><span class="nav-number">1.4.</span> <span class="nav-text">如何衡量一个系统的架构设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#高性能"><span class="nav-number">1.4.1.</span> <span class="nav-text">高性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高可用"><span class="nav-number">1.4.2.</span> <span class="nav-text">高可用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可伸缩"><span class="nav-number">1.4.3.</span> <span class="nav-text">可伸缩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可扩展"><span class="nav-number">1.4.4.</span> <span class="nav-text">可扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安全-1"><span class="nav-number">1.4.5.</span> <span class="nav-text">安全</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#互联网架构技术"><span class="nav-number">1.5.</span> <span class="nav-text">互联网架构技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前端架构"><span class="nav-number">1.5.1.</span> <span class="nav-text">前端架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网关及应用层架构"><span class="nav-number">1.5.2.</span> <span class="nav-text">网关及应用层架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务层架构"><span class="nav-number">1.5.3.</span> <span class="nav-text">服务层架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#存储层架构"><span class="nav-number">1.5.4.</span> <span class="nav-text">存储层架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后台架构"><span class="nav-number">1.5.5.</span> <span class="nav-text">后台架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运维与安全"><span class="nav-number">1.5.6.</span> <span class="nav-text">运维与安全</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">
+    <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备20009586号 </a>
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leo Liu</span>
+</div>
+
+        
+  <div class="busuanzi-count">
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-area-chart"></i>
+      </span>
+      <span title="站点总字数">
+       站点总字数: 722k
+      </span>
+    
+      <span class="post-meta-divider">|</span>
+    
+      <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+      <span class="site-uv" title="总访客量">
+      总访客量: <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+    
+      <span class="post-meta-divider">|</span>
+    
+      <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+      <span class="site-pv" title="总访问量">
+      总访问量: <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+    
+  </div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+      </div>
+
+    
+
+  </div>
+
+  
+    
+    
+      
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
+</html>
+<script type="text/javascript" src="/js/src/mouse.js"></script>

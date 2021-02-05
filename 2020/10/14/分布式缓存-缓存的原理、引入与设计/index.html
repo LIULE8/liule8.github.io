@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Satisfy:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+      
+    
+      
+    
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    save_scroll: false,
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},
+    path: 'search.xml',
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="缓存的原理、引入与设计业务数据访问性能太低怎么办 缓存的基本思想 缓存的优点 缓存的代价  缓存的定义 缓存最初的含义，是指用于加速 CPU 数据交换的 RAM，即随机存取存储器，通常这种存储器使用更昂贵但快速的静态 RAM（SRAM）技术，用以对 DRAM 进行加速。这是一个狭义缓存的定义。  而广义缓存的定义则更宽泛，任何可以用于数据高速交换的存储介质都是缓存，可以是硬件也可以是软件。">
+<meta name="keywords" content="缓存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="缓存的原理、引入与设计">
+<meta property="og:url" content="https://liule8.github.io/2020/10/14/分布式缓存-缓存的原理、引入与设计/index.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="缓存的原理、引入与设计业务数据访问性能太低怎么办 缓存的基本思想 缓存的优点 缓存的代价  缓存的定义 缓存最初的含义，是指用于加速 CPU 数据交换的 RAM，即随机存取存储器，通常这种存储器使用更昂贵但快速的静态 RAM（SRAM）技术，用以对 DRAM 进行加速。这是一个狭义缓存的定义。  而广义缓存的定义则更宽泛，任何可以用于数据高速交换的存储介质都是缓存，可以是硬件也可以是软件。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://image.leonote.cn//20201014195605.png">
+<meta property="og:image" content="http://image.leonote.cn//20201014195847.png">
+<meta property="og:image" content="http://image.leonote.cn//20201014201011.png">
+<meta property="og:image" content="http://image.leonote.cn//20201014201115.png">
+<meta property="og:image" content="http://image.leonote.cn//20201014202424.png">
+<meta property="og:image" content="http://image.leonote.cn//20201014203613.png">
+<meta property="og:image" content="http://image.leonote.cn//20201014211812.png">
+<meta property="og:updated_time" content="2020-11-21T01:02:39.277Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="缓存的原理、引入与设计">
+<meta name="twitter:description" content="缓存的原理、引入与设计业务数据访问性能太低怎么办 缓存的基本思想 缓存的优点 缓存的代价  缓存的定义 缓存最初的含义，是指用于加速 CPU 数据交换的 RAM，即随机存取存储器，通常这种存储器使用更昂贵但快速的静态 RAM（SRAM）技术，用以对 DRAM 进行加速。这是一个狭义缓存的定义。  而广义缓存的定义则更宽泛，任何可以用于数据高速交换的存储介质都是缓存，可以是硬件也可以是软件。">
+<meta name="twitter:image" content="http://image.leonote.cn//20201014195605.png">
+  <link rel="alternate" href="/atom.xml" title="Leo's notes" type="application/atom+xml">
+  <link rel="canonical" href="https://liule8.github.io/2020/10/14/分布式缓存-缓存的原理、引入与设计/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>缓存的原理、引入与设计 | Leo's notes</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <a href="https://github.com/LIULE8" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leo's notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/10/14/分布式缓存-缓存的原理、引入与设计/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Leo Liu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leo's notes">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">缓存的原理、引入与设计
+
+            
+          </h1>
+        
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-10-13 20:42:59" itemprop="dateCreated datePublished" datetime="2020-10-13T20:42:59Z">2020-10-13</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-21 01:02:39" itemprop="dateModified" datetime="2020-11-21T01:02:39Z">2020-11-21</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/缓存/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>7.1k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>6 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="缓存的原理、引入与设计"><a href="#缓存的原理、引入与设计" class="headerlink" title="缓存的原理、引入与设计"></a>缓存的原理、引入与设计</h1><h2 id="业务数据访问性能太低怎么办"><a href="#业务数据访问性能太低怎么办" class="headerlink" title="业务数据访问性能太低怎么办"></a>业务数据访问性能太低怎么办</h2><ol>
+<li>缓存的基本思想</li>
+<li>缓存的优点</li>
+<li>缓存的代价</li>
+</ol>
+<h3 id="缓存的定义"><a href="#缓存的定义" class="headerlink" title="缓存的定义"></a>缓存的定义</h3><ul>
+<li><p>缓存最初的含义，是指用于加速 CPU 数据交换的 RAM，即随机存取存储器，通常这种存储器使用更昂贵但快速的静态 RAM（SRAM）技术，用以对 DRAM 进行加速。这是一个狭义缓存的定义。</p>
+</li>
+<li><p>而广义缓存的定义则更宽泛，任何可以用于数据高速交换的存储介质都是缓存，可以是硬件也可以是软件。</p>
+</li>
+</ul>
+<p><img src="http://image.leonote.cn//20201014195605.png" alt></p>
+<blockquote>
+<p>缓存存在的意义就是通过开辟一个新的数据交换缓冲区，来解决原始数据获取代价太大的问题，让数据得到更快的访问。目前讲的缓存主要是指广义缓存，特别是互联网产品大量使用的各种缓存组件和技术。</p>
+</blockquote>
+<h3 id="缓存原理"><a href="#缓存原理" class="headerlink" title="缓存原理"></a>缓存原理</h3><h4 id="缓存的基本思想"><a href="#缓存的基本思想" class="headerlink" title="缓存的基本思想"></a>缓存的基本思想</h4><p><img src="http://image.leonote.cn//20201014195847.png" alt></p>
+<p>缓存构建的基本思想是利用时间局限性原理，通过空间换时间来达到加速数据获取的目的，同时由于缓存空间的成本较高，在实际设计架构中还要考虑<strong>访问延迟</strong>和<strong>成本</strong>的权衡问题。这里面有 3 个关键点。</p>
+<ol>
+<li><p>时间局限性原理，即被获取过一次的数据在未来会被多次引用，比如一条微博被一个人感兴趣并阅读后，它大概率还会被更多人阅读，当然如果变成热门微博后，会被数以百万/千万计算的更多用户查看。</p>
+</li>
+<li><p>以空间换时间，因为原始数据获取太慢，所以我们开辟一块高速独立空间，提供高效访问，来达到数据获取加速的目的。</p>
+</li>
+<li><p>性能成本 Tradeoff，构建系统时希望系统的访问性能越高越好，访问延迟越低小越好。但维持相同数据规模的存储及访问，性能越高延迟越小，成本也会越高，所以在系统架构设计时，你需要在系统性能和开发运行成本之间做取舍。比如左边这张图，相同成本的容量，SSD 硬盘容量会比内存大 10～30 倍以上，但读写延迟却高 50～100 倍。</p>
+</li>
+</ol>
+<h4 id="缓存的优势"><a href="#缓存的优势" class="headerlink" title="缓存的优势"></a>缓存的优势</h4><p>缓存的优势主要有以下几点：</p>
+<ul>
+<li><p>提升访问性能</p>
+</li>
+<li><p>降低网络拥堵</p>
+</li>
+<li><p>减轻服务负载</p>
+</li>
+<li><p>增强可扩展性</p>
+</li>
+</ul>
+<p>缓存存储原始数据，可以<strong>大幅提升访问性能</strong>。不过在实际业务场景中，缓存中存储的往往是需要频繁访问的中间数据甚至最终结果，这些数据相比 DB 中的原始数据小很多，这样就可以<strong>减少网络流量，降低网络拥堵</strong>，同时由于减少了解析和计算，调用方和存储服务的<strong>负载也可以大幅降低</strong>。缓存的读写性能很高，预热快，在数据访问存在性能瓶颈或遇到突发流量，系统读写压力大增时，<strong>可以快速部署</strong>上线，同时在流量稳定后，也可以随时下线，从而使系统的<strong>可扩展性大大增强</strong>。</p>
+<h4 id="缓存的代价"><a href="#缓存的代价" class="headerlink" title="缓存的代价"></a>缓存的代价</h4><p>然而不幸的是，任何事情都有两面性，缓存也不例外，我们在享受缓存带来一系列好处的同时，也注定需要付出一定的代价。</p>
+<ul>
+<li><p>首先，服务系统中引入缓存，会<strong>增加系统的复杂度</strong>。</p>
+</li>
+<li><p>其次，由于缓存相比原始 DB 存储的<strong>成本更高</strong>，所以系统部署及运行的费用也会更高。</p>
+</li>
+<li><p>最后，由于一份数据同时存在缓存和 DB 中，甚至缓存内部也会有多个数据副本，多份数据就会<strong>存在一致性问题</strong>，同时缓存体系本身也会存在<strong>可用性问题和分区的问题</strong>。这就需要我们加强对缓存原理、缓存组件以及优秀缓存体系实践的理解，从系统架构之初就对缓存进行良好设计，降低缓存引入的副作用，让缓存体系成为服务系统高效稳定运行的强力基石。</p>
+</li>
+</ul>
+<blockquote>
+<p>一般来讲，服务系统的全量原始数据存储在 DB 中（如 MySQL、HBase 等），所有数据的读写都可以通过 DB 操作来获取。但 DB 读写性能低、延迟高，如 MySQL 单实例的读写 QPS 通常只有千级别（3000～6000），读写平均耗时 10～100ms 级别，如果一个用户请求需要查 20 个不同的数据来聚合，仅仅 DB 请求就需要数百毫秒甚至数秒。而 cache 的读写性能正好可以弥补 DB 的不足，比如 Memcached 的读写 QPS 可以达到 10～100万 级别，读写平均耗时在 1ms 以下，结合并发访问技术，单个请求即便查上百条数据，也可以轻松应对。</p>
+<p>但 cache 容量小，只能存储部分访问频繁的热数据，同时，同一份数据可能同时存在 cache 和 DB，如果处理不当，就会出现数据不一致的问题。所以服务系统在处理业务请求时，需要对 cache 的读写方式进行适当设计，既要保证数据高效返回，又要尽量避免数据不一致等各种问题。</p>
+</blockquote>
+<h2 id="如何根据业务来选择缓存模式和组件"><a href="#如何根据业务来选择缓存模式和组件" class="headerlink" title="如何根据业务来选择缓存模式和组件"></a>如何根据业务来选择缓存模式和组件</h2><ol>
+<li>缓存的读写模式</li>
+<li>缓存的分类</li>
+</ol>
+<h3 id="缓存读写模式"><a href="#缓存读写模式" class="headerlink" title="缓存读写模式"></a>缓存读写模式</h3><p>如下图，业务系统读写缓存有 3 种模式：</p>
+<ul>
+<li><p>Cache Aside（旁路缓存）</p>
+</li>
+<li><p>Read/Write Through（读写穿透）</p>
+</li>
+<li><p>Write Behind Caching（异步缓存写入）</p>
+</li>
+</ul>
+<p><img src="http://image.leonote.cn//20201014201011.png" alt></p>
+<h4 id="Cache-Aside"><a href="#Cache-Aside" class="headerlink" title="Cache Aside"></a>Cache Aside</h4><p><img src="http://image.leonote.cn//20201014201115.png" alt></p>
+<p>如上图所示，Cache Aside 模式中，业务应用方</p>
+<ul>
+<li>对于写，是更新 DB 后，直接将 key 从 cache 中删除，由 DB 驱动缓存数据的更新</li>
+<li>对于读，是先读 cache，如果 cache miss，则读 DB，同时将数据回写到 cache</li>
+</ul>
+<p>这种模式的特点是，业务端处理所有数据访问细节，同时利用 Lazy 计算的思想，更新 DB 后，直接删除 cache 并通过 DB 更新，确保数据以 DB 结果为准，则可以大幅降低 cache 和 DB 中数据不一致的概率。</p>
+<p>如果没有专门的存储服务，同时是对数据一致性要求比较高的业务，或者是缓存数据更新比较复杂的业务，这些情况都比较适合使用 Cache Aside 模式。如微博发展初期，不少业务采用这种模式，这些缓存数据需要通过多个原始数据进行计算后设置。在部分数据变更后，直接删除缓存。同时，使用一个 Trigger 组件，实时读取 DB 的变更日志，然后重新计算并更新缓存。如果读缓存的时候，Trigger 还没写入 cache，则由调用方自行到 DB 加载计算并写入 cache。</p>
+<blockquote>
+<p>感觉直接用<code>@Cacheable</code>和<code>@CachePut</code>注解就基本达到这个效果</p>
+</blockquote>
+<h4 id="Read-Write-Through"><a href="#Read-Write-Through" class="headerlink" title="Read/Write Through"></a>Read/Write Through</h4><p><img src="http://image.leonote.cn//20201014202424.png" alt></p>
+<p>如上图，对于 Cache Aside 模式，业务应用需要同时维护 cache 和 DB 两个数据存储方，过于繁琐，于是就有了 Read/Write Through 模式。</p>
+<p>在这种模式下，业务应用只关注一个存储服务即可，业务方的读写 cache 和 DB 的操作，都由存储服务代理。存储服务收到业务应用的写请求时，会首先查 cache，如果数据在 cache 中不存在，则只更新 DB，如果数据在 cache 中存在，则先更新 cache，然后更新 DB。而存储服务收到读请求时，如果命中 cache 直接返回，否则先从 DB 加载，回种到 cache 后返回响应。<strong>( cache 为准)</strong></p>
+<p>这种模式的特点是，存储服务封装了所有的数据处理细节，业务应用端代码只用关注业务逻辑本身，<strong>系统的隔离性更佳</strong>。另外，进行写操作时，如果 cache 中没有数据则不更新，有缓存数据才更新，<strong>内存效率更高</strong>。</p>
+<p>微博 Feed 的 Outbox Vector（即用户最新微博列表）就采用这种模式。一些粉丝较少且不活跃的用户发表微博后，Vector 服务会首先查询 Vector Cache，如果 cache 中没有该用户的 Outbox 记录，则不写该用户的 cache 数据，直接更新 DB 后就返回，只有 cache 中存在才会通过 CAS 指令进行更新。</p>
+<h4 id="Write-Behind-Caching"><a href="#Write-Behind-Caching" class="headerlink" title="Write Behind Caching"></a>Write Behind Caching</h4><p><img src="http://image.leonote.cn//20201014203613.png" alt></p>
+<p>Write Behind Caching 模式与 Read/Write Through 模式类似，也由数据存储服务来管理 cache 和 DB 的读写。不同点是，数据更新时，Read/write Through 是同步更新 cache 和 DB，而 <strong>Write Behind Caching 则是只更新缓存，不直接更新 DB</strong>，而是改为<strong><em>异步批量</em></strong>的方式来更新 DB。该模式的特点是，<em>数据存储的写性能最高，非常适合一些变更特别频繁的业务</em>，特别是可以合并写请求的业务，比如对一些计数业务，一条 Feed 被点赞 1万 次，如果更新 1万 次 DB 代价很大，而合并成一次请求直接加 1万，则是一个非常轻量的操作。但这种模型有个显著的缺点，即<em>数据的一致性变差，甚至在一些极端场景下可能会丢失数据</em>。比如系统 Crash、机器宕机时，如果有数据还没保存到 DB，则会存在丢失的风险。</p>
+<blockquote>
+<p>📌这种读写模式适合变更频率特别高，但对一致性要求不太高的业务，这样写操作可以异步批量写入 DB，减小 DB 压力。</p>
+</blockquote>
+<p>三种模式各有优劣，不存在最佳模式。</p>
+<p>实际上，我们也不可能设计出一个最佳的完美模式出来，如同前面讲到的空间换时间、访问延迟换低成本一样，高性能和强一致性从来都是有冲突的，系统设计从来就是取舍，随处需要 trade-off。</p>
+<blockquote>
+<p>重要的是思想：即如何根据业务场景，更好的做 trade-off，从而设计出更好的服务系统。</p>
+</blockquote>
+<h3 id="缓存分类及常用缓存介绍"><a href="#缓存分类及常用缓存介绍" class="headerlink" title="缓存分类及常用缓存介绍"></a>缓存分类及常用缓存介绍</h3><h4 id="按宿主层次分类"><a href="#按宿主层次分类" class="headerlink" title="按宿主层次分类"></a>按宿主层次分类</h4><p>分为本地 Cache、进程间 Cache 和远程 Cache。</p>
+<ul>
+<li><p>本地 Cache：是指业务进程内的缓存，这类缓存由于在业务系统进程内，所以读写性能超高且无任何网络开销，但不足是会随着业务系统重启而丢失。</p>
+</li>
+<li><p>进程间 Cache：是本机独立运行的缓存，这类缓存读写性能较高，不会随着业务系统重启丢数据，并且可以大幅减少网络开销，但不足是业务系统和缓存都在相同宿主机，运维复杂，且存在资源竞争。( cache 和 project 都在同一个 Linux 部署 )</p>
+</li>
+<li><p>远程 Cache：是指跨机器部署的缓存，这类缓存因为独立设备部署，容量大且易扩展，在互联网企业使用最广泛。不过远程缓存需要跨机访问，在高读写压力下，带宽容易成为瓶颈。</p>
+</li>
+</ul>
+<p>本地 Cache 的缓存组件有 Ehcache、Guava Cache 等，开发者自己也可以用 Map、Set 等轻松构建一个自己专用的本地 Cache。</p>
+<p>进程间 Cache 和远程 Cache 的缓存组件相同，只是部署位置的差异罢了，这类缓存组件有 Memcached、Redis、Pika 等。</p>
+<h4 id="按存储介质分类"><a href="#按存储介质分类" class="headerlink" title="按存储介质分类"></a>按存储介质分类</h4><p>分为内存型缓存和持久化型缓存。</p>
+<ul>
+<li><p>内存型缓存将数据存储在内存，读写性能很高，但缓存系统重启或 Crash 后，内存数据会丢失。</p>
+</li>
+<li><p>持久化型缓存将数据存储到 SSD/Fusion-IO 硬盘中，相同成本下，这种缓存的容量会比内存型缓存大 1 个数量级以上，而且数据会持久化落地，重启不丢失，但读写性能相对低 1～2 个数量级。Memcached 是典型的内存型缓存，而 Pika 以及其他基于 RocksDB 开发的缓存组件等则属于持久化型缓存。</p>
+</li>
+</ul>
+<h2 id="设计缓存架构时需要考量哪些因素"><a href="#设计缓存架构时需要考量哪些因素" class="headerlink" title="设计缓存架构时需要考量哪些因素"></a>设计缓存架构时需要考量哪些因素</h2><h3 id="缓存的引入及架构设计"><a href="#缓存的引入及架构设计" class="headerlink" title="缓存的引入及架构设计"></a>缓存的引入及架构设计</h3><h4 id="缓存组件选择"><a href="#缓存组件选择" class="headerlink" title="缓存组件选择"></a>缓存组件选择</h4><p>在设计架构缓存时，首先要选定缓存组件，比如要用 Local-Cache，还是 Redis、Memcached、Pika 等开源缓存组件，如果业务缓存需求比较特殊，还要考虑是直接定制开发一个新的缓存组件，还是对开源缓存进行二次开发，来满足业务需要。</p>
+<h4 id="缓存数据结构设计"><a href="#缓存数据结构设计" class="headerlink" title="缓存数据结构设计"></a>缓存数据结构设计</h4><p>确定好缓存组件后，还要根据业务访问的特点，进行缓存数据结构的设计。</p>
+<p>对于直接简单 KV 读写的业务，你可以将这些业务数据封装为 String、Json、Protocol Buffer 等格式，序列化成字节序列，然后直接写入缓存中。读取时，先从缓存组件获取到数据的字节序列，再进行反序列化操作即可。对于只需要存取部分字段或需要在缓存端进行计算的业务，可以把数据设计为 Hash、Set、List、Geo 等结构，存储到支持复杂集合数据类型的缓存中，如 Redis、Pika 等。</p>
+<h4 id="缓存分布设计"><a href="#缓存分布设计" class="headerlink" title="缓存分布设计"></a>缓存分布设计</h4><p>确定了缓存组件，设计好了缓存数据结构，接下来就要设计缓存的分布。可以从 3 个维度来进行缓存分布设计。</p>
+<ul>
+<li><p>首先，要选择分布式算法，是采用<strong>取模</strong>还是<strong>一致性 Hash</strong> 进行分布。取模分布的方案简单，每个 key 只会存在确定的缓存节点，一致性 Hash 分布的方案相对复杂，一个 key 对应的缓存节点不确定。但一致性 Hash 分布，可以在部分缓存节点异常时，将失效节点的数据访问均衡分散到其他正常存活的节点，从而更好地保证了缓存系统的稳定性。</p>
+</li>
+<li><p>其次，分布读写访问如何进行实施，是由缓存 Client 直接进行 <strong>Hash 分布定位读写</strong>，还是通过 <strong>Proxy 代理来进行读写</strong>路由？Client 直接读写，读写性能最佳，但需要 Client 感知分布策略。在缓存部署发生在线变化时，也需要及时通知所有缓存 Client，避免读写异常，另外，Client 实现也较复杂。而通过 Proxy 路由，Client 只需直接访问 Proxy，分布逻辑及部署变更都由 Proxy 来处理，对业务应用开发最友好，但业务访问多一跳，访问性能会有一定的损失。</p>
+</li>
+<li><p>最后，缓存系统运行过程中，如果待缓存的数据量增长过快，会导致大量缓存数据被剔除，缓存命中率会下降，数据访问性能会随之降低，这样就需要将数据从缓存节点进行动态拆分，把部分数据水平迁移到其他缓存节点。这个迁移过程需要考虑，是由 Proxy 进行迁移还是缓存 Server 自身进行迁移，甚至根本就不支持迁移。对于 Memcached，一般不支持迁移，对 Redis，社区版本是依靠缓存 Server 进行迁移，而对 Codis 则是通过 Admin、Proxy 配合后端缓存组件进行迁移。</p>
+</li>
+</ul>
+<h4 id="缓存架构部署及运维管理"><a href="#缓存架构部署及运维管理" class="headerlink" title="缓存架构部署及运维管理"></a>缓存架构部署及运维管理</h4><p>设计完毕缓存的分布策略后，接下来就要考虑缓存的架构部署及运维管理了。架构部署主要考虑如何对缓存进行分池、分层、分 IDC，以及是否需要进行异构处理。</p>
+<ol>
+<li><p>核心的、高并发访问的不同数据，需要分别分拆到独立的缓存池中，进行分别访问，避免相互影响；访问量较小、非核心的业务数据，则可以混存。</p>
+</li>
+<li><p>对海量数据、访问超过 10～100万 级的业务数据，要考虑分层访问，并且要分摊访问量，避免缓存过载。</p>
+</li>
+<li><p>如果业务系统需要多 IDC 部署甚至异地多活，则需要对缓存体系也进行多 IDC 部署，要考虑如何跨 IDC 对缓存数据进行更新，可以采用直接跨 IDC 读写，也可以采用 DataBus 配合队列机进行不同 IDC 的消息同步，然后由消息处理机进行缓存更新，还可以由各个 IDC 的 DB Trigger 进行缓存更新。</p>
+</li>
+<li><p>某些极端场景下，还需要把多种缓存组件进行组合使用，通过缓存异构达到最佳读写性能。</p>
+</li>
+<li><p>站在系统层面，要想更好得管理缓存，还要考虑缓存的服务化，考虑缓存体系如何更好得进行集群管理、监控运维等。</p>
+</li>
+</ol>
+<h3 id="缓存设计架构的常见考量点"><a href="#缓存设计架构的常见考量点" class="headerlink" title="缓存设计架构的常见考量点"></a>缓存设计架构的常见考量点</h3><p>在缓存设计架构的过程中，有一些非常重要的考量点，如下图所示，只有分析清楚了这些考量点，才能设计架构出更佳的缓存体系。   </p>
+<p><img src="http://image.leonote.cn//20201014211812.png" alt></p>
+<h4 id="读写方式"><a href="#读写方式" class="headerlink" title="读写方式"></a>读写方式</h4><p>首先是 value 的读写方式。是全部整体读写，还是只部分读写及变更？是否需要内部计算？比如，用户粉丝数，很多普通用户的粉丝有几千到几万，而大 V 的粉丝更是高达几千万甚至过亿，因此，获取粉丝列表肯定不能采用整体读写的方式，只能部分获取。另外在判断某用户是否关注了另外一个用户时，也不需要拉取该用户的全部关注列表，直接在关注列表上进行检查判断，然后返回 True/False 或 0/1 的方式更为高效。</p>
+<h4 id="KV-size"><a href="#KV-size" class="headerlink" title="KV size"></a>KV size</h4><p>然后是不同业务数据缓存 KV 的 size。如果单个业务的 KV size 过大，需要分拆成多个 KV 来缓存。但是，不同缓存数据的 KV size 如果差异过大，也不能缓存在一起，避免缓存效率的低下和相互影响。</p>
+<h4 id="key-的数量"><a href="#key-的数量" class="headerlink" title="key 的数量"></a>key 的数量</h4><p>key 的数量也是一个重要考虑因素。如果 key 数量不大，可以在缓存中存下全量数据，把缓存当 DB 存储来用，如果缓存读取 miss，则表明数据不存在，根本不需要再去 DB 查询。如果数据量巨大，则在缓存中尽可能只保留频繁访问的热数据，对于冷数据直接访问 DB。</p>
+<h4 id="读写峰值"><a href="#读写峰值" class="headerlink" title="读写峰值"></a>读写峰值</h4><p>另外，对缓存数据的读写峰值，如果小于 10万 级别，简单分拆到独立 Cache 池即可。而一旦数据的读写峰值超过 10万 甚至到达 100万 级的QPS，则需要对 Cache 进行分层处理，可以同时使用 Local-Cache 配合远程 cache，甚至远程缓存内部继续分层叠加分池进行处理。微博业务中，大多数核心业务的 Memcached 访问都采用的这种处理方式。</p>
+<h4 id="命中率"><a href="#命中率" class="headerlink" title="命中率"></a>命中率</h4><p>缓存的命中率对整个服务体系的性能影响甚大。对于核心高并发访问的业务，需要预留足够的容量，确保核心业务缓存维持较高的命中率。比如微博中的 Feed Vector Cache，常年的命中率高达 99.5% 以上。为了持续保持缓存的命中率，缓存体系需要持续监控，及时进行故障处理或故障转移。同时在部分缓存节点异常、命中率下降时，故障转移方案，需要考虑是采用一致性 Hash 分布的访问漂移策略，还是采用数据多层备份策略。</p>
+<h4 id="过期策略"><a href="#过期策略" class="headerlink" title="过期策略"></a>过期策略</h4><ul>
+<li><p>可以设置较短的过期时间，让冷 key 自动过期；</p>
+</li>
+<li><p>也可以让 key 带上时间戳，同时设置较长的过期时间，比如很多业务系统内部有这样一些 <code>key:key_20190801</code>。</p>
+</li>
+</ul>
+<h4 id="平均缓存穿透加载时间"><a href="#平均缓存穿透加载时间" class="headerlink" title="平均缓存穿透加载时间"></a>平均缓存穿透加载时间</h4><p>平均缓存穿透加载时间在某些业务场景下也很重要，对于一些缓存穿透后，加载时间特别长或者需要复杂计算的数据，而且访问量还比较大的业务数据，要配置更多容量，维持更高的命中率，从而减少穿透到 DB 的概率，来确保整个系统的访问性能。</p>
+<h4 id="缓存可运维性"><a href="#缓存可运维性" class="headerlink" title="缓存可运维性"></a>缓存可运维性</h4><p>对于缓存的可运维性考虑，则需要考虑缓存体系的集群管理，如何进行一键扩缩容，如何进行缓存组件的升级和变更，如何快速发现并定位问题，如何持续监控报警，最好有一个完善的运维平台，将各种运维工具进行集成。</p>
+<h4 id="缓存安全性"><a href="#缓存安全性" class="headerlink" title="缓存安全性"></a>缓存安全性</h4><p>对于缓存的安全性考虑，一方面可以限制来源 IP，只允许内网访问，同时对于一些关键性指令，需要增加访问权限，避免被攻击或误操作时，导致重大后果。</p>
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        
+  <div class="my_post_copyright">
+    <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+    <!-- JS库 sweetalert 可修改路径 -->
+    <script src="//cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <p><span>本文标题:</span><a href="/2020/10/14/分布式缓存-缓存的原理、引入与设计/">缓存的原理、引入与设计</a></p>
+    <p><span>文章作者:</span><a href="/" title="访问 Leo Liu 的个人博客">Leo Liu</a></p>
+    <p><span>发布时间:</span>2020年10月13日 - 20:10</p>
+    <p><span>最后更新:</span>2020年11月21日 - 01:11</p>
+    <p><span>原始链接:</span><a href="/2020/10/14/分布式缓存-缓存的原理、引入与设计/" title="缓存的原理、引入与设计">https://liule8.github.io/2020/10/14/分布式缓存-缓存的原理、引入与设计/</a>
+      <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://liule8.github.io/2020/10/14/分布式缓存-缓存的原理、引入与设计/"  aria-label="复制成功！"></i></span>
+    </p>
+    <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">(CC BY-NC-ND 4.0)</a> 转载请保留原文链接及作者。</p>
+  </div>
+  <script>
+      var clipboard = new Clipboard('.fa-clipboard');
+      $(".fa-clipboard").click(function(){
+          clipboard.on('success', function(){
+              swal({
+                  title: "",
+                  text: '复制成功',
+                  icon: "success",
+                  showConfirmButton: true
+              });
+          });
+      });
+  </script>
+
+
+       </div>
+    
+
+    
+      <div>
+        <div>
+  
+    <div style="text-align:center;color:#cccccc;font-size:14px;">
+      <span>-------- 本文结束 </span>
+      <i class="fa fa-rocket"></i>
+      <span> 感谢您的阅读 --------</span>
+    </div>
+  
+</div>
+
+      </div>
+    
+
+    <footer class="post-footer">
+          
+        
+        <div class="post-tags">
+            <a href="/tags/缓存/" rel="tag"><i class="fa fa-tag"></i> 缓存</a>
+          
+        </div>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+              <a href="/2020/10/13/CollectionUtils工具类/" rel="next" title="CollectionUtils工具类">
+                <i class="fa fa-chevron-left"></i> CollectionUtils工具类
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+              <a href="/2020/10/14/SpringDataJpa的DataSource加载过程/" rel="prev" title="Spring Data Jpa DataSource 加载过程">
+                Spring Data Jpa DataSource 加载过程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.png"
+      alt="Leo Liu">
+  <p class="site-author-name" itemprop="name">Leo Liu</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/LIULE8" title="GitHub &rarr; https://github.com/LIULE8" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:leo.liu.scau@gmail.com" title="E-Mail &rarr; mailto:leo.liu.scau@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+          
+            <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+            <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+            <div class="widget-wrap">
+              <h5 class="widget-title">Tag Cloud</h5>
+              <div id="myCanvasContainer" class="widget tagcloud">
+                <canvas width="250" height="250" id="resCanvas" style="width: 180px">
+                  <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Annotation/">Annotation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Auditing/">Auditing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORF/">CORF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataSource/">DataSource</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Defining-Query-Methods/">Defining Query Methods</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECMAScript/">ECMAScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Entity-注解/">Entity 注解</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JPA/">JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Join/">Join</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jrebel/">Jrebel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mixin/">Mixin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Oracle/">Oracle</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Properties/">Properties</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RestTemplate/">RestTemplate</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/">Spring</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-ElasticSearch/">Spring Data ElasticSearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-JPA/">Spring Data JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-Jpa/">Spring Data Jpa</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Security/">Spring Security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Springboot/">Springboot</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/String/">String</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Time/">Time</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transaction/">Transaction</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UML/">UML</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vue/">Vue</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOL/">WOL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jar/">jar</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm/">npm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nvm/">nvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pageable/">pageable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/plantuml/">plantuml</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/">redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/乐观锁/">乐观锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/云服务器/">云服务器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同源策略/">同源策略</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/架构/">架构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注解/">注解</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/浏览器/">浏览器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/索引/">索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/缓存/">缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义返回值/">自定义返回值</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计模式/">设计模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/跨域/">跨域</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/运维/">运维</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/防止多次提交/">防止多次提交</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/集合/">集合</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面向对象设计原则/">面向对象设计原则</a><span class="tag-list-count">1</span></li></ul>
+                </canvas>
+              </div>
+            </div>
+          
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#缓存的原理、引入与设计"><span class="nav-number">1.</span> <span class="nav-text">缓存的原理、引入与设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#业务数据访问性能太低怎么办"><span class="nav-number">1.1.</span> <span class="nav-text">业务数据访问性能太低怎么办</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存的定义"><span class="nav-number">1.1.1.</span> <span class="nav-text">缓存的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存原理"><span class="nav-number">1.1.2.</span> <span class="nav-text">缓存原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存的基本思想"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">缓存的基本思想</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存的优势"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">缓存的优势</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存的代价"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">缓存的代价</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何根据业务来选择缓存模式和组件"><span class="nav-number">1.2.</span> <span class="nav-text">如何根据业务来选择缓存模式和组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存读写模式"><span class="nav-number">1.2.1.</span> <span class="nav-text">缓存读写模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Cache-Aside"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">Cache Aside</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Read-Write-Through"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">Read/Write Through</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Write-Behind-Caching"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">Write Behind Caching</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存分类及常用缓存介绍"><span class="nav-number">1.2.2.</span> <span class="nav-text">缓存分类及常用缓存介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#按宿主层次分类"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">按宿主层次分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#按存储介质分类"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">按存储介质分类</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设计缓存架构时需要考量哪些因素"><span class="nav-number">1.3.</span> <span class="nav-text">设计缓存架构时需要考量哪些因素</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存的引入及架构设计"><span class="nav-number">1.3.1.</span> <span class="nav-text">缓存的引入及架构设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存组件选择"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">缓存组件选择</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存数据结构设计"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">缓存数据结构设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存分布设计"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">缓存分布设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存架构部署及运维管理"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">缓存架构部署及运维管理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存设计架构的常见考量点"><span class="nav-number">1.3.2.</span> <span class="nav-text">缓存设计架构的常见考量点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#读写方式"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">读写方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#KV-size"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">KV size</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#key-的数量"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">key 的数量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读写峰值"><span class="nav-number">1.3.2.4.</span> <span class="nav-text">读写峰值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#命中率"><span class="nav-number">1.3.2.5.</span> <span class="nav-text">命中率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#过期策略"><span class="nav-number">1.3.2.6.</span> <span class="nav-text">过期策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#平均缓存穿透加载时间"><span class="nav-number">1.3.2.7.</span> <span class="nav-text">平均缓存穿透加载时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存可运维性"><span class="nav-number">1.3.2.8.</span> <span class="nav-text">缓存可运维性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存安全性"><span class="nav-number">1.3.2.9.</span> <span class="nav-text">缓存安全性</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">
+    <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备20009586号 </a>
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leo Liu</span>
+</div>
+
+        
+  <div class="busuanzi-count">
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-area-chart"></i>
+      </span>
+      <span title="站点总字数">
+       站点总字数: 722k
+      </span>
+    
+      <span class="post-meta-divider">|</span>
+    
+      <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+      <span class="site-uv" title="总访客量">
+      总访客量: <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+    
+      <span class="post-meta-divider">|</span>
+    
+      <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+      <span class="site-pv" title="总访问量">
+      总访问量: <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+    
+  </div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+      </div>
+
+    
+
+  </div>
+
+  
+    
+    
+      
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
+</html>
+<script type="text/javascript" src="/js/src/mouse.js"></script>

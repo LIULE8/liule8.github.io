@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Satisfy:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+      
+    
+      
+    
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    save_scroll: false,
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},
+    path: 'search.xml',
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="自定义 HandlerMethodArgumentResolver参数解析器 – Method Argument Resolver  SpringDataWebConfiguration 类是如何被加载的 PageableHandlerMethodArgumentResolver 是如何生效的 SortHandlerMethodArgumentResolver 是如何生效的 如何定义自己的 Han">
+<meta name="keywords" content="Spring Data Jpa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Data Jpa 自定义参数解析器">
+<meta property="og:url" content="https://liule8.github.io/2020/11/13/SpringDataJpa自定义参数解析器/index.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="自定义 HandlerMethodArgumentResolver参数解析器 – Method Argument Resolver  SpringDataWebConfiguration 类是如何被加载的 PageableHandlerMethodArgumentResolver 是如何生效的 SortHandlerMethodArgumentResolver 是如何生效的 如何定义自己的 Han">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://image.leonote.cn/20201113141756.png">
+<meta property="og:image" content="http://image.leonote.cn/20201113142007.png">
+<meta property="og:image" content="http://image.leonote.cn/20201116125713.png">
+<meta property="og:image" content="http://image.leonote.cn/20201116125905.png">
+<meta property="og:image" content="http://image.leonote.cn/20201116131624.png">
+<meta property="og:image" content="http://image.leonote.cn/20201116135238.png">
+<meta property="og:image" content="http://image.leonote.cn/20201117095947.png">
+<meta property="og:image" content="http://image.leonote.cn/20201117100937.png">
+<meta property="og:image" content="http://image.leonote.cn/20201117104905.png">
+<meta property="og:updated_time" content="2021-01-31T07:40:11.589Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Data Jpa 自定义参数解析器">
+<meta name="twitter:description" content="自定义 HandlerMethodArgumentResolver参数解析器 – Method Argument Resolver  SpringDataWebConfiguration 类是如何被加载的 PageableHandlerMethodArgumentResolver 是如何生效的 SortHandlerMethodArgumentResolver 是如何生效的 如何定义自己的 Han">
+<meta name="twitter:image" content="http://image.leonote.cn/20201113141756.png">
+  <link rel="alternate" href="/atom.xml" title="Leo's notes" type="application/atom+xml">
+  <link rel="canonical" href="https://liule8.github.io/2020/11/13/SpringDataJpa自定义参数解析器/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Spring Data Jpa 自定义参数解析器 | Leo's notes</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <a href="https://github.com/LIULE8" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leo's notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/11/13/SpringDataJpa自定义参数解析器/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Leo Liu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leo's notes">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">Spring Data Jpa 自定义参数解析器
+
+            
+          </h1>
+        
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-11-13 14:05:59" itemprop="dateCreated datePublished" datetime="2020-11-13T14:05:59Z">2020-11-13</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-31 07:40:11" itemprop="dateModified" datetime="2021-01-31T07:40:11Z">2021-01-31</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Data/" itemprop="url" rel="index"><span itemprop="name">Spring Data</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Data/Spring-Data-Jpa/" itemprop="url" rel="index"><span itemprop="name">Spring Data Jpa</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>16k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>15 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="自定义-HandlerMethodArgumentResolver"><a href="#自定义-HandlerMethodArgumentResolver" class="headerlink" title="自定义 HandlerMethodArgumentResolver"></a>自定义 HandlerMethodArgumentResolver</h1><p>参数解析器 – Method Argument Resolver</p>
+<ul>
+<li><code>SpringDataWebConfiguration</code> 类是如何被加载的</li>
+<li><code>PageableHandlerMethodArgumentResolver</code> 是如何生效的</li>
+<li><code>SortHandlerMethodArgumentResolver</code> 是如何生效的</li>
+<li>如何定义自己的 <code>HandlerMethodArgumentResolvers</code> 类</li>
+<li>还有没有其他 Web 场景需要我们自定义呢</li>
+</ul>
+<h2 id="Page-和-Sort-参数原理"><a href="#Page-和-Sort-参数原理" class="headerlink" title="Page 和 Sort 参数原理"></a>Page 和 Sort 参数原理</h2><p>是 <code>@EnableSpringDataWebSupport</code> 注解将<code>SpringDataWebConfiguration</code>这个类加载进去的，这个类里面把分页和排序的参数加载进去，关键代码如下所示：</p>
+<p><img src="http://image.leonote.cn/20201113141756.png" alt></p>
+<p>其中，<code>@EnableSpringDataWebSupport</code> 注解是 Spring Data JPA 对 Web 支持需要开启的入口，由于我们使用的是 Spring Boot，所以 <code>@EnableSpringDataWebSupport</code> 不需要我们手动去指定。这是由于 Spring Boot 有自动加载的机制，<code>SpringDataWebAutoConfiguration</code> 类里面引用了 <code>@EnableSpringDataWebSupport</code> 的注解，所以也不需要手动去引用了。关键代码如下所示：</p>
+<p><img src="http://image.leonote.cn/20201113142007.png" alt></p>
+<p>而 Spring Boot 的自动加载的核心文件就是 <code>spring.factories</code> 文件，那么我们打开 spring-boot-autoconfigure-2.3.3.jar 包，看一下 <code>spring.factories</code> 文件内容，可以找到 <code>SpringDataWebAutoConfiguration</code> 这个配置类，如下：</p>
+<p><img src="http://image.leonote.cn/20201116125713.png" alt></p>
+<blockquote>
+<p>结论：只要是 Spring Boot 项目，什么都不需要做，它会天然地让 Spring Data JPA 支持 Web 相关的操作。</p>
+</blockquote>
+<p><img src="http://image.leonote.cn/20201116125905.png" alt></p>
+<p>因为 <code>PageableHandlerMethodArgumentResolver</code> 和 <code>SortHandlerMethodArgumentResolver</code>  两个类是通过 <code>SpringDataWebConfiguration</code> 加载进去的，所以基本可以知道 Spring Data JPA 的 Page 和 Sort 参数是因为 <code>SpringDataWebConfiguration</code> 里面 @Bean 的注入才生效的。</p>
+<p><img src="http://image.leonote.cn/20201116131624.png" alt></p>
+<p>通过 <code>PageableHandlerMethodArgumentResolver</code> 和 <code>SortHandlerMethodArgumentResolver</code> 这两个类的源码，可以知道它们实现了 <code>org.springframework.web.method.support.HandlerMethodArgumentResolver</code> 这个接口，从而对 Request 里面的 Page 和 Sort 的参数做了处理逻辑和解析逻辑。</p>
+<p>在实际工作中，可能存在特殊情况需要对其进行扩展，比如 Page 的参数可能需要支持多种 Key 的情况，那么应该怎么做呢？</p>
+<h2 id="HandlerMethodArgumentResolver-用法"><a href="#HandlerMethodArgumentResolver-用法" class="headerlink" title="HandlerMethodArgumentResolver 用法"></a>HandlerMethodArgumentResolver 用法</h2><h3 id="接口方法详解"><a href="#接口方法详解" class="headerlink" title="接口方法详解"></a>接口方法详解</h3><p>熟悉 MVC 的人都知道，HandlerMethodArgumentResolvers 在 Spring MVC 中的主要作用是对 Controller 里面的方法参数做解析，即可以把 Request 里面的值映射到方法的参数中。打开此类的源码会发现只有两个方法，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HandlerMethodArgumentResolver</span> </span>&#123;</span><br><span class="line">   <span class="comment">//检查方法的参数是否支持处理和转化</span></span><br><span class="line">  <span class="function"><span class="keyword">boolean</span> <span class="title">supportsParameter</span><span class="params">(MethodParameter parameter)</span></span>;</span><br><span class="line">   <span class="comment">//根据request上下文，解析方法的参数</span></span><br><span class="line">  <span class="meta">@Nullable</span></span><br><span class="line">	<span class="function">Object <span class="title">resolveArgument</span><span class="params">(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,</span></span></span><br><span class="line"><span class="function"><span class="params">			NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory)</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此接口的应用场景非常广泛，可以看到其子类非常多，如下图所示：</p>
+<p><img src="http://image.leonote.cn/20201116135238.png" alt></p>
+<p>其中几个类的作用如下：</p>
+<ul>
+<li><p><code>PathVariableMapMethodArgumentResolver</code> 专门解析 @PathVariable 里面的值；</p>
+</li>
+<li><p><code>RequestResponseBodyMethodProcessor</code> 专门解析 @RequestBody 注解的方法参数的值；</p>
+</li>
+<li><p><code>RequestParamMethodArgumentResolver</code> 专门解析 @RequestParam 的注解参数的值，当方法的参数中没有任何注解的时候，默认是 @RequestParam；</p>
+</li>
+<li><p><code>PageableHandlerMethodArgumentResolver</code> 专门解析 @PageableDefault Pageable 的值</p>
+</li>
+<li><p><code>SortHandlerMethodArgumentResolver</code></p>
+</li>
+</ul>
+<h3 id="与-HttpMessageConverter-的关系"><a href="#与-HttpMessageConverter-的关系" class="headerlink" title="与 HttpMessageConverter 的关系"></a>与 HttpMessageConverter 的关系</h3><p>打开 <code>RequestResponseBodyMethodProcessor</code> 就会发现，这个类中主要处理的是，方法里面带 @RequestBody 注解的参数，如下图所示：</p>
+<p><img src="http://image.leonote.cn/20201117095947.png" alt></p>
+<p>而其中的 <code>readWithMessageConverters(webRequest, parameter, parameter.getNestedGenericParameterType())</code> 方法，如果我们点进去继续观察，发现里面<strong>会根据 Http 请求的 MediaType，来选择不同的 HttpMessageConverter 进行转化</strong>。</p>
+<blockquote>
+<p>不同的 <code>HttpMessageConverter</code> 都是由 <code>RequestResponseBodyMethodProcessor</code> 进行调用的</p>
+</blockquote>
+<h2 id="HttpMessageConverter-的执行顺序"><a href="#HttpMessageConverter-的执行顺序" class="headerlink" title="HttpMessageConverter 的执行顺序"></a>HttpMessageConverter 的执行顺序</h2><p>当我们自定义 HandlerMethodArgumentResolver 时，通过下面的方法加载进去。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addArgumentResolvers</span><span class="params">(List&lt;HandlerMethodArgumentResolver&gt; resolvers)</span> </span>&#123;</span><br><span class="line">   resolvers.add(myPageableHandlerMethodArgumentResolver);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>List&lt;HandlerMethodArgumentResolver&gt;</code> 里面<strong>自定义的 resolver 的优先级是最高的</strong>，也就是会优先执行 <code>HandlerMethodArgumentResolver</code> 之后，才会按照顺序执行系统里面自带的那一批 <code>HttpMessageConverter</code>，按照 List 的顺序执行。</p>
+<p>Spring 里面有个执行效率问题，就是一旦一次执行找到了需要的 <code>HandlerMethodArgumentResolver</code> 的时候，利用 <strong>Spring 中的缓存机制</strong>，执行过程中就不会再遍历 <code>List&lt;HandlerMethodArgumentResolver&gt;</code> 了，而是直接用上次找到的 <code>HandlerMethodArgumentResolver</code>，这样提升了执行效率。</p>
+<p>如果想要了解更多的 Resolver，可以看下图这个类的代码：</p>
+<p><img src="http://image.leonote.cn/20201117100937.png" alt></p>
+<h2 id="如何自定义-HandlerMethodArgumentResolver"><a href="#如何自定义-HandlerMethodArgumentResolver" class="headerlink" title="如何自定义 HandlerMethodArgumentResolver"></a>如何自定义 HandlerMethodArgumentResolver</h2><p>在实际的工作中，可能会遇到对老项目进行改版的工作，如果要我们把旧的 API 接口改造成 JPA 的技术实现，那么可能会出现需要新、老参数的问题。假设在实际场景中，我们 Page 的参数是 page[number]，而 page size 的参数是 page[size]，看看应该怎么做。</p>
+<p><strong>第一步：新建 MyPageableHandlerMethodArgumentResolver</strong></p>
+<p>这个类的作用有两个：</p>
+<ul>
+<li><p>用来兼容 ?page[size]=2&amp;page[number]=0 的参数情况；</p>
+</li>
+<li><p>支持 JPA 新的参数形式 ?size=2&amp;page=0。</p>
+</li>
+</ul>
+<p>通过自定义的 <code>MyPageableHandlerMethodArgumentResolver</code> 来实现这个需求，请看下面这段代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过<span class="doctag">@Component</span>把此类加载到Spring的容器里面去 </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyPageableHandlerMethodArgumentResolver</span> <span class="keyword">extends</span> <span class="title">PageableHandlerMethodArgumentResolver</span> <span class="keyword">implements</span> <span class="title">HandlerMethodArgumentResolver</span> </span>&#123;</span><br><span class="line">   <span class="comment">//我们假设sort的参数没有发生变化，采用PageableHandlerMethodArgumentResolver里面的写法</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> SortHandlerMethodArgumentResolver DEFAULT_SORT_RESOLVER = <span class="keyword">new</span> SortHandlerMethodArgumentResolver();</span><br><span class="line">   <span class="comment">//给定两个默认值</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Integer DEFAULT_PAGE = <span class="number">0</span>;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Integer DEFAULT_SIZE = <span class="number">10</span>;</span><br><span class="line">   <span class="comment">//兼容新版，引入JPA的分页参数</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String JPA_PAGE_PARAMETER = <span class="string">"page"</span>;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String JPA_SIZE_PARAMETER = <span class="string">"size"</span>;</span><br><span class="line">   <span class="comment">//兼容原来老的分页参数</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_PAGE_PARAMETER = <span class="string">"page[number]"</span>;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_SIZE_PARAMETER = <span class="string">"page[size]"</span>;</span><br><span class="line">   <span class="keyword">private</span> SortArgumentResolver sortResolver;</span><br><span class="line">   <span class="comment">//模仿 PageableHandlerMethodArgumentResolver 里面的构造方法</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">MyPageableHandlerMethodArgumentResolver</span><span class="params">(@Nullable SortArgumentResolver sortResolver)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">this</span>.sortResolver = sortResolver == <span class="keyword">null</span> ? DEFAULT_SORT_RESOLVER : sortResolver;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supportsParameter</span><span class="params">(MethodParameter parameter)</span> </span>&#123;</span><br><span class="line"><span class="comment">//    假设用我们自己的类 MyPageRequest 接收参数</span></span><br><span class="line">      <span class="keyword">return</span> MyPageRequest.class.equals(parameter.getParameterType());</span><br><span class="line">      <span class="comment">//同时我们也可以支持通过Spring Data JPA里面的Pageable参数进行接收，两种效果是一样的</span></span><br><span class="line"><span class="comment">//    return Pageable.class.equals(parameter.getParameterType());</span></span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 参数封装逻辑page和sort，JPA参数的优先级高于page[number]和page[size]参数</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="comment">//public Pageable resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) &#123; //这种是Pageable的方式</span></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> MyPageRequest <span class="title">resolveArgument</span><span class="params">(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory)</span> </span>&#123;</span><br><span class="line">      String jpaPageString = webRequest.getParameter(JPA_PAGE_PARAMETER);</span><br><span class="line">      String jpaSizeString = webRequest.getParameter(JPA_SIZE_PARAMETER);</span><br><span class="line">      <span class="comment">//我们分别取参数里面page、sort和 page[number]、page[size]的值</span></span><br><span class="line">      String pageString = webRequest.getParameter(DEFAULT_PAGE_PARAMETER);</span><br><span class="line">      String sizeString = webRequest.getParameter(DEFAULT_SIZE_PARAMETER);</span><br><span class="line">      <span class="comment">//当两个都有值时候的优先级，及其默认值的逻辑</span></span><br><span class="line">      Integer page = jpaPageString != <span class="keyword">null</span> ? Integer.valueOf(jpaPageString) : pageString != <span class="keyword">null</span> ? Integer.valueOf(pageString) : DEFAULT_PAGE;</span><br><span class="line">      <span class="comment">//在这里同时可以计算 page+1的逻辑;如：page=page+1;</span></span><br><span class="line">      Integer size = jpaSizeString != <span class="keyword">null</span> ? Integer.valueOf(jpaSizeString) : sizeString != <span class="keyword">null</span> ? Integer.valueOf(sizeString) : DEFAULT_SIZE;</span><br><span class="line">       <span class="comment">//我们假设，sort排序的取值方法先不发生改变</span></span><br><span class="line">      Sort sort = sortResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);</span><br><span class="line"><span class="comment">//    如果使用 Pageable 参数接收值，我们也可以不用自定义 MyPageRequest 对象，直接返回 PageRequest;</span></span><br><span class="line"><span class="comment">//    return PageRequest.of(page,size,sort);</span></span><br><span class="line">      <span class="comment">//将 page 和 size 计算出来的记过封装到我们自定义的 MyPageRequest 类里面去</span></span><br><span class="line">      MyPageRequest myPageRequest = <span class="keyword">new</span> MyPageRequest(page, size,sort);</span><br><span class="line">      <span class="comment">//返回 controller 里面的参数需要的对象；</span></span><br><span class="line">      <span class="keyword">return</span> myPageRequest;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码的逻辑就是取 Request 的 Page 相关的参数，封装到对象中返回给 Controller 的方法参数里面。</p>
+<p>其中 MyPageRequest 不是必需的，只是为了演示不同的做法。</p>
+<p><strong>第二步：新建 MyPageRequest</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 继承父类，可以省掉很多计算 page 和 index 的逻辑</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyPageRequest</span> <span class="keyword">extends</span> <span class="title">PageRequest</span> </span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="title">MyPageRequest</span><span class="params">(<span class="keyword">int</span> page, <span class="keyword">int</span> size, Sort sort)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">super</span>(page, size, sort);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此类，我们用来接收 Page 相关的参数值，也不是必需的。</p>
+<p><strong>第三步：implements WebMvcConfigurer 加载 myPageableHandlerMethodArgumentResolver</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 实现 WebMvcConfigurer</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWebMvcConfigurer</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line">   <span class="meta">@Autowired</span></span><br><span class="line">   <span class="keyword">private</span> MyPageableHandlerMethodArgumentResolver myPageableHandlerMethodArgumentResolver;</span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 覆盖这个方法，把我们自定义的 myPageableHandlerMethodArgumentResolver 加载到原始的 mvc 的 resolvers 里面去</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> resolvers</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addArgumentResolvers</span><span class="params">(List&lt;HandlerMethodArgumentResolver&gt; resolvers)</span> </span>&#123;</span><br><span class="line">      resolvers.add(myPageableHandlerMethodArgumentResolver);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里利用 Spring MVC 的机制加载我们自定义的 <code>myPageableHandlerMethodArgumentResolver</code>，由于自定义的优先级是最高的，所以用 MyPageRequest.class 和 Pageable.class 都是可以的</p>
+<p><strong>第四步： Controller 里面的写法</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//用 Pageable 这种方式也是可以的</span></span><br><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/users"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Page&lt;UserInfo&gt; <span class="title">queryByPage</span><span class="params">(Pageable pageable, UserInfo userInfo)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">return</span> userInfoRepository.findAll(Example.of(userInfo),pageable);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//用 MyPageRequest 进行接收</span></span><br><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/users/mypage"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Page&lt;UserInfo&gt; <span class="title">queryByMyPage</span><span class="params">(MyPageRequest pageable, UserInfo userInfo)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">return</span> userInfoRepository.findAll(Example.of(userInfo),pageable);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里利用 Pageable 和 MyPageRequest 两种方式都是可以的。</p>
+<p><strong>第五步：启动项目测试一下</strong></p>
+<p>依次可以测试下面两种情况，发现都是可以正常工作的。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET http://localhost:8089/users?page[size]=2&amp;page[number]=0&amp;ages=10&amp;sort=id,desc</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET http://localhost:8089/users?size=2&amp;page=0&amp;ages=10&amp;sort=id,desc</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET http://localhost:8089/users/mypage?page[size]=2&amp;page[number]=0&amp;ages=10&amp;sort=id,desc</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET http://localhost:8089/users/mypage?size=2&amp;page=0&amp;ages=10&amp;sort=id,desc</span><br></pre></td></tr></table></figure>
+
+<p>演示的 Controller 方法里面有多个参数的，每个参数都各司其职，找到自己对应的 <code>HandlerMethodArgumentResolver</code>，这正是 Spring MVC 框架的优雅之处。</p>
+<h2 id="实际工作的建议"><a href="#实际工作的建议" class="headerlink" title="实际工作的建议"></a>实际工作的建议</h2><p>自定义 HandlerMethodArgumentResolver 到底对我们的工作起到哪些作用呢？</p>
+<h3 id="场景一"><a href="#场景一" class="headerlink" title="场景一"></a>场景一</h3><p>当我们在 Controller 里面处理某些参数时，重复的步骤非常多，那么我们就可以考虑写一下自己的框架，来处理请求里面的参数，而 Controller 里面的代码就会变得非常优雅，不需要关心其他框架代码，只要知道方法的参数有值就可以了。</p>
+<h3 id="场景二"><a href="#场景二" class="headerlink" title="场景二"></a>场景二</h3><p>再举个例子，在实际工作中需要注意的是，默认 JPA 里面的 Page 是从 0 开始，而我们可能有些老的代码也要维护，因为老的代码大多数的 Page 都会从 1 开始。如果我们不自定义 <code>HandlerMethodArgumentResolver</code>，那么在用到分页时，每个 Controller 的方法里面都需要关心这个逻辑。那么这个时候你就应该想到上面列举的自定义 <code>MyPageableHandlerMethodArgumentResolver</code> 的 resolveArgument 方法的实现，使用这种方法我们只需要在里面修改 Page 的计算逻辑即可。</p>
+<h3 id="场景三"><a href="#场景三" class="headerlink" title="场景三"></a>场景三</h3><p>再举个例子，在实际的工作中，还经常会遇到“取当前用户”的应用场景。此时，普通做法是，当使用到当前用户的 UserInfo 时，每次都需要根据请求 header 的 token 取到用户信息，伪代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"user/info"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> UserInfo <span class="title">getUserInfo</span><span class="params">(@RequestHeader String token)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 伪代码</span></span><br><span class="line">    Long userId = redisTemplate.get(token);</span><br><span class="line">    UserInfo useInfo = userInfoRepository.getById(userId);</span><br><span class="line">    <span class="keyword">return</span> userInfo;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果我们使用 <code>HandlerMethodArgumentResolver</code> 接口来实现，代码就会变得优雅许多。伪代码如下：</p>
+<ol>
+<li><p><strong>实现 HandlerMethodArgumentResolver 接口</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserInfoArgumentResolver</span> <span class="keyword">implements</span> <span class="title">HandlerMethodArgumentResolver</span> </span>&#123;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">final</span> RedisTemplate redisTemplate;<span class="comment">//伪代码，假设我们token是放在redis里面的</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">final</span> UserInfoRepository userInfoRepository;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">UserInfoArgumentResolver</span><span class="params">(RedisTemplate redisTemplate, UserInfoRepository userInfoRepository)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">this</span>.redisTemplate = redisTemplate;<span class="comment">//伪代码，假设我们token是放在redis里面的</span></span><br><span class="line">      <span class="keyword">this</span>.userInfoRepository = userInfoRepository;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supportsParameter</span><span class="params">(MethodParameter parameter)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> UserInfo.class.isAssignableFrom(parameter.getParameterType());</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> Object <span class="title">resolveArgument</span><span class="params">(MethodParameter parameter, ModelAndViewContainer mavContainer,</span></span></span><br><span class="line"><span class="function"><span class="params">                          NativeWebRequest webRequest, WebDataBinderFactory binderFactory)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">      HttpServletRequest nativeRequest = (HttpServletRequest) webRequest.getNativeRequest();</span><br><span class="line">      String token = nativeRequest.getHeader(<span class="string">"token"</span>);</span><br><span class="line">      Long userId = (Long) redisTemplate.opsForValue().get(token);<span class="comment">//伪代码，假设我们token是放在redis里面的</span></span><br><span class="line">      UserInfo useInfo = userInfoRepository.getOne(userId);</span><br><span class="line">      <span class="keyword">return</span> useInfo;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>只需要在 MyWebMvcConfigurer 里面把 userInfoArgumentResolver 添加进去即可</strong>，关键代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWebMvcConfigurer</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line">   <span class="meta">@Autowired</span></span><br><span class="line">   <span class="keyword">private</span> MyPageableHandlerMethodArgumentResolver myPageableHandlerMethodArgumentResolver;</span><br><span class="line">   <span class="meta">@Autowired</span></span><br><span class="line">   <span class="keyword">private</span> UserInfoArgumentResolver userInfoArgumentResolver;</span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addArgumentResolvers</span><span class="params">(List&lt;HandlerMethodArgumentResolver&gt; resolvers)</span> </span>&#123;</span><br><span class="line">      resolvers.add(myPageableHandlerMethodArgumentResolver);</span><br><span class="line">      <span class="comment">//我们只需要把userInfoArgumentResolver加入resolvers中即可</span></span><br><span class="line">      resolvers.add(userInfoArgumentResolver);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>在 Controller 中使用</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserInfoController</span> </span>&#123;</span><br><span class="line">  <span class="comment">//获得当前用户的信息</span></span><br><span class="line">  <span class="meta">@GetMapping</span>(<span class="string">"user/info"</span>)</span><br><span class="line">  <span class="function"><span class="keyword">public</span> UserInfo <span class="title">getUserInfo</span><span class="params">(UserInfo userInfo)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">return</span> userInfo;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//给当前用户 say hello</span></span><br><span class="line">  <span class="meta">@PostMapping</span>(<span class="string">"sayHello"</span>)</span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">(UserInfo userInfo)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"hello "</span> + userInfo.getTelephone();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>上述代码可以看到，在 Controller 里面可以完全省掉根据 token 从 redis 取当前用户信息的过程，优化了操作流程。</p>
+<h3 id="场景四"><a href="#场景四" class="headerlink" title="场景四"></a>场景四</h3><p>有的时候我们也会更改 Pageable 的默认值和参数的名字，也可以在 application.properties 的文件里面通过如下的 Key 值对自定义进行配置，如下图所示：</p>
+<p><img src="http://image.leonote.cn/20201117104905.png" alt></p>
+<h2 id="思路拓展"><a href="#思路拓展" class="headerlink" title="思路拓展"></a>思路拓展</h2><h3 id="WebMvcConfigurer-介绍"><a href="#WebMvcConfigurer-介绍" class="headerlink" title="WebMvcConfigurer 介绍"></a>WebMvcConfigurer 介绍</h3><p>当我们做 Spring 的 MVC 开发的时候，可能会通过实现 <code>WebMvcConfigurer</code> 去做一些公用的业务逻辑，下面我列举几个常见的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** 拦截器配置 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addInterceptors</span><span class="params">(InterceptorRegistry var1)</span></span>;</span><br><span class="line"><span class="comment">/** 视图跳转控制器 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addViewControllers</span><span class="params">(ViewControllerRegistry registry)</span></span>;</span><br><span class="line"><span class="comment">/** 静态资源处理 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addResourceHandlers</span><span class="params">(ResourceHandlerRegistry registry)</span></span>;</span><br><span class="line"><span class="comment">/** 默认静态资源处理器 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">configureDefaultServletHandling</span><span class="params">(DefaultServletHandlerConfigurer configurer)</span></span>;</span><br><span class="line"><span class="comment">/** 这里配置视图解析器 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">configureViewResolvers</span><span class="params">(ViewResolverRegistry registry)</span></span>;</span><br><span class="line"><span class="comment">/** 配置内容裁决的一些选项 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">configureContentNegotiation</span><span class="params">(ContentNegotiationConfigurer configurer)</span></span>;</span><br><span class="line"><span class="comment">/** 解决跨域问题 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addCorsMappings</span><span class="params">(CorsRegistry registry)</span></span>;</span><br><span class="line"><span class="comment">/** 添加对 controller 的 Return 的结果的处理 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addReturnValueHandlers</span><span class="params">(List&lt;HandlerMethodReturnValueHandler&gt; handlers)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>当我们实现 Restful 风格的 API 协议时，会经常看到其对 json 响应结果进行了统一的封装，我们也可以采用 <code>HandlerMethodReturnValueHandler</code> 来实现，再来看一个例子。</p>
+<h3 id="用-Result-对-JSON-的返回结果进行统一封装"><a href="#用-Result-对-JSON-的返回结果进行统一封装" class="headerlink" title="用 Result 对 JSON 的返回结果进行统一封装"></a>用 Result 对 JSON 的返回结果进行统一封装</h3><p>下面通过五个步骤来实现一个通过自定义注解，利用<code>HandlerMethodReturnValueHandler</code> 实现 JSON 结果封装的例子。</p>
+<p><strong>第一步：我们自定义一个注解 @WarpWithData</strong>，表示此注解包装的返回结果用 Data 进行包装，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(&#123;ElementType.TYPE, ElementType.METHOD&#125;)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="comment">/** 自定义一个注解对返回结果进行包装 */</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> WarpWithData &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>第二步：自定义 MyWarpWithDataHandlerMethodReturnValueHandler，并继承 RequestResponseBodyMethodProcessor 来实现 HandlerMethodReturnValueHandler 接口</strong>，用来处理 Data 包装的结果，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//自定义自己的 return 的处理类，我们直接继承 RequestResponseBodyMethodProcessor，这样父类里面的方法我们直接使用就可以了</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWarpWithDataHandlerMethodReturnValueHandler</span> <span class="keyword">extends</span> <span class="title">RequestResponseBodyMethodProcessor</span> <span class="keyword">implements</span> <span class="title">HandlerMethodReturnValueHandler</span> </span>&#123;</span><br><span class="line">   <span class="comment">//参考父类 RequestResponseBodyMethodProcessor 的做法</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">MyWarpWithDataHandlerMethodReturnValueHandler</span><span class="params">(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">super</span>(converters);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">//只处理需要包装的注解的方法</span></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supportsReturnType</span><span class="params">(MethodParameter returnType)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> returnType.hasMethodAnnotation(WarpWithData.class);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">//将返回结果包装一层 Data</span></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleReturnValue</span><span class="params">(Object returnValue, MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest)</span> <span class="keyword">throws</span> IOException, HttpMediaTypeNotAcceptableException </span>&#123;</span><br><span class="line">      Map&lt;String,Object&gt; res = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">      res.put(<span class="string">"data"</span>,returnValue);</span><br><span class="line">      <span class="keyword">super</span>.handleReturnValue(res,methodParameter,modelAndViewContainer,nativeWebRequest);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>第三步：在 MyWebMvcConfigurer 里面直接把 myWarpWithDataHandlerMethodReturnValueHandler 加入 handlers 里面即可</strong>，也是通过覆盖父类 WebMvcConfigurer 里面的 addReturnValueHandlers 方法完成的，关键代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWebMvcConfigurer</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line">   <span class="meta">@Autowired</span></span><br><span class="line">   <span class="keyword">private</span> MyWarpWithDataHandlerMethodReturnValueHandler myWarpWithDataHandlerMethodReturnValueHandler;</span><br><span class="line">   <span class="comment">//把我们自定义的 myWarpWithDataHandlerMethodReturnValueHandler 加入 handlers 里面即可</span></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addReturnValueHandlers</span><span class="params">(List&lt;HandlerMethodReturnValueHandler&gt; handlers)</span> </span>&#123;</span><br><span class="line">      handlers.add(myWarpWithDataHandlerMethodReturnValueHandler);</span><br><span class="line">   &#125;</span><br><span class="line">  <span class="meta">@Autowired</span></span><br><span class="line">  <span class="keyword">private</span> RequestMappingHandlerAdapter requestMappingHandlerAdapter;</span><br><span class="line">  <span class="comment">//由于 HandlerMethodReturnValueHandler 处理的优先级问题，通过如下方法，把我们自定义的 myWarpWithDataHandlerMethodReturnValueHandler 放到第一个；</span></span><br><span class="line">  <span class="meta">@PostConstruct</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     List&lt;HandlerMethodReturnValueHandler&gt; returnValueHandlers = Lists.newArrayList(myWarpWithDataHandlerMethodReturnValueHandler);</span><br><span class="line">     <span class="comment">// 取出原始列表，重新覆盖进去；</span></span><br><span class="line">     returnValueHandlers.addAll(requestMappingHandlerAdapter.getReturnValueHandlers());</span><br><span class="line">     requestMappingHandlerAdapter.setReturnValueHandlers(returnValueHandlers);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的是，我们利用 @PostConstruct 调整了一下 HandlerMethodReturnValueHandler 加载的优先级，使其生效。</p>
+<p><strong>第四步：Controller 方法中直接加上 @WarpWithData 注解</strong>，关键代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/user/&#123;id&#125;"</span>)</span><br><span class="line"><span class="meta">@WarpWithData</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> UserInfo <span class="title">getUserInfoFromPath</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id) </span>&#123;</span><br><span class="line">   <span class="keyword">return</span> userInfoRepository.getOne(id);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>第五步：我们测试一下</strong>。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET http://localhost:8089/user/1</span><br></pre></td></tr></table></figure>
+
+<p>就会得到如下结果，返回的 JSON 结果多了一个 Data 包装。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"data"</span>: &#123;</span><br><span class="line">    <span class="attr">"id"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"version"</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">"createUserId"</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="attr">"createTime"</span>: <span class="string">"2020-10-23T00:23:10.185Z"</span>,</span><br><span class="line">    <span class="attr">"lastModifiedUserId"</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="attr">"lastModifiedTime"</span>: <span class="string">"2020-10-23T00:23:10.185Z"</span>,</span><br><span class="line">    <span class="attr">"ages"</span>: <span class="number">10</span>,</span><br><span class="line">    <span class="attr">"telephone"</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="attr">"hibernateLazyInitializer"</span>: &#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        
+  <div class="my_post_copyright">
+    <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+    <!-- JS库 sweetalert 可修改路径 -->
+    <script src="//cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <p><span>本文标题:</span><a href="/2020/11/13/SpringDataJpa自定义参数解析器/">Spring Data Jpa 自定义参数解析器</a></p>
+    <p><span>文章作者:</span><a href="/" title="访问 Leo Liu 的个人博客">Leo Liu</a></p>
+    <p><span>发布时间:</span>2020年11月13日 - 14:11</p>
+    <p><span>最后更新:</span>2021年01月31日 - 07:01</p>
+    <p><span>原始链接:</span><a href="/2020/11/13/SpringDataJpa自定义参数解析器/" title="Spring Data Jpa 自定义参数解析器">https://liule8.github.io/2020/11/13/SpringDataJpa自定义参数解析器/</a>
+      <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://liule8.github.io/2020/11/13/SpringDataJpa自定义参数解析器/"  aria-label="复制成功！"></i></span>
+    </p>
+    <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">(CC BY-NC-ND 4.0)</a> 转载请保留原文链接及作者。</p>
+  </div>
+  <script>
+      var clipboard = new Clipboard('.fa-clipboard');
+      $(".fa-clipboard").click(function(){
+          clipboard.on('success', function(){
+              swal({
+                  title: "",
+                  text: '复制成功',
+                  icon: "success",
+                  showConfirmButton: true
+              });
+          });
+      });
+  </script>
+
+
+       </div>
+    
+
+    
+      <div>
+        <div>
+  
+    <div style="text-align:center;color:#cccccc;font-size:14px;">
+      <span>-------- 本文结束 </span>
+      <i class="fa fa-rocket"></i>
+      <span> 感谢您的阅读 --------</span>
+    </div>
+  
+</div>
+
+      </div>
+    
+
+    <footer class="post-footer">
+          
+        
+        <div class="post-tags">
+            <a href="/tags/Spring-Data-Jpa/" rel="tag"><i class="fa fa-tag"></i> Spring Data Jpa</a>
+          
+        </div>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+              <a href="/2020/11/11/SpringDataJpa对WebMVC的支持/" rel="next" title="Spring Data Jpa 对 WebMVC 的支持">
+                <i class="fa fa-chevron-left"></i> Spring Data Jpa 对 WebMVC 的支持
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+              <a href="/2020/11/15/系统架构演化/" rel="prev" title="系统架构演化">
+                系统架构演化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.png"
+      alt="Leo Liu">
+  <p class="site-author-name" itemprop="name">Leo Liu</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/LIULE8" title="GitHub &rarr; https://github.com/LIULE8" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:leo.liu.scau@gmail.com" title="E-Mail &rarr; mailto:leo.liu.scau@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+          
+            <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+            <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+            <div class="widget-wrap">
+              <h5 class="widget-title">Tag Cloud</h5>
+              <div id="myCanvasContainer" class="widget tagcloud">
+                <canvas width="250" height="250" id="resCanvas" style="width: 180px">
+                  <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Annotation/">Annotation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Auditing/">Auditing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORF/">CORF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataSource/">DataSource</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Defining-Query-Methods/">Defining Query Methods</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECMAScript/">ECMAScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Entity-注解/">Entity 注解</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JPA/">JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Join/">Join</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jrebel/">Jrebel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mixin/">Mixin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Oracle/">Oracle</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Properties/">Properties</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RestTemplate/">RestTemplate</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/">Spring</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-ElasticSearch/">Spring Data ElasticSearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-JPA/">Spring Data JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-Jpa/">Spring Data Jpa</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Security/">Spring Security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Springboot/">Springboot</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/String/">String</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Time/">Time</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transaction/">Transaction</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UML/">UML</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vue/">Vue</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOL/">WOL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jar/">jar</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm/">npm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nvm/">nvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pageable/">pageable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/plantuml/">plantuml</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/">redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/乐观锁/">乐观锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/云服务器/">云服务器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同源策略/">同源策略</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/架构/">架构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注解/">注解</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/浏览器/">浏览器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/索引/">索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/缓存/">缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义返回值/">自定义返回值</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计模式/">设计模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/跨域/">跨域</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/运维/">运维</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/防止多次提交/">防止多次提交</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/集合/">集合</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面向对象设计原则/">面向对象设计原则</a><span class="tag-list-count">1</span></li></ul>
+                </canvas>
+              </div>
+            </div>
+          
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#自定义-HandlerMethodArgumentResolver"><span class="nav-number">1.</span> <span class="nav-text">自定义 HandlerMethodArgumentResolver</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Page-和-Sort-参数原理"><span class="nav-number">1.1.</span> <span class="nav-text">Page 和 Sort 参数原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HandlerMethodArgumentResolver-用法"><span class="nav-number">1.2.</span> <span class="nav-text">HandlerMethodArgumentResolver 用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#接口方法详解"><span class="nav-number">1.2.1.</span> <span class="nav-text">接口方法详解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#与-HttpMessageConverter-的关系"><span class="nav-number">1.2.2.</span> <span class="nav-text">与 HttpMessageConverter 的关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HttpMessageConverter-的执行顺序"><span class="nav-number">1.3.</span> <span class="nav-text">HttpMessageConverter 的执行顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何自定义-HandlerMethodArgumentResolver"><span class="nav-number">1.4.</span> <span class="nav-text">如何自定义 HandlerMethodArgumentResolver</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实际工作的建议"><span class="nav-number">1.5.</span> <span class="nav-text">实际工作的建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#场景一"><span class="nav-number">1.5.1.</span> <span class="nav-text">场景一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#场景二"><span class="nav-number">1.5.2.</span> <span class="nav-text">场景二</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#场景三"><span class="nav-number">1.5.3.</span> <span class="nav-text">场景三</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#场景四"><span class="nav-number">1.5.4.</span> <span class="nav-text">场景四</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思路拓展"><span class="nav-number">1.6.</span> <span class="nav-text">思路拓展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#WebMvcConfigurer-介绍"><span class="nav-number">1.6.1.</span> <span class="nav-text">WebMvcConfigurer 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用-Result-对-JSON-的返回结果进行统一封装"><span class="nav-number">1.6.2.</span> <span class="nav-text">用 Result 对 JSON 的返回结果进行统一封装</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">
+    <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备20009586号 </a>
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leo Liu</span>
+</div>
+
+        
+  <div class="busuanzi-count">
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-area-chart"></i>
+      </span>
+      <span title="站点总字数">
+       站点总字数: 722k
+      </span>
+    
+      <span class="post-meta-divider">|</span>
+    
+      <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+      <span class="site-uv" title="总访客量">
+      总访客量: <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+    
+      <span class="post-meta-divider">|</span>
+    
+      <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+      <span class="site-pv" title="总访问量">
+      总访问量: <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+    
+  </div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+      </div>
+
+    
+
+  </div>
+
+  
+    
+    
+      
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
+</html>
+<script type="text/javascript" src="/js/src/mouse.js"></script>

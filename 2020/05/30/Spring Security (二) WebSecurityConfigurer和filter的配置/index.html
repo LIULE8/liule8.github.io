@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Satisfy:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+      
+    
+      
+    
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    save_scroll: false,
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},
+    path: 'search.xml',
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="【转载】 作者：Ccww 链接：https://juejin.im/post/5d0b1eb35188252f921b1535  Spring Security（二）–WebSecurityConfigurer配置以及filter顺序  在认证过程和访问授权前必须了解spring Security如何知道我们要求所有用户都经过身份验证？ Spring Security如何知道我们想要支持基于表单">
+<meta name="keywords" content="Spring Security">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Security (二) WebSecurityConfigurer和filter的配置">
+<meta property="og:url" content="https://liule8.github.io/2020/05/30/Spring Security (二) WebSecurityConfigurer和filter的配置/index.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="【转载】 作者：Ccww 链接：https://juejin.im/post/5d0b1eb35188252f921b1535  Spring Security（二）–WebSecurityConfigurer配置以及filter顺序  在认证过程和访问授权前必须了解spring Security如何知道我们要求所有用户都经过身份验证？ Spring Security如何知道我们想要支持基于表单">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-07-03T13:58:58.577Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Security (二) WebSecurityConfigurer和filter的配置">
+<meta name="twitter:description" content="【转载】 作者：Ccww 链接：https://juejin.im/post/5d0b1eb35188252f921b1535  Spring Security（二）–WebSecurityConfigurer配置以及filter顺序  在认证过程和访问授权前必须了解spring Security如何知道我们要求所有用户都经过身份验证？ Spring Security如何知道我们想要支持基于表单">
+  <link rel="alternate" href="/atom.xml" title="Leo's notes" type="application/atom+xml">
+  <link rel="canonical" href="https://liule8.github.io/2020/05/30/Spring Security (二) WebSecurityConfigurer和filter的配置/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Spring Security (二) WebSecurityConfigurer和filter的配置 | Leo's notes</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <a href="https://github.com/LIULE8" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leo's notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/05/30/Spring Security (二) WebSecurityConfigurer和filter的配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Leo Liu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leo's notes">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">Spring Security (二) WebSecurityConfigurer和filter的配置
+
+            
+          </h1>
+        
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-30 12:47:26" itemprop="dateCreated datePublished" datetime="2020-05-30T12:47:26Z">2020-05-30</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-03 13:58:58" itemprop="dateModified" datetime="2020-07-03T13:58:58Z">2020-07-03</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Security/" itemprop="url" rel="index"><span itemprop="name">Spring Security</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>10k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>9 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>【转载】</p>
+<p>作者：Ccww</p>
+<p>链接：<a href="https://juejin.im/post/5d0b1eb35188252f921b1535" target="_blank" rel="noopener">https://juejin.im/post/5d0b1eb35188252f921b1535</a></p>
+</blockquote>
+<h1 id="Spring-Security（二）–WebSecurityConfigurer配置以及filter顺序"><a href="#Spring-Security（二）–WebSecurityConfigurer配置以及filter顺序" class="headerlink" title="Spring Security（二）–WebSecurityConfigurer配置以及filter顺序"></a>Spring Security（二）–WebSecurityConfigurer配置以及filter顺序</h1><p>  在认证过程和访问授权前必须了解spring Security如何知道我们要求所有用户都经过身份验证？ Spring Security如何知道我们想要支持基于表单的身份验证？因此必须了解WebSecurityConfigurerAdapter配置类如何工作的。而且也必须了解清楚filter的顺序，才能更好了解其调用工作流程。</p>
+<h2 id="WebSecurityConfigurerAdapter"><a href="#WebSecurityConfigurerAdapter" class="headerlink" title="WebSecurityConfigurerAdapter"></a>WebSecurityConfigurerAdapter</h2><p>  在使用 <code>WebSecurityConfigurerAdapter</code> 前，先了解 Spring security config。<br>  Spring security config 具有三个模块，一共有3个 builder，认证相关的 <code>AuthenticationManagerBuilder</code> 和web相关的 <code>WebSecurity</code>、<code>HttpSecurity</code>。</p>
+<ol>
+<li><p><code>AuthenticationManagerBuilder</code>：用来配置全局的认证相关的信息，其实就是<code>AuthenticationProvider</code>和<code>UserDetailsService</code>，前者是认证服务提供商，后者是用户详情查询服务；</p>
+</li>
+<li><p><code>WebSecurity</code>： 全局请求忽略规则配置（比如说静态文件，比如说注册页面）、全局<code>HttpFirewall</code>配置、是否debug配置、全局<code>SecurityFilterChain</code>配置、<code>privilegeEvaluator</code>、<code>expressionHandler</code>、<code>securityInterceptor</code>；</p>
+</li>
+<li><p><code>HttpSecurity</code>：具体的权限控制规则配置。一个这个配置相当于xml配置中的一个标签。各种具体的认证机制的相关配置，<code>OpenIDLoginConfigurer</code>、<code>AnonymousConfigurer</code>、<code>FormLoginConfigurer</code>、<code>HttpBasicConfigurer</code>等。</p>
+<p>  <code>WebSecurityConfigurerAdapter</code>提供了简洁方式来创建<code>WebSecurityConfigurer</code>，其作为基类，可通过实现该类自定义配置类，主要重写这三个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(AuthenticationManagerBuilder auth)</span> <span class="keyword">throws</span> Exception </span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(WebSecurity web)</span> <span class="keyword">throws</span> Exception </span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(HttpSecurity httpSecurity)</span> <span class="keyword">throws</span> Exception </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ol>
+<p>  而且其自动从<code>SpringFactoriesLoader</code>查找<code>AbstractHttpConfigurer</code>让我们去扩展，想要实现必须创建一个<code>AbstractHttpConfigurer</code>的扩展类，并在classpath路径下创建一个文件META-INF/spring.factories。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer = sample.MyClassThatExtendsAbstractHttpConfigurer</span><br></pre></td></tr></table></figure>
+
+<p>其源码分析：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1.init初始化：获取HttpSecurity和配置FilterSecurityInterceptor拦截器到WebSecurity</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">final</span> WebSecurity web)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">   <span class="comment">//获取HttpSecurity</span></span><br><span class="line">   <span class="keyword">final</span> HttpSecurity http = getHttp();</span><br><span class="line">   <span class="comment">//配置FilterSecurityInterceptor拦截器到WebSecurity</span></span><br><span class="line">   web.addSecurityFilterChainBuilder(http).postBuildAction(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       FilterSecurityInterceptor securityInterceptor = http</span><br><span class="line">               .getSharedObject(FilterSecurityInterceptor.class);</span><br><span class="line">       web.securityInterceptor(securityInterceptor);</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;);</span><br><span class="line"> &#125;</span><br><span class="line">   .....</span><br><span class="line"><span class="comment">//2.获取HttpSecurity的过程</span></span><br><span class="line"> <span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> HttpSecurity <span class="title">getHttp</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (http != <span class="keyword">null</span>) &#123;</span><br><span class="line">     <span class="keyword">return</span> http;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   DefaultAuthenticationEventPublisher eventPublisher = objectPostProcessor</span><br><span class="line">           .postProcess(<span class="keyword">new</span> DefaultAuthenticationEventPublisher());</span><br><span class="line">   localConfigureAuthenticationBldr.authenticationEventPublisher(eventPublisher);</span><br><span class="line"></span><br><span class="line">   AuthenticationManager authenticationManager = authenticationManager();</span><br><span class="line">   authenticationBuilder.parentAuthenticationManager(authenticationManager);</span><br><span class="line">   Map&lt;Class&lt;? extends Object&gt;, Object&gt; sharedObjects = createSharedObjects();</span><br><span class="line"></span><br><span class="line">   http = <span class="keyword">new</span> HttpSecurity(objectPostProcessor, authenticationBuilder,</span><br><span class="line">           sharedObjects);</span><br><span class="line">   <span class="keyword">if</span> (!disableDefaults) &#123;</span><br><span class="line">     <span class="comment">// 默认的HttpSecurity的配置</span></span><br><span class="line">     http</span><br><span class="line">             <span class="comment">//添加 CSRF 支持，使用WebSecurityConfigurerAdapter时，默认启用，禁用csrf().disable()</span></span><br><span class="line">             .csrf().and()</span><br><span class="line">             <span class="comment">//添加WebAsyncManagerIntegrationFilter</span></span><br><span class="line">             .addFilter(<span class="keyword">new</span> WebAsyncManagerIntegrationFilter())</span><br><span class="line">             <span class="comment">//允许配置异常处理</span></span><br><span class="line">             .exceptionHandling().and()</span><br><span class="line">             <span class="comment">//将安全标头添加到响应</span></span><br><span class="line">             .headers().and()</span><br><span class="line">             <span class="comment">//允许配置会话管理</span></span><br><span class="line">             .sessionManagement().and()</span><br><span class="line">             <span class="comment">//HttpServletRequest之间的SecurityContextHolder创建securityContext管理</span></span><br><span class="line">             .securityContext().and()</span><br><span class="line">             <span class="comment">//允许配置请求缓存</span></span><br><span class="line">             .requestCache().and()</span><br><span class="line">             <span class="comment">//允许配置匿名用户</span></span><br><span class="line">             .anonymous().and()</span><br><span class="line">             <span class="comment">//HttpServletRequestd的方法和属性注册在SecurityContext中</span></span><br><span class="line">             .servletApi().and()</span><br><span class="line">             <span class="comment">//使用默认登录页面</span></span><br><span class="line">             .apply(<span class="keyword">new</span> DefaultLoginPageConfigurer&lt;&gt;()).and()</span><br><span class="line">             <span class="comment">//提供注销支持</span></span><br><span class="line">             .logout();</span><br><span class="line">     <span class="comment">// @formatter:on</span></span><br><span class="line">     ClassLoader classLoader = <span class="keyword">this</span>.context.getClassLoader();</span><br><span class="line">     List&lt;AbstractHttpConfigurer&gt; defaultHttpConfigurers =</span><br><span class="line">             SpringFactoriesLoader.loadFactories(AbstractHttpConfigurer.class, classLoader);</span><br><span class="line"></span><br><span class="line">     <span class="keyword">for</span>(AbstractHttpConfigurer configurer : defaultHttpConfigurers) &#123;</span><br><span class="line">       http.apply(configurer);</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   configure(http);</span><br><span class="line">   <span class="keyword">return</span> http;</span><br><span class="line"> &#125;</span><br><span class="line">   .....</span><br><span class="line"> <span class="comment">//3.可重写方法实现自定义的HttpSecurity   </span></span><br><span class="line"> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">   logger.debug(<span class="string">"Using default configure(HttpSecurity). If subclassed this will potentially override subclass configure(HttpSecurity)."</span>);</span><br><span class="line"></span><br><span class="line">   http</span><br><span class="line">           .authorizeRequests()</span><br><span class="line">           .anyRequest().authenticated()</span><br><span class="line">           .and()</span><br><span class="line">           .formLogin().and()</span><br><span class="line">           .httpBasic();</span><br><span class="line"> &#125;</span><br><span class="line">   .....</span><br></pre></td></tr></table></figure>
+
+<p>     从源码init初始化模块中的“获取<code>HttpSecurity</code>”和“配置<code>FilterSecurityInterceptor</code>拦截器到<code>WebSecurity</code>”中可以看出，想要spring Security如何知道我们要求所有用户都经过身份验证？ Spring Security如何知道我们想要支持基于表单的身份验证？只要重写<code>protected void configure(HttpSecurity http) throws Exception</code>方法即可。因此我们需要理解<code>HttpSecurity</code>的方法的作用，如何进行配置。下一节来讨论<code>HttpSecurity</code>。</p>
+<h2 id="HttpSecurity"><a href="#HttpSecurity" class="headerlink" title="HttpSecurity"></a>HttpSecurity</h2><p>  <code>HttpSecurity</code>基于Web的安全性允许为特定的http请求进行配置。其有很多方法，列举一些常用的如下表：</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">说明</th>
+<th align="left">使用案例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">csrf()</td>
+<td align="left">添加 CSRF 支持，使用WebSecurityConfigurerAdapter时，默认启用</td>
+<td align="left">禁用：csrf().disable()</td>
+</tr>
+<tr>
+<td align="left">openidLogin()</td>
+<td align="left">用于基于 OpenId 的验证</td>
+<td align="left">openidLogin().permitAll();</td>
+</tr>
+<tr>
+<td align="left">authorizeRequests()</td>
+<td align="left">开启使用HttpServletRequest请求的访问限制</td>
+<td align="left">authorizeRequests().anyRequest().authenticated()</td>
+</tr>
+<tr>
+<td align="left">formLogin()</td>
+<td align="left">开启表单的身份验证，如果未指定FormLoginConfigurer#loginPage(String)，则将生成默认登录页面</td>
+<td align="left">formLogin().loginPage(“/authentication/login”).failureUrl(“/authentication/login?failed”)</td>
+</tr>
+<tr>
+<td align="left">oauth2Login()</td>
+<td align="left">开启OAuth 2.0或OpenID Connect 1.0身份验证</td>
+<td align="left">authorizeRequests()..anyRequest().authenticated()..and().oauth2Login()</td>
+</tr>
+<tr>
+<td align="left">rememberMe()</td>
+<td align="left">开启配置“记住我”的验证</td>
+<td align="left">authorizeRequests().antMatchers(“/**”).hasRole(“USER”).and().formLogin().permitAll().and().rememberMe()</td>
+</tr>
+<tr>
+<td align="left">addFilter()</td>
+<td align="left">添加自定义的filter</td>
+<td align="left">addFilter(new CustomFilter())</td>
+</tr>
+<tr>
+<td align="left">addFilterAt()</td>
+<td align="left">在指定filter相同位置上添加自定义filter</td>
+<td align="left">addFilterAt(new CustomFilter(), UsernamePasswordAuthenticationFilter.class)</td>
+</tr>
+<tr>
+<td align="left">addFilterAfter()</td>
+<td align="left">在指定filter位置后添加自定义filter</td>
+<td align="left">addFilterAfter(new CustomFilter(), UsernamePasswordAuthenticationFilter.class)</td>
+</tr>
+<tr>
+<td align="left">requestMatchers()</td>
+<td align="left">开启配置HttpSecurity，仅当RequestMatcher相匹配时开启</td>
+<td align="left">requestMatchers().antMatchers(“/api/**”)</td>
+</tr>
+<tr>
+<td align="left">antMatchers()</td>
+<td align="left">其可以与authorizeRequests()、RequestMatcher匹配，如：requestMatchers().antMatchers(“/api/**”)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">logout()</td>
+<td align="left">添加退出登录支持。当使用WebSecurityConfigurerAdapter时，这将自动应用。默认情况是，访问URL”/ logout”，使HTTP Session无效来清除用户，清除已配置的任何#rememberMe()身份验证，清除SecurityContextHolder，然后重定向到”/login?success”</td>
+<td align="left">logout().deleteCookies(“remove”).invalidateHttpSession(false).logoutUrl(“/custom-logout”).logoutSuccessUrl(“/logout-success”);</td>
+</tr>
+</tbody></table>
+<p><code>HttpSecurity</code>还有很多方法供我们使用，去配置<code>HttpSecurity</code>。由于太多这边就不一一说明，有兴趣可去研究。</p>
+<h2 id="WebSecurityConfigurerAdapter-使用"><a href="#WebSecurityConfigurerAdapter-使用" class="headerlink" title="WebSecurityConfigurerAdapter 使用"></a>WebSecurityConfigurerAdapter 使用</h2><p><code>WebSecurityConfigurerAdapter</code>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebSecurity</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebSecurityConfig</span> <span class="keyword">extends</span> <span class="title">WebSecurityConfigurerAdapter</span> </span>&#123;</span><br><span class="line"> <span class="meta">@Autowired</span></span><br><span class="line"> <span class="keyword">private</span> MyFilterSecurityInterceptor myFilterSecurityInterceptor;</span><br><span class="line"> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception </span>&#123;    </span><br><span class="line">     http</span><br><span class="line">     <span class="comment">//request 设置</span></span><br><span class="line">     .authorizeRequests()   <span class="comment">//http.authorizeRequests() 方法中的自定义匹配</span></span><br><span class="line">     .antMatchers(<span class="string">"/resources/**"</span>, <span class="string">"/signup"</span>, <span class="string">"/about"</span>).permitAll() <span class="comment">// 指定所有用户进行访问指定的url          </span></span><br><span class="line">     .antMatchers(<span class="string">"/admin/**"</span>).hasRole(<span class="string">"ADMIN"</span>)  <span class="comment">//指定具有特定权限的用户才能访问特定目录，hasRole()方法指定用户权限，且不需前缀 “ROLE_“  </span></span><br><span class="line">     .antMatchers(<span class="string">"/db/**"</span>).access(<span class="string">"hasRole('ADMIN') and hasRole('DBA')"</span>)<span class="comment">//          </span></span><br><span class="line">     .anyRequest().authenticated()  <span class="comment">//任何请求没匹配的都需要进行验证                                           </span></span><br><span class="line">     .and()        <span class="comment">//login设置  自定义登录页面且允许所有用户登录</span></span><br><span class="line">     .formLogin()      </span><br><span class="line">     .loginPage(<span class="string">"/login"</span>) <span class="comment">//The updated configuration specifies the location of the log in page  指定自定义登录页面</span></span><br><span class="line">     .permitAll(); <span class="comment">// 允许所有用户访问登录页面. The formLogin().permitAll() 方法</span></span><br><span class="line">     .and </span><br><span class="line">     .logout()  <span class="comment">//logouts 设置                                                              </span></span><br><span class="line">     .logoutUrl(<span class="string">"/my/logout"</span>)  <span class="comment">// 指定注销路径                                              </span></span><br><span class="line">     .logoutSuccessUrl(<span class="string">"/my/index"</span>) <span class="comment">//指定成功注销后跳转到指定的页面                                        </span></span><br><span class="line">     .logoutSuccessHandler(logoutSuccessHandler)  <span class="comment">//指定成功注销后处理类 如果使用了logoutSuccessHandler()的话， logoutSuccessUrl()就会失效                                </span></span><br><span class="line">     .invalidateHttpSession(<span class="keyword">true</span>)  <span class="comment">// httpSession是否有效时间，如果使用了 SecurityContextLogoutHandler，其将被覆盖                                        </span></span><br><span class="line">     .addLogoutHandler(logoutHandler)  <span class="comment">//在最后增加默认的注销处理类LogoutHandler                </span></span><br><span class="line">     .deleteCookies(cookieNamesToClear);<span class="comment">//指定注销成功后remove cookies</span></span><br><span class="line">     <span class="comment">//增加在FilterSecurityInterceptor前添加自定义的myFilterSecurityInterceptor</span></span><br><span class="line">     http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>NOTE：此示例只供参考</p>
+</blockquote>
+<h2 id="filter-顺序"><a href="#filter-顺序" class="headerlink" title="filter 顺序"></a>filter 顺序</h2><p>Spring Security filter顺序：</p>
+<table>
+<thead>
+<tr>
+<th align="left">Filter Class</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">ChannelProcessingFilter</td>
+<td align="left">访问协议控制过滤器，可能会将我们重新定向到另外一种协议,从http转换成https</td>
+</tr>
+<tr>
+<td align="left">SecurityContextPersistenceFilter</td>
+<td align="left">创建SecurityContext安全上下文信息和request结束时清空SecurityContextHolder</td>
+</tr>
+<tr>
+<td align="left">ConcurrentSessionFilter</td>
+<td align="left">并发访问控制过滤器,主要功能：SessionRegistry中获取SessionInformation来判断session是否过期，从而实现并发访问控制。</td>
+</tr>
+<tr>
+<td align="left">HeaderWriterFilter</td>
+<td align="left">给http response添加一些Header</td>
+</tr>
+<tr>
+<td align="left">CsrfFilter</td>
+<td align="left">跨域过滤器，跨站请求伪造保护Filter</td>
+</tr>
+<tr>
+<td align="left">LogoutFilter</td>
+<td align="left">处理退出登录的Filter</td>
+</tr>
+<tr>
+<td align="left">X509AuthenticationFilter</td>
+<td align="left">添加X509预授权处理机制支持</td>
+</tr>
+<tr>
+<td align="left">CasAuthenticationFilter</td>
+<td align="left">认证filter，经过这些过滤器后SecurityContextHolder中将包含一个完全组装好的Authentication对象，从而使后续鉴权能正常执行</td>
+</tr>
+<tr>
+<td align="left">UsernamePasswordAuthenticationFilter</td>
+<td align="left">认证的filter，经过这些过滤器后SecurityContextHolder中将包含一个完全组装好的Authentication对象，从而使后续鉴权能正常执行。表单认证是最常用的一个认证方式。</td>
+</tr>
+<tr>
+<td align="left">BasicAuthenticationFilter</td>
+<td align="left">认证filter，经过这些过滤器后SecurityContextHolder中将包含一个完全组装好的Authentication对象，从而使后续鉴权能正常执行</td>
+</tr>
+<tr>
+<td align="left">SecurityContextHolderAwareRequestFilter</td>
+<td align="left">此过滤器对ServletRequest进行了一次包装，使得request具有更加丰富的API</td>
+</tr>
+<tr>
+<td align="left">JaasApiIntegrationFilter</td>
+<td align="left">(JAAS)认证方式filter</td>
+</tr>
+<tr>
+<td align="left">RememberMeAuthenticationFilter</td>
+<td align="left">记忆认证处理过滤器，即是如果前面认证过滤器没有对当前的请求进行处理，启用了RememberMe功能，会从cookie中解析出用户，并进行认证处理，之后在SecurityContextHolder中存入一个Authentication对象。</td>
+</tr>
+<tr>
+<td align="left">AnonymousAuthenticationFilter</td>
+<td align="left">匿名认证处理过滤器，当SecurityContextHolder中认证信息为空,则会创建一个匿名用户存入到SecurityContextHolder中</td>
+</tr>
+<tr>
+<td align="left">SessionManagementFilter</td>
+<td align="left">会话管理Filter，持久化用户登录信息，可以保存到session中，也可以保存到cookie或者redis中</td>
+</tr>
+<tr>
+<td align="left">ExceptionTranslationFilter</td>
+<td align="left">异常处理过滤器，主要拦截后续过滤器（FilterSecurityInterceptor）操作中抛出的异常。</td>
+</tr>
+<tr>
+<td align="left">FilterSecurityInterceptor</td>
+<td align="left">安全拦截过滤器类，获取当前请求url对应的ConfigAttribute，并调用accessDecisionManager进行访问授权决策。</td>
+</tr>
+</tbody></table>
+<p><strong>spring security的默认filter链:</strong></p>
+<blockquote>
+<p> SecurityContextPersistenceFilter<br>-&gt;HeaderWriterFilter<br>-&gt;LogoutFilter<br>-&gt;UsernamePasswordAuthenticationFilter<br>-&gt;RequestCacheAwareFilter<br>-&gt;SecurityContextHolderAwareRequestFilter<br>-&gt;SessionManagementFilter<br>-&gt;ExceptionTranslationFilter<br>-&gt;FilterSecurityInterceptor</p>
+</blockquote>
+<p>在上节我们已分析了核心的filter源码以及功能。可回看上节源码分析更加深入的了解各个filter工作原理。</p>
+<h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>  在认证和访问授权过程前，首先必须进行WebSecurityConfigurer符合自身应用的security Configurer，也要清楚filter链的先后顺序，才能更好理解spring security的工作原理以及在项目中出现的问题定位。</p>
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        
+
+       </div>
+    
+
+    
+      <div>
+        <div>
+  
+    <div style="text-align:center;color:#cccccc;font-size:14px;">
+      <span>-------- 本文结束 </span>
+      <i class="fa fa-rocket"></i>
+      <span> 感谢您的阅读 --------</span>
+    </div>
+  
+</div>
+
+      </div>
+    
+
+    <footer class="post-footer">
+          
+        
+        <div class="post-tags">
+            <a href="/tags/Spring-Security/" rel="tag"><i class="fa fa-tag"></i> Spring Security</a>
+          
+        </div>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+              <a href="/2020/05/29/同源策略/" rel="next" title="同源策略">
+                <i class="fa fa-chevron-left"></i> 同源策略
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+              <a href="/2020/05/30/Spring Security (一) 架构框架-Component、Service、Filter分析/" rel="prev" title="Spring Security (一) 架构框架-Component、Service、Filter分析">
+                Spring Security (一) 架构框架-Component、Service、Filter分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.png"
+      alt="Leo Liu">
+  <p class="site-author-name" itemprop="name">Leo Liu</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/LIULE8" title="GitHub &rarr; https://github.com/LIULE8" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:leo.liu.scau@gmail.com" title="E-Mail &rarr; mailto:leo.liu.scau@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+          
+            <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+            <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+            <div class="widget-wrap">
+              <h5 class="widget-title">Tag Cloud</h5>
+              <div id="myCanvasContainer" class="widget tagcloud">
+                <canvas width="250" height="250" id="resCanvas" style="width: 180px">
+                  <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Annotation/">Annotation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Auditing/">Auditing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORF/">CORF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataSource/">DataSource</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Defining-Query-Methods/">Defining Query Methods</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECMAScript/">ECMAScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Entity-注解/">Entity 注解</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JPA/">JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Join/">Join</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jrebel/">Jrebel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mixin/">Mixin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Oracle/">Oracle</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Properties/">Properties</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RestTemplate/">RestTemplate</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/">Spring</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-ElasticSearch/">Spring Data ElasticSearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-JPA/">Spring Data JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-Jpa/">Spring Data Jpa</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Security/">Spring Security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Springboot/">Springboot</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/String/">String</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Time/">Time</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transaction/">Transaction</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UML/">UML</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vue/">Vue</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOL/">WOL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jar/">jar</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm/">npm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nvm/">nvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pageable/">pageable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/plantuml/">plantuml</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/">redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/乐观锁/">乐观锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/云服务器/">云服务器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同源策略/">同源策略</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/架构/">架构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注解/">注解</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/浏览器/">浏览器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/索引/">索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/缓存/">缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义返回值/">自定义返回值</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计模式/">设计模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/跨域/">跨域</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/运维/">运维</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/防止多次提交/">防止多次提交</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/集合/">集合</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面向对象设计原则/">面向对象设计原则</a><span class="tag-list-count">1</span></li></ul>
+                </canvas>
+              </div>
+            </div>
+          
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-Security（二）–WebSecurityConfigurer配置以及filter顺序"><span class="nav-number">1.</span> <span class="nav-text">Spring Security（二）–WebSecurityConfigurer配置以及filter顺序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#WebSecurityConfigurerAdapter"><span class="nav-number">1.1.</span> <span class="nav-text">WebSecurityConfigurerAdapter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HttpSecurity"><span class="nav-number">1.2.</span> <span class="nav-text">HttpSecurity</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WebSecurityConfigurerAdapter-使用"><span class="nav-number">1.3.</span> <span class="nav-text">WebSecurityConfigurerAdapter 使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#filter-顺序"><span class="nav-number">1.4.</span> <span class="nav-text">filter 顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结："><span class="nav-number">1.5.</span> <span class="nav-text">总结：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">
+    <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备20009586号 </a>
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leo Liu</span>
+</div>
+
+        
+  <div class="busuanzi-count">
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-area-chart"></i>
+      </span>
+      <span title="站点总字数">
+       站点总字数: 722k
+      </span>
+    
+      <span class="post-meta-divider">|</span>
+    
+      <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+      <span class="site-uv" title="总访客量">
+      总访客量: <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+    
+      <span class="post-meta-divider">|</span>
+    
+      <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+      <span class="site-pv" title="总访问量">
+      总访问量: <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+    
+  </div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+      </div>
+
+    
+
+  </div>
+
+  
+    
+    
+      
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
+</html>
+<script type="text/javascript" src="/js/src/mouse.js"></script>

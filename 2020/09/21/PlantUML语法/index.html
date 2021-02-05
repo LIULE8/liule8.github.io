@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Satisfy:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+      
+    
+      
+    
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    save_scroll: false,
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},
+    path: 'search.xml',
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="PlantUML语法安装官方站点  需要 java 环境。 需要安装 Graphviz 依赖 下载 plantuml  使用 IDEA 来创建和预览 下载 IDEA 编辑器 打开 Plugins 搜索 “plantuml”，选中 PlantUML integration，点击安装即可 配置 PlantUML    脚本语法puml 是脚本语言，是按照换行来识别语法的。 一般的表达语句为:  节点">
+<meta name="keywords" content="UML,plantuml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PlantUML语法">
+<meta property="og:url" content="https://liule8.github.io/2020/09/21/PlantUML语法/index.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="PlantUML语法安装官方站点  需要 java 环境。 需要安装 Graphviz 依赖 下载 plantuml  使用 IDEA 来创建和预览 下载 IDEA 编辑器 打开 Plugins 搜索 “plantuml”，选中 PlantUML integration，点击安装即可 配置 PlantUML    脚本语法puml 是脚本语言，是按照换行来识别语法的。 一般的表达语句为:  节点">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://image.leonote.cn/20200921160019.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921184659.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921184843.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921184945.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921192651.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921192834.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921193035.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921193139.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921193326.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921193453.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921193617.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921193759.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921194112.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921194240.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921194357.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921194508.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921194637.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921194722.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921194933.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921195056.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921195943.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921200044.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921200217.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921200340.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921200506.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921200612.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921200730.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921200821.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921200928.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921201053.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921201142.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921201337.png">
+<meta property="og:image" content="http://image.leonote.cn//20200921201436.png">
+<meta property="og:updated_time" content="2020-09-21T12:16:34.946Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PlantUML语法">
+<meta name="twitter:description" content="PlantUML语法安装官方站点  需要 java 环境。 需要安装 Graphviz 依赖 下载 plantuml  使用 IDEA 来创建和预览 下载 IDEA 编辑器 打开 Plugins 搜索 “plantuml”，选中 PlantUML integration，点击安装即可 配置 PlantUML    脚本语法puml 是脚本语言，是按照换行来识别语法的。 一般的表达语句为:  节点">
+<meta name="twitter:image" content="http://image.leonote.cn/20200921160019.png">
+  <link rel="alternate" href="/atom.xml" title="Leo's notes" type="application/atom+xml">
+  <link rel="canonical" href="https://liule8.github.io/2020/09/21/PlantUML语法/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>PlantUML语法 | Leo's notes</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <a href="https://github.com/LIULE8" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leo's notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/09/21/PlantUML语法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Leo Liu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leo's notes">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">PlantUML语法
+
+            
+          </h1>
+        
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-09-21 15:40:59 / 修改时间：12:16:34" itemprop="dateCreated datePublished" datetime="2020-09-21T15:40:59Z">2020-09-21</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/UML/" itemprop="url" rel="index"><span itemprop="name">UML</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>14k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>12 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="PlantUML语法"><a href="#PlantUML语法" class="headerlink" title="PlantUML语法"></a>PlantUML语法</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p><a href="http://plantuml.com/" target="_blank" rel="noopener">官方站点</a></p>
+<ol>
+<li>需要 java 环境。</li>
+<li>需要安装 <a href="http://www.graphviz.org/" target="_blank" rel="noopener">Graphviz</a> 依赖</li>
+<li>下载 <a href="http://plantuml.com/download" target="_blank" rel="noopener">plantuml</a></li>
+</ol>
+<h2 id="使用-IDEA-来创建和预览"><a href="#使用-IDEA-来创建和预览" class="headerlink" title="使用 IDEA 来创建和预览"></a>使用 IDEA 来创建和预览</h2><ol>
+<li>下载 <a href="https://www.jetbrains.com/zh-cn/idea/download/" target="_blank" rel="noopener">IDEA</a> 编辑器</li>
+<li>打开 Plugins 搜索 “plantuml”，选中 PlantUML integration，点击安装即可</li>
+<li>配置 PlantUML </li>
+</ol>
+<p><img src="http://image.leonote.cn/20200921160019.png" alt></p>
+<h2 id="脚本语法"><a href="#脚本语法" class="headerlink" title="脚本语法"></a>脚本语法</h2><p>puml 是脚本语言，是按照换行来识别语法的。</p>
+<p>一般的表达语句为:</p>
+<ol>
+<li><p><code>节点  连接符号  节点</code></p>
+</li>
+<li><p><code>关键字  节点或内容</code></p>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">开始关键字</span><br><span class="line">  内容</span><br><span class="line">结束关键字</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<blockquote>
+<p>注意<strong>空格</strong>等非字符作为节点内容的使用，有些多关键字语句中需要使用<strong>双引号</strong>来包含带空格的语句</p>
+</blockquote>
+<h3 id="活动图-Activity-Diagram"><a href="#活动图-Activity-Diagram" class="headerlink" title="活动图 ( Activity Diagram )"></a>活动图 ( Activity Diagram )</h3><h4 id="Simple-Activity"><a href="#Simple-Activity" class="headerlink" title="Simple Activity"></a>Simple Activity</h4><p>语法是 <code>: 节点 ;</code> 结束</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title act_new_1</span><br><span class="line">:步骤一;</span><br><span class="line">:此处有个支持简单的 mark 语法 **加粗字体**;</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921184659.png" alt></p>
+<h4 id="Start-Stop-开始和结束"><a href="#Start-Stop-开始和结束" class="headerlink" title="Start / Stop 开始和结束"></a>Start / Stop 开始和结束</h4><p>开始位置为 start 开始，stop 停止，end 结束</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title act_new_2</span><br><span class="line">start</span><br><span class="line">:步骤一;</span><br><span class="line">:mark 语法 **加粗字体**;</span><br><span class="line">stop</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921184843.png" alt></p>
+<h4 id="Conditional-条件语句"><a href="#Conditional-条件语句" class="headerlink" title="Conditional 条件语句"></a>Conditional 条件语句</h4><p>控制语句的使用，注意内容 <code>()</code> 的使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title act_new_3</span><br><span class="line">start</span><br><span class="line">if (是否已下载 graphviz?) then (是)</span><br><span class="line">    :执行 \ndiagrams;</span><br><span class="line">else (否)</span><br><span class="line">    :需要下载 graphviz 后才能执行</span><br><span class="line">    __activity__ diagrams;</span><br><span class="line">endif</span><br><span class="line">stop</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921184945.png" alt></p>
+<h4 id="Repeat-loop-循环处理（控制语句）"><a href="#Repeat-loop-循环处理（控制语句）" class="headerlink" title="Repeat loop 循环处理（控制语句）"></a>Repeat loop 循环处理（控制语句）</h4><p>使用关键字 <code>repeat</code>，<code>repeat while ()</code> 来实现</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title act_new_4</span><br><span class="line">start</span><br><span class="line">repeat</span><br><span class="line">    :读取文件;</span><br><span class="line">    :编译 diagrams;</span><br><span class="line">repeat while (更多，执行下一个?)</span><br><span class="line">stop</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921192651.png" alt></p>
+<h4 id="While-loop-循环控制"><a href="#While-loop-循环控制" class="headerlink" title="While loop 循环控制"></a>While loop 循环控制</h4><p>使用 <code>while</code> <code>endwhile</code> 循环控制</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title act_new_5</span><br><span class="line">start</span><br><span class="line">while (执行条件允许文件存在?)</span><br><span class="line">    :读取文件;</span><br><span class="line">    :编译 diagrams;</span><br><span class="line">endwhile</span><br><span class="line">stop</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921192834.png" alt></p>
+<p>可以追加标签</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title act_new_6</span><br><span class="line">start</span><br><span class="line">:打开文件;</span><br><span class="line">while (检查文件大小 ?) is (有内容)</span><br><span class="line">    :读取文件;</span><br><span class="line">    :编译 dia;</span><br><span class="line">endwhile (空)</span><br><span class="line">:关闭文件;</span><br><span class="line">end</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921193035.png" alt></p>
+<h4 id="Parallel-processing-并行处理"><a href="#Parallel-processing-并行处理" class="headerlink" title="Parallel processing 并行处理"></a>Parallel processing 并行处理</h4><p>使用 <code>fork</code> 关键字创建并行处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title act_new_7</span><br><span class="line">start</span><br><span class="line">if (multiprocessor?) then (yes)</span><br><span class="line">  fork</span><br><span class="line">    :Treatment 1;</span><br><span class="line">  fork again</span><br><span class="line">    :Treatment 2;</span><br><span class="line">  end fork</span><br><span class="line">else (monoproc)</span><br><span class="line">  :Treatment 1;</span><br><span class="line">  :Treatment 2;</span><br><span class="line">endif</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921193139.png" alt></p>
+<h4 id="Notes-注释"><a href="#Notes-注释" class="headerlink" title="Notes 注释"></a>Notes 注释</h4><ul>
+<li>单行注释使用 <code>note right|left 内容</code>，注意后面没有分号</li>
+<li>多行注释使用 <code>note right|left 换行 内容 换行 end note</code>的方式处理</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title act_new_8</span><br><span class="line">start</span><br><span class="line">: 步骤1;</span><br><span class="line">note left: This is a __NOTE__</span><br><span class="line">: 步骤2;</span><br><span class="line">note right</span><br><span class="line">    支持 mark 编辑语法</span><br><span class="line">    This note is on several</span><br><span class="line">    //lines// and can</span><br><span class="line">    contain &lt;b&gt;HTML&lt;/b&gt;</span><br><span class="line">    ====</span><br><span class="line">    * Calling the method &quot;&quot;foo()&quot;&quot; is prohibited</span><br><span class="line">end note</span><br><span class="line">stop</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921193326.png" alt></p>
+<p>注意 mark 并非 Markdown 语法，以案例为 b</p>
+<h4 id="Color-颜色"><a href="#Color-颜色" class="headerlink" title="Color 颜色"></a>Color 颜色</h4><p>在冒号钱可以追加 <code>#十六进制</code> 的颜色编号或者名称</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title act_new_9</span><br><span class="line">start</span><br><span class="line">:进程开始;</span><br><span class="line">#red:试着读取文件</span><br><span class="line">文件必须有可写权限!;</span><br><span class="line">#AAAAAA:结束进程;</span><br><span class="line">stop</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921193453.png" alt></p>
+<h4 id="Complete-example-案例"><a href="#Complete-example-案例" class="headerlink" title="Complete example 案例"></a>Complete example 案例</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title act_new_10</span><br><span class="line">start</span><br><span class="line">:ClickServlet.handleRequest();</span><br><span class="line">:new page;</span><br><span class="line">if (Page.onSecurityCheck) then (true)</span><br><span class="line">    #7c7c7c:Page.onInit();</span><br><span class="line">    if (isForward?) then (no)</span><br><span class="line">    #red:Process controls;</span><br><span class="line">    if (continue processing?) then (no)</span><br><span class="line">        stop</span><br><span class="line">    endif</span><br><span class="line">    if (isPost?) then (yes)</span><br><span class="line">        :Page.onPost();</span><br><span class="line">    else (no)</span><br><span class="line">        :Page.onGet();</span><br><span class="line">    endif</span><br><span class="line">    :Page.onRender();</span><br><span class="line">    endif</span><br><span class="line">else (false)</span><br><span class="line">endif</span><br><span class="line">if (do redirect?) then (yes)</span><br><span class="line">    :redirect process;</span><br><span class="line">else</span><br><span class="line">    if (do forward?) then (yes)</span><br><span class="line">    :Forward request;</span><br><span class="line">    else (no)</span><br><span class="line">    :Render page template;</span><br><span class="line">    endif</span><br><span class="line">endif</span><br><span class="line">stop</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921193617.png" alt></p>
+<h3 id="时序图-Sequence-Diagram"><a href="#时序图-Sequence-Diagram" class="headerlink" title="时序图 ( Sequence Diagram )"></a>时序图 ( Sequence Diagram )</h3><p>基本语法</p>
+<ol>
+<li>使用 <code>节点 -&gt; 节点: 描述</code> -&gt; 为实线</li>
+<li>如果使用虚线则 用 <code>--&gt;</code></li>
+<li>箭头的方向可以是双向的 <code>节点 &lt;-- 节点</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_1</span><br><span class="line">用户 -&gt; 平台: 发送登录请求</span><br><span class="line">平台 --&gt; 用户: 验证通过</span><br><span class="line">用户 -&gt; 平台: 另一个请求</span><br><span class="line">用户 &lt;-- 平台: 返回验证消息</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921193759.png" alt></p>
+<h4 id="Comments-注释"><a href="#Comments-注释" class="headerlink" title="Comments 注释"></a>Comments 注释</h4><p>内部注释使用 <code>&#39;</code> 单引号来开始 单行注释， 多行注释则使用 <code>/&#39;</code> 和 <code>&#39;/</code> 包括</p>
+<h4 id="Declaring-participant-（角色）"><a href="#Declaring-participant-（角色）" class="headerlink" title="Declaring participant （角色）"></a>Declaring participant （角色）</h4><p>提供了的声明参加者 (角色)，来丰富图形，默认情况下在箭头两边的已经隐式声明了( participant )，也可以使用 <code>participant 节点</code> 来显示声明角色，这种状况主要是为了声明角色的顺序。</p>
+<ul>
+<li>actor</li>
+<li>boundary</li>
+<li>control</li>
+<li>entity</li>
+<li>database</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_2</span><br><span class="line">actor Foo1</span><br><span class="line">boundary Foo2</span><br><span class="line">control Foo3</span><br><span class="line">entity Foo4</span><br><span class="line">database Foo5</span><br><span class="line">Foo1 -&gt; Foo2 : To boundary</span><br><span class="line">Foo1 -&gt; Foo3 : To control</span><br><span class="line">Foo1 -&gt; Foo4 : To entity</span><br><span class="line">Foo1 -&gt; Foo5 : To database</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921194112.png" alt></p>
+<p>追加色彩案例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_3</span><br><span class="line">actor 客户 #red</span><br><span class="line">&apos; 声明角色的时候在后面可以追加颜色</span><br><span class="line">&apos; 注释内容并不会显示</span><br><span class="line">&apos; The only difference between actor</span><br><span class="line">&apos; and participant is the drawing</span><br><span class="line">participant 服务端</span><br><span class="line">participant &quot;I have a really\nlong name&quot; as L #99FF99</span><br><span class="line">/&apos;  这里使用 `as` 关键字声明了 L 来作为别名</span><br><span class="line">    你也可以这样写:</span><br><span class="line">    participant L as &quot;I have a really\nlong name&quot;  #99FF99</span><br><span class="line">    &apos;/</span><br><span class="line">服务端-&gt;客户: 请求认证</span><br><span class="line">客户-&gt;服务端: Authentication Response</span><br><span class="line">客户-&gt;L: Log transaction</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921194240.png" alt></p>
+<h4 id="Use-non-letters-in-participants-非字符处理"><a href="#Use-non-letters-in-participants-非字符处理" class="headerlink" title="Use non-letters in participants 非字符处理"></a>Use non-letters in participants 非字符处理</h4><p>在声明非字母的角色的时候使用双引号处理 (包含空格)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_4</span><br><span class="line">服务端 -&gt; &quot;客户()&quot; : Hello</span><br><span class="line">&quot;客户()&quot; -&gt; &quot;This is very\nlong&quot; as Long</span><br><span class="line">&apos; You can also declare:</span><br><span class="line">&apos; &quot;客户()&quot; -&gt; Long as &quot;This is very\nlong&quot;</span><br><span class="line">Long --&gt; &quot;客户()&quot; : ok</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921194357.png" alt></p>
+<h4 id="Message-to-Self"><a href="#Message-to-Self" class="headerlink" title="Message to Self"></a>Message to Self</h4><p>在介绍过长的内容的时候使用 <code>\n</code> 来换行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_5</span><br><span class="line">服务端-&gt;服务端: This is a signal to self.\nIt also demonstrates\nmultiline \ntext</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921194508.png" alt></p>
+<h4 id="Change-arrow-style-箭头样式"><a href="#Change-arrow-style-箭头样式" class="headerlink" title="Change arrow style 箭头样式"></a>Change arrow style 箭头样式</h4><p>在时序图中可以使用多种样式，基于下面的案例，来替换默认的箭头</p>
+<blockquote>
+<p>总体来说 <code>-</code> 表示实线， <code>--</code> 标识虚线<br>而在在两边的标识箭头的方向和样式</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_6</span><br><span class="line">客户 -&gt; 服务端</span><br><span class="line">客户 -&gt;&gt; 服务端</span><br><span class="line">客户 -\ 服务端</span><br><span class="line">客户 \\- 服务端</span><br><span class="line">客户 //-- 服务端</span><br><span class="line">客户 -&gt;o 服务端</span><br><span class="line">客户 o\\-- 服务端</span><br><span class="line">客户 &lt;-&gt; 服务端</span><br><span class="line">客户 &lt;-&gt;o 服务端</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921194637.png" alt></p>
+<h4 id="Change-arrow-color-箭头色彩"><a href="#Change-arrow-color-箭头色彩" class="headerlink" title="Change arrow color 箭头色彩"></a>Change arrow color 箭头色彩</h4><p>使用关键字 <code>autonumber</code> 来自动为消息生成索引数字</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_8</span><br><span class="line">autonumber</span><br><span class="line">客户 -&gt; 服务端 : 请求认证</span><br><span class="line">客户 &lt;- 服务端 : Authentication Response</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921194722.png" alt></p>
+<p>在 <code>autonumber</code> 后可以设定 <code>开始位置 梯度</code> 参数<br>在默认情况下 <code>autonumber</code> 自动追加了 <code>start</code> 参数， 在使用 <code>stop</code> 参数可以停止计数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_9</span><br><span class="line">autonumber</span><br><span class="line">客户 -&gt; 服务端 : 请求认证</span><br><span class="line">客户 &lt;- 服务端 : Authentication Response</span><br><span class="line">autonumber stop</span><br><span class="line">客户 &lt;- 服务端 : 停止</span><br><span class="line">autonumber 15</span><br><span class="line">客户 -&gt; 服务端 : Another 请求认证</span><br><span class="line">客户 &lt;- 服务端 : Another authentication Response</span><br><span class="line">autonumber 40 10</span><br><span class="line">客户 -&gt; 服务端 : Yet another 请求认证</span><br><span class="line">客户 &lt;- 服务端 : Yet another authentication Response</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921194933.png" alt></p>
+<p>你也可以对数字进行格式化输出，为 <code>autonumber</code> 追加格式化使用单引号 <code>&quot;格式&quot;</code> ，内部可以使用 HTML 标记，可以参看后面的 Formatting using HTML </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_10</span><br><span class="line">autonumber &quot;&lt;b&gt;[000]&lt;/b&gt;&quot;</span><br><span class="line">客户 -&gt; 服务端 : 请求认证</span><br><span class="line">客户 &lt;- 服务端 : Authentication Response</span><br><span class="line">autonumber 15 &quot;&lt;b&gt;(&lt;u&gt;###&lt;/u&gt;)&quot;</span><br><span class="line">客户 -&gt; 服务端 : Another 请求认证</span><br><span class="line">客户 &lt;- 服务端 : Another authentication Response</span><br><span class="line">autonumber 40 10 &quot;&lt;font color=red&gt;&lt;b&gt;Message 0  &quot;</span><br><span class="line">客户 -&gt; 服务端 : Yet another 请求认证</span><br><span class="line">客户 &lt;- 服务端 : Yet another authentication Response</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921195056.png" alt></p>
+<h4 id="Splitting-diagrams-分割为多个图形"><a href="#Splitting-diagrams-分割为多个图形" class="headerlink" title="Splitting diagrams 分割为多个图形"></a>Splitting diagrams 分割为多个图形</h4><p>关键字 <code>newpage</code> 可以将同一张图形分割为多个图，可以追加 标题参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_11</span><br><span class="line">服务端 -&gt; 客户 : message 1</span><br><span class="line">服务端 -&gt; 客户 : message 2</span><br><span class="line">newpage</span><br><span class="line">服务端 -&gt; 客户 : message 3</span><br><span class="line">服务端 -&gt; 客户 : message 4</span><br><span class="line">newpage 第三章的标题\n最后一页</span><br><span class="line">服务端 -&gt; 客户 : message 5</span><br><span class="line">服务端 -&gt; 客户 : message 6</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921195943.png" alt></p>
+<h4 id="Grouping-message-分组消息"><a href="#Grouping-message-分组消息" class="headerlink" title="Grouping message 分组消息"></a>Grouping message 分组消息</h4><p>提供了一下几组关键词</p>
+<ul>
+<li>alt/else</li>
+<li>opt</li>
+<li>loop</li>
+<li>par</li>
+<li>break</li>
+<li>critical</li>
+<li>group, followed by a text to be displayed</li>
+</ul>
+<p>关键词后可以追加文本，来作为副标题<br>使用 <code>end</code> 关键词来表示结束</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_12</span><br><span class="line">服务端 -&gt; 客户: 请求认证</span><br><span class="line">alt 成功</span><br><span class="line">    客户 -&gt; 服务端: 许可认证</span><br><span class="line">else 可识别的正常失败</span><br><span class="line">    客户 -&gt; 服务端: 认证失败</span><br><span class="line">    group 组名称</span><br><span class="line">        服务端 -&gt;  日志:  attack start</span><br><span class="line">        loop 1000 times</span><br><span class="line">            服务端 -&gt; 客户: DNS Attack</span><br><span class="line">        end</span><br><span class="line">        服务端 -&gt;  日志: Log attack end</span><br><span class="line">    end</span><br><span class="line">else  其他失败</span><br><span class="line">   客户 -&gt; 服务端: 重新请求</span><br><span class="line">end</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921200044.png" alt></p>
+<h4 id="Notes-on-messages"><a href="#Notes-on-messages" class="headerlink" title="Notes on messages"></a>Notes on messages</h4><h5 id="单行注释"><a href="#单行注释" class="headerlink" title="单行注释"></a>单行注释</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">note right:  右侧的内容</span><br><span class="line">note left:  右侧的内容</span><br></pre></td></tr></table></figure>
+
+<h5 id="多行注释"><a href="#多行注释" class="headerlink" title="多行注释"></a>多行注释</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">note right:</span><br><span class="line">多行内容</span><br><span class="line">end note</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_13</span><br><span class="line">服务端-&gt;客户 : hello</span><br><span class="line">note left: this is a first note</span><br><span class="line">客户-&gt;服务端 : ok</span><br><span class="line">note right: this is another note</span><br><span class="line">客户-&gt;客户 : I am thinking</span><br><span class="line">note left</span><br><span class="line">    a note</span><br><span class="line">    can also be defined</span><br><span class="line">    on several lines</span><br><span class="line">end note</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921200217.png" alt></p>
+<h4 id="Some-other-notes"><a href="#Some-other-notes" class="headerlink" title="Some other notes"></a>Some other notes</h4><p><code>of</code>，<code>over</code> 后跟上角色（参与者），可以管理，其中 <code>over</code> 可以覆盖在线上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_14</span><br><span class="line">participant 服务端</span><br><span class="line">participant 客户</span><br><span class="line">note left of 服务端 #aqua</span><br><span class="line">    显示</span><br><span class="line">    左侧 of 服务端.</span><br><span class="line">end note</span><br><span class="line">note right of 服务端: 显示在右侧 of 服务端.</span><br><span class="line">note over 服务端: over 注释覆盖在服务端.</span><br><span class="line">note over 服务端, 客户 #FFAAAA: 注释\n 覆盖在 客户 和 服务端.</span><br><span class="line">note over 客户, 服务端</span><br><span class="line">    This is yet another</span><br><span class="line">    example of</span><br><span class="line">    a long note.</span><br><span class="line">end note</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921200340.png" alt></p>
+<h4 id="Formatting-using-HTML"><a href="#Formatting-using-HTML" class="headerlink" title="Formatting using HTML"></a>Formatting using HTML</h4><p>使用类 html-tag：</p>
+<ul>
+<li><code>&lt;b&gt;</code> 来加粗字体</li>
+<li><code>&lt;u&gt;</code> or <code>&lt;u:#AAAAAA&gt;</code> or <code>&lt;u:colorName&gt;</code> 输出下划线</li>
+<li><code>&lt;i&gt;</code> 斜体字输出</li>
+<li><code>&lt;s&gt;</code> or <code>&lt;s:#AAAAAA&gt;</code> or <code>&lt;s:colorName&gt;</code> for strike text</li>
+<li><code>&lt;w&gt; or</code>&lt;w:#AAAAAA&gt;<code>or</code>&lt;w:colorName&gt;` for wave underline text</li>
+<li><code>&lt;color:#AAAAAA&gt;</code> or <code>&lt;color:colorName&gt;</code></li>
+<li><code>&lt;back:#AAAAAA&gt;</code> or <code>&lt;back:colorName&gt;</code> for background color</li>
+<li>`<a href="size:nn" target="_blank" rel="noopener">size:nn</a> to change font size</li>
+<li><code>&lt;img src=&quot;file&quot;&gt;</code> or <code>&lt;img:file&gt;</code> : the file must be accessible by the filesystem</li>
+<li><code>&lt;img src=&quot;http://url&quot;&gt;</code> or <code>&lt;img:http://url&gt;</code> : the URL must be available from the Internet</li>
+</ul>
+<p><strong>example</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_15</span><br><span class="line">participant 服务端</span><br><span class="line">participant &quot;The &lt;b&gt;Famous&lt;/b&gt; 客户&quot; as 客户</span><br><span class="line">服务端 -&gt; 客户 : A &lt;i&gt;well formated&lt;/i&gt; message</span><br><span class="line">note right of 服务端</span><br><span class="line"> This is &lt;back:cadetblue&gt;&lt;size:18&gt;displayed&lt;/size&gt;&lt;/back&gt;</span><br><span class="line"> &lt;u&gt;left of&lt;/u&gt; 服务端.</span><br><span class="line">end note</span><br><span class="line">note left of 客户</span><br><span class="line"> &lt;u:red&gt;This&lt;/u&gt; is &lt;color #118888&gt;displayed&lt;/color&gt;</span><br><span class="line"> &lt;b&gt;&lt;color purple&gt;left of&lt;/color&gt; &lt;s:red&gt;服务端&lt;/strike&gt; 客户&lt;/b&gt;.</span><br><span class="line">end note</span><br><span class="line">note over 服务端, 客户</span><br><span class="line"> &lt;w:#FF33FF&gt;This is hosted&lt;/w&gt; by &lt;img http://s.plantuml.com/logoc.png&gt;</span><br><span class="line">end note</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921200506.png" alt></p>
+<h4 id="Divider"><a href="#Divider" class="headerlink" title="Divider"></a>Divider</h4><p>If you want, you can split a diagram using == separator to divide your diagram into logical steps</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_16</span><br><span class="line">== Initialisation ==</span><br><span class="line">服务端 -&gt; 客户: 请求认证</span><br><span class="line">客户 --&gt; 服务端: Authentication Response</span><br><span class="line">== Repetition ==</span><br><span class="line">服务端 -&gt; 客户: Another 请求认证</span><br><span class="line">服务端 &lt;-- 客户: another authentication Response</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921200612.png" alt></p>
+<h4 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h4><p>You can use reference in a diagram, using the keyword ref over</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_17</span><br><span class="line">participant 服务端</span><br><span class="line">actor 客户</span><br><span class="line">ref over 服务端, 客户 : init</span><br><span class="line">服务端 -&gt; 客户 : hello</span><br><span class="line">ref over 客户</span><br><span class="line">  This can be on</span><br><span class="line">  several lines</span><br><span class="line">end ref</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921200730.png" alt></p>
+<h4 id="Delay"><a href="#Delay" class="headerlink" title="Delay"></a>Delay</h4><p>You can use … to indicate a delay in the diagram. And it is also possible to put a message with this delay.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_18</span><br><span class="line">服务端 -&gt; 客户: 请求认证</span><br><span class="line">...</span><br><span class="line">客户 --&gt; 服务端: Authentication Response</span><br><span class="line">...5 minutes latter...</span><br><span class="line">客户 --&gt; 服务端: Bye !</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921200821.png" alt></p>
+<h4 id="Space"><a href="#Space" class="headerlink" title="Space"></a>Space</h4><p>对消息使用空行 <code>|||</code>，也可以自己定义像素高度 <code>||数字||</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_19</span><br><span class="line">服务端 -&gt; 客户: message 1</span><br><span class="line">客户 --&gt; 服务端: ok</span><br><span class="line">|||</span><br><span class="line">服务端 -&gt; 客户: message 2</span><br><span class="line">客户 --&gt; 服务端: ok</span><br><span class="line">||45||</span><br><span class="line">服务端 -&gt; 客户: message 3</span><br><span class="line">客户 --&gt; 服务端: ok</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921200928.png" alt></p>
+<h4 id="Lifeline-Activation-and-Destruction-生命周期"><a href="#Lifeline-Activation-and-Destruction-生命周期" class="headerlink" title="Lifeline Activation and Destruction 生命周期"></a>Lifeline Activation and Destruction 生命周期</h4><p>使用 <code>activate 角色</code> 表示开始生命周期，使用 <code>destory 角色</code> 标识结束周期</p>
+<p>开始和结束必须成对的存在</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_20</span><br><span class="line">participant User</span><br><span class="line">User -&gt; A: DoWork</span><br><span class="line">activate A</span><br><span class="line">A -&gt; B: &lt;&lt; createRequest &gt;&gt;</span><br><span class="line">activate B</span><br><span class="line">B -&gt; C: DoWork</span><br><span class="line">activate C</span><br><span class="line">C --&gt; B: WorkDone</span><br><span class="line">destroy C</span><br><span class="line">B --&gt; A: RequestCreated</span><br><span class="line">deactivate B</span><br><span class="line">A -&gt; User: Done</span><br><span class="line">deactivate A</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921201053.png" alt></p>
+<p>为进程的生命周期进行标记色彩 ，可以追加色彩参数， 在 plantuml 中色彩使用 #十六进制的色彩值 来表示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title seq_21</span><br><span class="line">participant User</span><br><span class="line">User -&gt; A: DoWork</span><br><span class="line">activate A #FFBBBB</span><br><span class="line">A -&gt; A: Internal call</span><br><span class="line">activate A #DarkSalmon</span><br><span class="line">A -&gt; B: &lt;&lt; createRequest &gt;&gt;</span><br><span class="line">activate B</span><br><span class="line">B --&gt; A: RequestCreated</span><br><span class="line">deactivate B</span><br><span class="line">deactivate A</span><br><span class="line">A -&gt; User: Done</span><br><span class="line">deactivate A</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921201142.png" alt></p>
+<h4 id="Participant-creation"><a href="#Participant-creation" class="headerlink" title="Participant creation"></a>Participant creation</h4><p>You can use the create keyword just before the first reception of a message to emphasize the fact that this message is actually creating this new object</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">客户 -&gt; 服务端 : hello</span><br><span class="line">create Other</span><br><span class="line">服务端 -&gt; Other : new</span><br><span class="line">create control String</span><br><span class="line">服务端 -&gt; String</span><br><span class="line">note right : You can also put notes!</span><br><span class="line">服务端 --&gt; 客户 : ok</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="Incoming-and-outgoing-messages"><a href="#Incoming-and-outgoing-messages" class="headerlink" title="Incoming and outgoing messages"></a>Incoming and outgoing messages</h4><p>You can use incoming or outgoing arrows if you want to focus on a part of the diagram. Use square brackets to denotate the left “[“ or the right “]” side of the diagram.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">[-&gt; A: DoWork</span><br><span class="line">activate A</span><br><span class="line">A -&gt; A: Internal call</span><br><span class="line">activate A</span><br><span class="line">A -&gt;] : &lt;&lt; createRequest &gt;&gt;</span><br><span class="line">A&lt;--] : RequestCreated</span><br><span class="line">deactivate A</span><br><span class="line">[&lt;- A: Done</span><br><span class="line">deactivate A</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921201337.png" alt></p>
+<h4 id="Stereotypes-and-Spots"><a href="#Stereotypes-and-Spots" class="headerlink" title="Stereotypes and Spots"></a>Stereotypes and Spots</h4><p>It is possible to add stereotypes to participants using &lt;&lt; and &gt;&gt;. In the stereotype, you can add a spotted character in a colored circle using the syntax (X,color)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">participant &quot;Famous 客户&quot; as 客户 &lt;&lt; Generated &gt;&gt;</span><br><span class="line">participant 服务端 &lt;&lt; (C,#ADD1B2) Testable &gt;&gt;</span><br><span class="line">客户-&gt;服务端: First message</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn//20200921201436.png" alt></p>
+<p>或者</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">participant 客户 &lt;&lt; (C,#ADD1B2) &gt;&gt;</span><br><span class="line">participant 服务端 &lt;&lt; (C,#ADD1B2) &gt;&gt;</span><br><span class="line">客户-&gt;服务端: First message</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="More-information-on-titles"><a href="#More-information-on-titles" class="headerlink" title="More information on titles"></a>More information on titles</h4><p>You can use some HTML tags in the title.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title &lt;u&gt;Simple&lt;/u&gt; communication example</span><br><span class="line">服务端 -&gt; 客户: 请求认证</span><br><span class="line">客户 -&gt; 服务端: Authentication Response</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p>You can add newline using \n in the title description.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">title &lt;u&gt;Simple&lt;/u&gt; communication example\non several lines</span><br><span class="line">服务端 -&gt; 客户: 请求认证</span><br><span class="line">客户 -&gt; 服务端: Authentication Response</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<p>You can also define title on several lines using title and end title keywords.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line"></span><br><span class="line">title</span><br><span class="line"> &lt;u&gt;Simple&lt;/u&gt; communication example</span><br><span class="line"> on &lt;i&gt;several&lt;/i&gt; lines and using &lt;font color=red&gt;html&lt;/font&gt;</span><br><span class="line"> This is hosted by &lt;img:sourceforge.jpg&gt;</span><br><span class="line">end title</span><br><span class="line"></span><br><span class="line">服务端 -&gt; 客户: 请求认证</span><br><span class="line">客户 -&gt; 服务端: Authentication Response</span><br><span class="line"></span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="7-22-Participants-englober"><a href="#7-22-Participants-englober" class="headerlink" title="7.22. Participants englober"></a>7.22. Participants englober</h4><p>It is possible to draw a box arround some participants, using box and end box commands. You can add an optional title or a optional background color, after the box keyword.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">box &quot;Internal Service&quot; #LightBlue</span><br><span class="line">    participant 客户</span><br><span class="line">    participant 服务端</span><br><span class="line">end box</span><br><span class="line">participant Other</span><br><span class="line">客户 -&gt; 服务端 : hello</span><br><span class="line">服务端 -&gt; Other : hello</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="7-23-Removing-Footer"><a href="#7-23-Removing-Footer" class="headerlink" title="7.23. Removing Footer"></a>7.23. Removing Footer</h4><p>You can use the hide footbox keywords to remove the footer of the diagram.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">hide footbox</span><br><span class="line">title Footer removed</span><br><span class="line">服务端 -&gt; 客户: 请求认证</span><br><span class="line">客户 --&gt; 服务端: Authentication Response</span><br></pre></td></tr></table></figure>
+
+<p>@enduml</p>
+<p>Skinparam</p>
+<p>You can use the skinparam command to change colors and fonts for the drawing. You can use this command :</p>
+<p>In the diagram definition, like any other commands, In an included file, In a configuration file, provided in the command line or the ANT task.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">skinparam backgroundColor #EEEBDC</span><br><span class="line"></span><br><span class="line">skinparam sequence &#123;</span><br><span class="line">    ArrowColor DeepSkyBlue</span><br><span class="line">    ActorBorderColor DeepSkyBlue</span><br><span class="line">    LifeLineBorderColor blue</span><br><span class="line">    LifeLineBackgroundColor #A9DCDF</span><br><span class="line"></span><br><span class="line">    ParticipantBorderColor DeepSkyBlue</span><br><span class="line">    ParticipantBackgroundColor DodgerBlue</span><br><span class="line">    ParticipantFontName Impact</span><br><span class="line">    ParticipantFontSize 17</span><br><span class="line">    ParticipantFontColor #A9DCDF</span><br><span class="line"></span><br><span class="line">    ActorBackgroundColor aqua</span><br><span class="line">    ActorFontColor DeepSkyBlue</span><br><span class="line">    ActorFontSize 17</span><br><span class="line">    ActorFontName Aapex</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">actor User</span><br><span class="line">participant &quot;First Class&quot; as A</span><br><span class="line">participant &quot;Second Class&quot; as B</span><br><span class="line">participant &quot;Last Class&quot; as C</span><br><span class="line"></span><br><span class="line">User -&gt; A: DoWork</span><br><span class="line">activate A</span><br><span class="line"></span><br><span class="line">A -&gt; B: Create Request</span><br><span class="line">activate B</span><br><span class="line"></span><br><span class="line">B -&gt; C: DoWork</span><br><span class="line">activate C</span><br><span class="line">C --&gt; B: WorkDone</span><br><span class="line">destroy C</span><br><span class="line"></span><br><span class="line">B --&gt; A: Request Created</span><br><span class="line">deactivate B</span><br><span class="line"></span><br><span class="line">A --&gt; User: Done</span><br><span class="line">deactivate A</span><br><span class="line"></span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://erasin.wang/plantuml/" target="_blank" rel="noopener">PlantUML语法</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/134200993" target="_blank" rel="noopener">PlantUML语法</a></p>
+
+    </div>
+
+    
+    
+    
+
+    
+      <div>
+        
+  <div class="my_post_copyright">
+    <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+    <!-- JS库 sweetalert 可修改路径 -->
+    <script src="//cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <p><span>本文标题:</span><a href="/2020/09/21/PlantUML语法/">PlantUML语法</a></p>
+    <p><span>文章作者:</span><a href="/" title="访问 Leo Liu 的个人博客">Leo Liu</a></p>
+    <p><span>发布时间:</span>2020年09月21日 - 15:09</p>
+    <p><span>最后更新:</span>2020年09月21日 - 12:09</p>
+    <p><span>原始链接:</span><a href="/2020/09/21/PlantUML语法/" title="PlantUML语法">https://liule8.github.io/2020/09/21/PlantUML语法/</a>
+      <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://liule8.github.io/2020/09/21/PlantUML语法/"  aria-label="复制成功！"></i></span>
+    </p>
+    <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">(CC BY-NC-ND 4.0)</a> 转载请保留原文链接及作者。</p>
+  </div>
+  <script>
+      var clipboard = new Clipboard('.fa-clipboard');
+      $(".fa-clipboard").click(function(){
+          clipboard.on('success', function(){
+              swal({
+                  title: "",
+                  text: '复制成功',
+                  icon: "success",
+                  showConfirmButton: true
+              });
+          });
+      });
+  </script>
+
+
+       </div>
+    
+
+    
+      <div>
+        <div>
+  
+    <div style="text-align:center;color:#cccccc;font-size:14px;">
+      <span>-------- 本文结束 </span>
+      <i class="fa fa-rocket"></i>
+      <span> 感谢您的阅读 --------</span>
+    </div>
+  
+</div>
+
+      </div>
+    
+
+    <footer class="post-footer">
+          
+        
+        <div class="post-tags">
+            <a href="/tags/UML/" rel="tag"><i class="fa fa-tag"></i> UML</a>
+          
+            <a href="/tags/plantuml/" rel="tag"><i class="fa fa-tag"></i> plantuml</a>
+          
+        </div>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+              <a href="/2020/09/19/UML/" rel="next" title="统一建模语言(UML)">
+                <i class="fa fa-chevron-left"></i> 统一建模语言(UML)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+              <a href="/2020/09/22/SpringDataJpa的DQM语法/" rel="prev" title="Defining Query Methods语法">
+                Defining Query Methods语法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.png"
+      alt="Leo Liu">
+  <p class="site-author-name" itemprop="name">Leo Liu</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="https://github.com/LIULE8" title="GitHub &rarr; https://github.com/LIULE8" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+      
+        
+      
+        <a href="mailto:leo.liu.scau@gmail.com" title="E-Mail &rarr; mailto:leo.liu.scau@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+    
+  </div>
+
+
+
+
+          
+            <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+            <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+            <div class="widget-wrap">
+              <h5 class="widget-title">Tag Cloud</h5>
+              <div id="myCanvasContainer" class="widget tagcloud">
+                <canvas width="250" height="250" id="resCanvas" style="width: 180px">
+                  <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Annotation/">Annotation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Auditing/">Auditing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORF/">CORF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataSource/">DataSource</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Defining-Query-Methods/">Defining Query Methods</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECMAScript/">ECMAScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Entity-注解/">Entity 注解</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JPA/">JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Join/">Join</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jrebel/">Jrebel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mixin/">Mixin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Oracle/">Oracle</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Properties/">Properties</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RestTemplate/">RestTemplate</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/">Spring</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-ElasticSearch/">Spring Data ElasticSearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-JPA/">Spring Data JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-Jpa/">Spring Data Jpa</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Security/">Spring Security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Springboot/">Springboot</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/String/">String</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Time/">Time</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transaction/">Transaction</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UML/">UML</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vue/">Vue</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOL/">WOL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jar/">jar</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm/">npm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nvm/">nvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pageable/">pageable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/plantuml/">plantuml</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/">redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/乐观锁/">乐观锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/云服务器/">云服务器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同源策略/">同源策略</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/架构/">架构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注解/">注解</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/浏览器/">浏览器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/索引/">索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/缓存/">缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义返回值/">自定义返回值</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计模式/">设计模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/跨域/">跨域</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/运维/">运维</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/防止多次提交/">防止多次提交</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/集合/">集合</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面向对象设计原则/">面向对象设计原则</a><span class="tag-list-count">1</span></li></ul>
+                </canvas>
+              </div>
+            </div>
+          
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#PlantUML语法"><span class="nav-number">1.</span> <span class="nav-text">PlantUML语法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">1.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-IDEA-来创建和预览"><span class="nav-number">1.2.</span> <span class="nav-text">使用 IDEA 来创建和预览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#脚本语法"><span class="nav-number">1.3.</span> <span class="nav-text">脚本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#活动图-Activity-Diagram"><span class="nav-number">1.3.1.</span> <span class="nav-text">活动图 ( Activity Diagram )</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Simple-Activity"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">Simple Activity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Start-Stop-开始和结束"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">Start / Stop 开始和结束</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Conditional-条件语句"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">Conditional 条件语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Repeat-loop-循环处理（控制语句）"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">Repeat loop 循环处理（控制语句）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#While-loop-循环控制"><span class="nav-number">1.3.1.5.</span> <span class="nav-text">While loop 循环控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Parallel-processing-并行处理"><span class="nav-number">1.3.1.6.</span> <span class="nav-text">Parallel processing 并行处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Notes-注释"><span class="nav-number">1.3.1.7.</span> <span class="nav-text">Notes 注释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Color-颜色"><span class="nav-number">1.3.1.8.</span> <span class="nav-text">Color 颜色</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Complete-example-案例"><span class="nav-number">1.3.1.9.</span> <span class="nav-text">Complete example 案例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#时序图-Sequence-Diagram"><span class="nav-number">1.3.2.</span> <span class="nav-text">时序图 ( Sequence Diagram )</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Comments-注释"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">Comments 注释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Declaring-participant-（角色）"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">Declaring participant （角色）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Use-non-letters-in-participants-非字符处理"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">Use non-letters in participants 非字符处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Message-to-Self"><span class="nav-number">1.3.2.4.</span> <span class="nav-text">Message to Self</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Change-arrow-style-箭头样式"><span class="nav-number">1.3.2.5.</span> <span class="nav-text">Change arrow style 箭头样式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Change-arrow-color-箭头色彩"><span class="nav-number">1.3.2.6.</span> <span class="nav-text">Change arrow color 箭头色彩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Splitting-diagrams-分割为多个图形"><span class="nav-number">1.3.2.7.</span> <span class="nav-text">Splitting diagrams 分割为多个图形</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Grouping-message-分组消息"><span class="nav-number">1.3.2.8.</span> <span class="nav-text">Grouping message 分组消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Notes-on-messages"><span class="nav-number">1.3.2.9.</span> <span class="nav-text">Notes on messages</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#单行注释"><span class="nav-number">1.3.2.9.1.</span> <span class="nav-text">单行注释</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#多行注释"><span class="nav-number">1.3.2.9.2.</span> <span class="nav-text">多行注释</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Some-other-notes"><span class="nav-number">1.3.2.10.</span> <span class="nav-text">Some other notes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Formatting-using-HTML"><span class="nav-number">1.3.2.11.</span> <span class="nav-text">Formatting using HTML</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Divider"><span class="nav-number">1.3.2.12.</span> <span class="nav-text">Divider</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Reference"><span class="nav-number">1.3.2.13.</span> <span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Delay"><span class="nav-number">1.3.2.14.</span> <span class="nav-text">Delay</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Space"><span class="nav-number">1.3.2.15.</span> <span class="nav-text">Space</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Lifeline-Activation-and-Destruction-生命周期"><span class="nav-number">1.3.2.16.</span> <span class="nav-text">Lifeline Activation and Destruction 生命周期</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Participant-creation"><span class="nav-number">1.3.2.17.</span> <span class="nav-text">Participant creation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Incoming-and-outgoing-messages"><span class="nav-number">1.3.2.18.</span> <span class="nav-text">Incoming and outgoing messages</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Stereotypes-and-Spots"><span class="nav-number">1.3.2.19.</span> <span class="nav-text">Stereotypes and Spots</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#More-information-on-titles"><span class="nav-number">1.3.2.20.</span> <span class="nav-text">More information on titles</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-22-Participants-englober"><span class="nav-number">1.3.2.21.</span> <span class="nav-text">7.22. Participants englober</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-23-Removing-Footer"><span class="nav-number">1.3.2.22.</span> <span class="nav-text">7.23. Removing Footer</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">
+    <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备20009586号 </a>
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leo Liu</span>
+</div>
+
+        
+  <div class="busuanzi-count">
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-area-chart"></i>
+      </span>
+      <span title="站点总字数">
+       站点总字数: 722k
+      </span>
+    
+      <span class="post-meta-divider">|</span>
+    
+      <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+      <span class="site-uv" title="总访客量">
+      总访客量: <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+    
+      <span class="post-meta-divider">|</span>
+    
+      <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+      <span class="site-pv" title="总访问量">
+      总访问量: <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+    
+  </div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+      </div>
+
+    
+
+  </div>
+
+  
+    
+    
+      
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
+</html>
+<script type="text/javascript" src="/js/src/mouse.js"></script>
