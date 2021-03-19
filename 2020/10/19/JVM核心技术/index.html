@@ -1,341 +1,145 @@
-<!DOCTYPE html>
-
-
-
-
-
-<html class="theme-next mist use-motion" lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-<meta name="generator" content="Hexo 3.9.0">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
-  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
-
-<link rel="stylesheet" href="/css/main.css?v=7.3.0">
-
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Satisfy:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
-      
-    
-      
-    
-  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
-
-
-<script id="hexo-configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Mist',
-    version: '7.3.0',
-    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
-    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
-    save_scroll: false,
-    copycode: {"enable":false,"show_result":false,"style":null},
-    fancybox: false,
-    mediumzoom: false,
-    lazyload: false,
-    pangu: false,
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    },
-    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},
-    path: 'search.xml',
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    translation: {
-      copy_button: '复制',
-      copy_success: '复制成功',
-      copy_failure: '复制失败'
-    }
-  };
-</script>
-
-  <meta name="description" content="JVM 基础知识什么是 JVMJVM 是 Java Virtual Machine（ Java 虚拟机）的缩写，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。由一套字节码指令集、一组寄存器、一个栈、一个垃圾回收堆和一个存储方法域等组成。JVM 屏蔽了与操作系统平台相关的信息，使得 Java 程序只需要生成在 Java 虚拟机上运行的目标代码（字节码），就可在多种平台上不加修改的运行，这也是">
-<meta name="keywords" content="JVM">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>JVM 核心技术 | Leo's notes</title><meta name="keywords" content="JVM"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="JVM 基础知识什么是 JVMJVM 是 Java Virtual Machine（ Java 虚拟机）的缩写，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。由一套字节码指令集、一组寄存器、一个栈、一个垃圾回收堆和一个存储方法域等组成。JVM 屏蔽了与操作系统平台相关的信息，使得 Java 程序只需要生成在 Java 虚拟机上运行的目标代码（字节码），就可在多种平台上不加修改的运行，这也是">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JVM 核心技术">
-<meta property="og:url" content="https://liule8.github.io/2020/10/19/JVM核心技术/index.html">
+<meta property="og:url" content="https://liule8.github.io/2020/10/19/JVM%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF/index.html">
 <meta property="og:site_name" content="Leo&#39;s notes">
 <meta property="og:description" content="JVM 基础知识什么是 JVMJVM 是 Java Virtual Machine（ Java 虚拟机）的缩写，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。由一套字节码指令集、一组寄存器、一个栈、一个垃圾回收堆和一个存储方法域等组成。JVM 屏蔽了与操作系统平台相关的信息，使得 Java 程序只需要生成在 Java 虚拟机上运行的目标代码（字节码），就可在多种平台上不加修改的运行，这也是">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://image.leonote.cn/20201030134056.png">
-<meta property="og:image" content="http://image.leonote.cn/20201030162432.png">
-<meta property="og:updated_time" content="2020-11-17T11:20:34.145Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2020-10-18T17:19:05.000Z">
+<meta property="article:modified_time" content="2020-11-17T11:20:34.145Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM 核心技术">
-<meta name="twitter:description" content="JVM 基础知识什么是 JVMJVM 是 Java Virtual Machine（ Java 虚拟机）的缩写，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。由一套字节码指令集、一组寄存器、一个栈、一个垃圾回收堆和一个存储方法域等组成。JVM 屏蔽了与操作系统平台相关的信息，使得 Java 程序只需要生成在 Java 虚拟机上运行的目标代码（字节码），就可在多种平台上不加修改的运行，这也是">
-<meta name="twitter:image" content="http://image.leonote.cn/20201030134056.png">
-  <link rel="alternate" href="/atom.xml" title="Leo's notes" type="application/atom+xml">
-  <link rel="canonical" href="https://liule8.github.io/2020/10/19/JVM核心技术/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome: false,
-    isPost: true,
-    isPage: false,
-    isArchive: false
-  };
-</script>
-
-  <title>JVM 核心技术 | Leo's notes</title>
-  
-
-
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .motion-element,
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-title { opacity: initial; }
-
-  .use-motion .logo,
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/2020/10/19/JVM%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-11-17 11:20:34'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
   }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
 
-</head>
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
 
-  <div class="container sidebar-position-left">
-    <div class="headband"></div>
-
-    <a href="https://github.com/LIULE8" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta">
-
-    <div class="custom-logo-site-title">
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Leo's notes</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
-  </div>
-
-  <div class="site-nav-toggle">
-    <button aria-label="切换导航栏">
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
-  </div>
-</div>
-
-
-<nav class="site-nav">
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
   
-  <ul id="menu" class="menu">
-      
-      
-      
-        
-        <li class="menu-item menu-item-home">
-      
-    
-
-    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
-
-  </li>
-      
-      
-      
-        
-        <li class="menu-item menu-item-tags">
-      
-    
-
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
-
-  </li>
-      
-      
-      
-        
-        <li class="menu-item menu-item-categories">
-      
-    
-
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
-
-  </li>
-      
-      
-      
-        
-        <li class="menu-item menu-item-archives">
-      
-    
-
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a href="javascript:;" class="popup-trigger">
-        
-          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
-      </li>
-    
-  </ul>
-
-    
-
-    <div class="site-search">
-      
-  <div class="popup search-popup local-search-popup">
-  <div class="local-search-header clearfix">
-    <span class="search-icon">
-      <i class="fa fa-search"></i>
-    </span>
-    <span class="popup-btn-close">
-      <i class="fa fa-times-circle"></i>
-    </span>
-    <div class="local-search-input-wrapper">
-      <input autocomplete="off"
-             placeholder="搜索..." spellcheck="false"
-             type="text" id="local-search-input">
-    </div>
-  </div>
-  <div id="local-search-result"></div>
-</div>
-
-
-    </div>
-</nav>
-</div>
-    </header>
-
-    
-
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content page-post-detail">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
   
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/10/19/JVM核心技术/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Leo Liu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leo's notes">
-    </span>
-      <header class="post-header">
-
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
         
-          <h1 class="post-title" itemprop="name headline">JVM 核心技术
-
-            
-          </h1>
-        
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-10-18 17:19:05" itemprop="dateCreated datePublished" datetime="2020-10-18T17:19:05Z">2020-10-18</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-17 11:20:34" itemprop="dateModified" datetime="2020-11-17T11:20:34Z">2020-11-17</time>
-              </span>
-            
-          
-
-          
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">本文字数：</span>
-              
-              <span>3.2k</span>
-            </span>
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              
-              <span>3 分钟</span>
-            </span>
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <h1 id="JVM-基础知识"><a href="#JVM-基础知识" class="headerlink" title="JVM 基础知识"></a>JVM 基础知识</h1><h2 id="什么是-JVM"><a href="#什么是-JVM" class="headerlink" title="什么是 JVM"></a>什么是 JVM</h2><p>JVM 是 Java Virtual Machine（ Java 虚拟机）的缩写，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。由<strong>一套字节码指令集、一组寄存器、一个栈、一个垃圾回收堆和一个存储方法域等</strong>组成。JVM 屏蔽了与操作系统平台相关的信息，使得 Java 程序只需要生成在 Java 虚拟机上运行的目标代码（字节码），就可在多种平台上不加修改的运行，这也是 Java 能够“<strong>一次编译，到处运行的</strong>”原因。</p>
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">73</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">63</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">35</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">JVM 核心技术</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-10-18T17:19:05.000Z" title="发表于 2020-10-18 17:19:05">2020-10-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-11-17T11:20:34.145Z" title="更新于 2020-11-17 11:20:34">2020-11-17</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="JVM 核心技术"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="JVM-基础知识"><a href="#JVM-基础知识" class="headerlink" title="JVM 基础知识"></a>JVM 基础知识</h1><h2 id="什么是-JVM"><a href="#什么是-JVM" class="headerlink" title="什么是 JVM"></a>什么是 JVM</h2><p>JVM 是 Java Virtual Machine（ Java 虚拟机）的缩写，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。由<strong>一套字节码指令集、一组寄存器、一个栈、一个垃圾回收堆和一个存储方法域等</strong>组成。JVM 屏蔽了与操作系统平台相关的信息，使得 Java 程序只需要生成在 Java 虚拟机上运行的目标代码（字节码），就可在多种平台上不加修改的运行，这也是 Java 能够“<strong>一次编译，到处运行的</strong>”原因。</p>
 <h2 id="JRE、JDK-和-JVM-的关系"><a href="#JRE、JDK-和-JVM-的关系" class="headerlink" title="JRE、JDK 和 JVM 的关系"></a>JRE、JDK 和 JVM 的关系</h2><ul>
 <li><p><strong>JVM（ Java Virtual Machine， Java 虚拟机）</strong>是 JRE 的一部分。JVM 主要工作是解释自己的指令集（即字节码）并映射到本地的CPU指令集和OS的系统调用。Java 语言是跨平台运行的，不同的操作系统会有不同的 JVM 映射规则，使之与操作系统无关，完成跨平台性。</p>
 </li>
@@ -347,7 +151,7 @@
 <blockquote>
 <p>📌 包含关系：JVM &lt; JRE &lt; JDK</p>
 </blockquote>
-<h2 id="JVM-原理"><a href="#JVM-原理" class="headerlink" title="JVM 原理"></a>JVM 原理</h2><h3 id="Java-体系结构介绍"><a href="#Java-体系结构介绍" class="headerlink" title="Java 体系结构介绍"></a>Java 体系结构介绍</h3><p><img src="http://image.leonote.cn/20201030134056.png" alt></p>
+<h2 id="JVM-原理"><a href="#JVM-原理" class="headerlink" title="JVM 原理"></a>JVM 原理</h2><h3 id="Java-体系结构介绍"><a href="#Java-体系结构介绍" class="headerlink" title="Java 体系结构介绍"></a>Java 体系结构介绍</h3><p><img src="http://image.leonote.cn/20201030134056.png" alt=""></p>
 <ul>
 <li>Class Loader（类加载器）：用于装载 .class 文件。</li>
 <li>Execution Engine（执行引擎）：用于执行字节码或者本地方法。</li>
@@ -368,8 +172,8 @@
 </li>
 </ol>
 <p>JVM 执行引擎实例则对应了属于用户运行程序线程，它是线程级别的。</p>
-<h2 id="JVM-类加载器"><a href="#JVM-类加载器" class="headerlink" title="JVM 类加载器"></a>JVM 类加载器</h2><h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://juejin.im/post/6844904114543919111" target="_blank" rel="noopener">类加载器</a></p>
-<h3 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h3><p><img src="http://image.leonote.cn/20201030162432.png" alt></p>
+<h2 id="JVM-类加载器"><a href="#JVM-类加载器" class="headerlink" title="JVM 类加载器"></a>JVM 类加载器</h2><h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a target="_blank" rel="noopener" href="https://juejin.im/post/6844904114543919111">类加载器</a></p>
+<h3 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h3><p><img src="http://image.leonote.cn/20201030162432.png" alt=""></p>
 <ol>
 <li><p><strong>装载（loading）</strong>：</p>
 <p>负责找到 Class 文件并加载至 JVM 中，JVM 通过类名、类所在的包名、ClassLoader完成类的加载。因此，标识一个被加载了的类：类名 + 包名 + ClassLoader 实例 ID。</p>
@@ -434,8 +238,8 @@
 <li>使用反射 API 对某个类进行反射调用时，初始化这个类，其实跟前面一样，反射调用 要么是已经有实例了，要么是静态方法，都需要初始化；</li>
 <li>当初次调用 MethodHandle 实例时，初始化该 MethodHandle 指向的方法所在的类。</li>
 </ol>
-<h3 id="不会初始化（可能会加载）"><a href="#不会初始化（可能会加载）" class="headerlink" title="不会初始化（可能会加载）"></a>不会初始化（可能会加载）</h3><h3 id="三类加载器"><a href="#三类加载器" class="headerlink" title="三类加载器"></a>三类加载器</h3><h3 id="显示当前-ClassLoader-加载了哪些-Jar"><a href="#显示当前-ClassLoader-加载了哪些-Jar" class="headerlink" title="显示当前 ClassLoader 加载了哪些 Jar?"></a>显示当前 ClassLoader 加载了哪些 Jar?</h3><h3 id="自定义-ClassLoader"><a href="#自定义-ClassLoader" class="headerlink" title="自定义 ClassLoader"></a>自定义 ClassLoader</h3><h3 id="添加引用类的几种方式"><a href="#添加引用类的几种方式" class="headerlink" title="添加引用类的几种方式"></a>添加引用类的几种方式</h3><h2 id="JVM-内存模型"><a href="#JVM-内存模型" class="headerlink" title="JVM 内存模型"></a>JVM 内存模型</h2><h3 id="JVM-内存结构"><a href="#JVM-内存结构" class="headerlink" title="JVM 内存结构"></a>JVM 内存结构</h3><h3 id="JVM-内存整体结构"><a href="#JVM-内存整体结构" class="headerlink" title="JVM 内存整体结构"></a>JVM 内存整体结构</h3><h3 id="JVM-栈内存结构"><a href="#JVM-栈内存结构" class="headerlink" title="JVM 栈内存结构"></a>JVM 栈内存结构</h3><h3 id="JVM队内存结构"><a href="#JVM队内存结构" class="headerlink" title="JVM队内存结构"></a>JVM队内存结构</h3><h3 id="CPU与内存行为"><a href="#CPU与内存行为" class="headerlink" title="CPU与内存行为"></a>CPU与内存行为</h3><h3 id="小结：什么是-JMM"><a href="#小结：什么是-JMM" class="headerlink" title="小结：什么是 JMM ?"></a>小结：什么是 JMM ?</h3><h2 id="JAVA-字节码"><a href="#JAVA-字节码" class="headerlink" title="JAVA 字节码"></a>JAVA 字节码</h2><h3 id="参考资料-1"><a href="#参考资料-1" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://juejin.im/post/6844903939112976391" target="_blank" rel="noopener">JAVA字节码的探秘</a></p>
-<p><a href="https://juejin.im/post/6844903588716609543" target="_blank" rel="noopener">轻松看懂JAVA字节码</a></p>
+<h3 id="不会初始化（可能会加载）"><a href="#不会初始化（可能会加载）" class="headerlink" title="不会初始化（可能会加载）"></a>不会初始化（可能会加载）</h3><h3 id="三类加载器"><a href="#三类加载器" class="headerlink" title="三类加载器"></a>三类加载器</h3><h3 id="显示当前-ClassLoader-加载了哪些-Jar"><a href="#显示当前-ClassLoader-加载了哪些-Jar" class="headerlink" title="显示当前 ClassLoader 加载了哪些 Jar?"></a>显示当前 ClassLoader 加载了哪些 Jar?</h3><h3 id="自定义-ClassLoader"><a href="#自定义-ClassLoader" class="headerlink" title="自定义 ClassLoader"></a>自定义 ClassLoader</h3><h3 id="添加引用类的几种方式"><a href="#添加引用类的几种方式" class="headerlink" title="添加引用类的几种方式"></a>添加引用类的几种方式</h3><h2 id="JVM-内存模型"><a href="#JVM-内存模型" class="headerlink" title="JVM 内存模型"></a>JVM 内存模型</h2><h3 id="JVM-内存结构"><a href="#JVM-内存结构" class="headerlink" title="JVM 内存结构"></a>JVM 内存结构</h3><h3 id="JVM-内存整体结构"><a href="#JVM-内存整体结构" class="headerlink" title="JVM 内存整体结构"></a>JVM 内存整体结构</h3><h3 id="JVM-栈内存结构"><a href="#JVM-栈内存结构" class="headerlink" title="JVM 栈内存结构"></a>JVM 栈内存结构</h3><h3 id="JVM队内存结构"><a href="#JVM队内存结构" class="headerlink" title="JVM队内存结构"></a>JVM队内存结构</h3><h3 id="CPU与内存行为"><a href="#CPU与内存行为" class="headerlink" title="CPU与内存行为"></a>CPU与内存行为</h3><h3 id="小结：什么是-JMM"><a href="#小结：什么是-JMM" class="headerlink" title="小结：什么是 JMM ?"></a>小结：什么是 JMM ?</h3><h2 id="JAVA-字节码"><a href="#JAVA-字节码" class="headerlink" title="JAVA 字节码"></a>JAVA 字节码</h2><h3 id="参考资料-1"><a href="#参考资料-1" class="headerlink" title="参考资料"></a>参考资料</h3><p><a target="_blank" rel="noopener" href="https://juejin.im/post/6844903939112976391">JAVA字节码的探秘</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/6844903588716609543">轻松看懂JAVA字节码</a></p>
 <h3 id="什么是字节码？"><a href="#什么是字节码？" class="headerlink" title="什么是字节码？"></a>什么是字节码？</h3><p>字节码由单字节的指令组成，理论上最多支持256个操作码（opcode），实际上Java只使用了200左右的操作码，还有一些操作码则保留给调试操作</p>
 <p>根据指令的性质，主要分为四个大类：</p>
 <ol>
@@ -451,614 +255,4 @@
 <li>invokeinterface：当通过接口引用来调用方法时，将会编译为 invokeinterface 指令。</li>
 <li>invokedynamic：JDK7 新增加的指令，是实现“动态类型语言”（Dynamically Typed Language）支持而进行的升级改进，同时也是 JDK8 以后支持 lambda 表达式的实现基础。</li>
 </ul>
-<h3 id="一个动态例子"><a href="#一个动态例子" class="headerlink" title="一个动态例子"></a>一个动态例子</h3><h2 id="JVM-启动参数"><a href="#JVM-启动参数" class="headerlink" title="JVM 启动参数"></a>JVM 启动参数</h2><h3 id="系统属性"><a href="#系统属性" class="headerlink" title="系统属性"></a>系统属性</h3><h3 id="运行模式"><a href="#运行模式" class="headerlink" title="运行模式"></a>运行模式</h3><h3 id="堆内存"><a href="#堆内存" class="headerlink" title="堆内存"></a>堆内存</h3><h3 id="GC相关"><a href="#GC相关" class="headerlink" title="GC相关"></a>GC相关</h3><h3 id="分析诊断"><a href="#分析诊断" class="headerlink" title="分析诊断"></a>分析诊断</h3><h3 id="JavaAgents"><a href="#JavaAgents" class="headerlink" title="JavaAgents"></a>JavaAgents</h3>
-    </div>
-
-    
-    
-    
-
-    
-      <div>
-        
-  <div class="my_post_copyright">
-    <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
-
-    <!-- JS库 sweetalert 可修改路径 -->
-    <script src="//cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
-    <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <p><span>本文标题:</span><a href="/2020/10/19/JVM核心技术/">JVM 核心技术</a></p>
-    <p><span>文章作者:</span><a href="/" title="访问 Leo Liu 的个人博客">Leo Liu</a></p>
-    <p><span>发布时间:</span>2020年10月18日 - 17:10</p>
-    <p><span>最后更新:</span>2020年11月17日 - 11:11</p>
-    <p><span>原始链接:</span><a href="/2020/10/19/JVM核心技术/" title="JVM 核心技术">https://liule8.github.io/2020/10/19/JVM核心技术/</a>
-      <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://liule8.github.io/2020/10/19/JVM核心技术/"  aria-label="复制成功！"></i></span>
-    </p>
-    <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">(CC BY-NC-ND 4.0)</a> 转载请保留原文链接及作者。</p>
-  </div>
-  <script>
-      var clipboard = new Clipboard('.fa-clipboard');
-      $(".fa-clipboard").click(function(){
-          clipboard.on('success', function(){
-              swal({
-                  title: "",
-                  text: '复制成功',
-                  icon: "success",
-                  showConfirmButton: true
-              });
-          });
-      });
-  </script>
-
-
-       </div>
-    
-
-    
-      <div>
-        <div>
-  
-    <div style="text-align:center;color:#cccccc;font-size:14px;">
-      <span>-------- 本文结束 </span>
-      <i class="fa fa-rocket"></i>
-      <span> 感谢您的阅读 --------</span>
-    </div>
-  
-</div>
-
-      </div>
-    
-
-    <footer class="post-footer">
-          
-        
-        <div class="post-tags">
-            <a href="/tags/JVM/" rel="tag"><i class="fa fa-tag"></i> JVM</a>
-          
-        </div>
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-              <a href="/2020/10/16/SpringDataJpa的Entity注解/" rel="next" title="Spring Data Jpa 的 Entity 注解">
-                <i class="fa fa-chevron-left"></i> Spring Data Jpa 的 Entity 注解
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-              <a href="/2020/11/05/Oracle的一些常用SQL/" rel="prev" title="Oracle的一些常用SQL">
-                Oracle的一些常用SQL <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-  </div>
-
-
-          </div>
-          
-
-
-        </div>
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-inner">
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-overview">
-
-          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image"
-      src="/images/avatar.png"
-      alt="Leo Liu">
-  <p class="site-author-name" itemprop="name">Leo Liu</p>
-  <div class="site-description motion-element" itemprop="description"></div>
-</div>
-  <nav class="site-state motion-element">
-      <div class="site-state-item site-state-posts">
-        
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">69</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-    
-      
-      
-      <div class="site-state-item site-state-categories">
-        
-          
-            <a href="/categories/">
-          
-        
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        <span class="site-state-item-count">35</span>
-        <span class="site-state-item-name">分类</span>
-        </a>
-      </div>
-    
-      
-      
-      <div class="site-state-item site-state-tags">
-        
-          
-            <a href="/tags/">
-          
-        
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        <span class="site-state-item-count">61</span>
-        <span class="site-state-item-name">标签</span>
-        </a>
-      </div>
-    
-  </nav>
-  <div class="feed-link motion-element">
-    <a href="/atom.xml" rel="alternate">
-      <i class="fa fa-rss"></i>RSS
-    </a>
-  </div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-      
-      
-      
-        
-      
-        <a href="https://github.com/LIULE8" title="GitHub &rarr; https://github.com/LIULE8" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
-      </span>
-    
-      <span class="links-of-author-item">
-      
-      
-      
-        
-      
-        <a href="mailto:leo.liu.scau@gmail.com" title="E-Mail &rarr; mailto:leo.liu.scau@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
-      </span>
-    
-  </div>
-
-
-
-
-          
-            <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
-            <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
-            <div class="widget-wrap">
-              <h5 class="widget-title">Tag Cloud</h5>
-              <div id="myCanvasContainer" class="widget tagcloud">
-                <canvas width="250" height="250" id="resCanvas" style="width: 180px">
-                  <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Annotation/">Annotation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Auditing/">Auditing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORF/">CORF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataSource/">DataSource</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Defining-Query-Methods/">Defining Query Methods</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECMAScript/">ECMAScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Entity-注解/">Entity 注解</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JPA/">JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Join/">Join</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jrebel/">Jrebel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mixin/">Mixin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Oracle/">Oracle</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Properties/">Properties</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RestTemplate/">RestTemplate</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/">Spring</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-ElasticSearch/">Spring Data ElasticSearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-JPA/">Spring Data JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-Jpa/">Spring Data Jpa</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Security/">Spring Security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Springboot/">Springboot</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/String/">String</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Time/">Time</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transaction/">Transaction</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UML/">UML</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vue/">Vue</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOL/">WOL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jar/">jar</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm/">npm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nvm/">nvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pageable/">pageable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/plantuml/">plantuml</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/">redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/乐观锁/">乐观锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/云服务器/">云服务器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同源策略/">同源策略</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/架构/">架构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注解/">注解</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/浏览器/">浏览器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/索引/">索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/缓存/">缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义返回值/">自定义返回值</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计模式/">设计模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/跨域/">跨域</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/运维/">运维</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/防止多次提交/">防止多次提交</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/集合/">集合</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面向对象设计原则/">面向对象设计原则</a><span class="tag-list-count">1</span></li></ul>
-                </canvas>
-              </div>
-            </div>
-          
-
-        </div>
-      </div>
-      <!--noindex-->
-        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-            
-            
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM-基础知识"><span class="nav-number">1.</span> <span class="nav-text">JVM 基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是-JVM"><span class="nav-number">1.1.</span> <span class="nav-text">什么是 JVM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JRE、JDK-和-JVM-的关系"><span class="nav-number">1.2.</span> <span class="nav-text">JRE、JDK 和 JVM 的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM-原理"><span class="nav-number">1.3.</span> <span class="nav-text">JVM 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-体系结构介绍"><span class="nav-number">1.3.1.</span> <span class="nav-text">Java 体系结构介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM-生命周期介绍"><span class="nav-number">1.3.2.</span> <span class="nav-text">JVM 生命周期介绍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM-类加载器"><span class="nav-number">1.4.</span> <span class="nav-text">JVM 类加载器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">1.4.1.</span> <span class="nav-text">参考资料</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类的生命周期"><span class="nav-number">1.4.2.</span> <span class="nav-text">类的生命周期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类初始化顺序"><span class="nav-number">1.4.3.</span> <span class="nav-text">类初始化顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类的加载时机"><span class="nav-number">1.4.4.</span> <span class="nav-text">类的加载时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不会初始化（可能会加载）"><span class="nav-number">1.4.5.</span> <span class="nav-text">不会初始化（可能会加载）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三类加载器"><span class="nav-number">1.4.6.</span> <span class="nav-text">三类加载器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显示当前-ClassLoader-加载了哪些-Jar"><span class="nav-number">1.4.7.</span> <span class="nav-text">显示当前 ClassLoader 加载了哪些 Jar?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义-ClassLoader"><span class="nav-number">1.4.8.</span> <span class="nav-text">自定义 ClassLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加引用类的几种方式"><span class="nav-number">1.4.9.</span> <span class="nav-text">添加引用类的几种方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM-内存模型"><span class="nav-number">1.5.</span> <span class="nav-text">JVM 内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM-内存结构"><span class="nav-number">1.5.1.</span> <span class="nav-text">JVM 内存结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM-内存整体结构"><span class="nav-number">1.5.2.</span> <span class="nav-text">JVM 内存整体结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM-栈内存结构"><span class="nav-number">1.5.3.</span> <span class="nav-text">JVM 栈内存结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM队内存结构"><span class="nav-number">1.5.4.</span> <span class="nav-text">JVM队内存结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU与内存行为"><span class="nav-number">1.5.5.</span> <span class="nav-text">CPU与内存行为</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结：什么是-JMM"><span class="nav-number">1.5.6.</span> <span class="nav-text">小结：什么是 JMM ?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JAVA-字节码"><span class="nav-number">1.6.</span> <span class="nav-text">JAVA 字节码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料-1"><span class="nav-number">1.6.1.</span> <span class="nav-text">参考资料</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是字节码？"><span class="nav-number">1.6.2.</span> <span class="nav-text">什么是字节码？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成字节码"><span class="nav-number">1.6.3.</span> <span class="nav-text">生成字节码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最简单的字节码"><span class="nav-number">1.6.4.</span> <span class="nav-text">最简单的字节码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复杂点的例子"><span class="nav-number">1.6.5.</span> <span class="nav-text">复杂点的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字节码的运行时结构"><span class="nav-number">1.6.6.</span> <span class="nav-text">字节码的运行时结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从助记符到二进制"><span class="nav-number">1.6.7.</span> <span class="nav-text">从助记符到二进制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四则运行的例子"><span class="nav-number">1.6.8.</span> <span class="nav-text">四则运行的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数值处理与本地变量表"><span class="nav-number">1.6.9.</span> <span class="nav-text">数值处理与本地变量表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算数操作与类型转换"><span class="nav-number">1.6.10.</span> <span class="nav-text">算数操作与类型转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一个完整的循环控制"><span class="nav-number">1.6.11.</span> <span class="nav-text">一个完整的循环控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法调用的指令"><span class="nav-number">1.6.12.</span> <span class="nav-text">方法调用的指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一个动态例子"><span class="nav-number">1.6.13.</span> <span class="nav-text">一个动态例子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM-启动参数"><span class="nav-number">1.7.</span> <span class="nav-text">JVM 启动参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#系统属性"><span class="nav-number">1.7.1.</span> <span class="nav-text">系统属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行模式"><span class="nav-number">1.7.2.</span> <span class="nav-text">运行模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆内存"><span class="nav-number">1.7.3.</span> <span class="nav-text">堆内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC相关"><span class="nav-number">1.7.4.</span> <span class="nav-text">GC相关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析诊断"><span class="nav-number">1.7.5.</span> <span class="nav-text">分析诊断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JavaAgents"><span class="nav-number">1.7.6.</span> <span class="nav-text">JavaAgents</span></a></li></ol></li></ol></li></ol></div>
-            
-
-          </div>
-        </div>
-      <!--/noindex-->
-      
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">
-    <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备20009586号 </a>
-  &copy; 
-  <span itemprop="copyrightYear">2021</span>
-  <span class="with-love" id="animate">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Leo Liu</span>
-</div>
-
-        
-  <div class="busuanzi-count">
-    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-area-chart"></i>
-      </span>
-      <span title="站点总字数">
-       站点总字数: 722k
-      </span>
-    
-      <span class="post-meta-divider">|</span>
-    
-      <span class="post-meta-item-icon">
-      <i class="fa fa-user"></i>
-    </span>
-      <span class="site-uv" title="总访客量">
-      总访客量: <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
-    </span>
-    
-      <span class="post-meta-divider">|</span>
-    
-      <span class="post-meta-item-icon">
-      <i class="fa fa-eye"></i>
-    </span>
-      <span class="site-pv" title="总访问量">
-      总访问量: <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
-    </span>
-    
-  </div>
-
-
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-      </div>
-
-    
-
-  </div>
-
-  
-    
-    
-      
-    
-  
-  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
-  <script src="/lib/jquery/index.js?v=3.4.1"></script>
-  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-<script src="/js/utils.js?v=7.3.0"></script>
-  <script src="/js/motion.js?v=7.3.0"></script>
-
-
-  <script src="/js/schemes/muse.js?v=7.3.0"></script>
-
-
-
-<script src="/js/next-boot.js?v=7.3.0"></script>
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <script src="/js/local-search.js?v=7.3.0"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-
-  
-  <script src="/js/scrollspy.js?v=7.3.0"></script>
-<script src="/js/post-details.js?v=7.3.0"></script>
-
-
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
-</html>
-<script type="text/javascript" src="/js/src/mouse.js"></script>
+<h3 id="一个动态例子"><a href="#一个动态例子" class="headerlink" title="一个动态例子"></a>一个动态例子</h3><h2 id="JVM-启动参数"><a href="#JVM-启动参数" class="headerlink" title="JVM 启动参数"></a>JVM 启动参数</h2><h3 id="系统属性"><a href="#系统属性" class="headerlink" title="系统属性"></a>系统属性</h3><h3 id="运行模式"><a href="#运行模式" class="headerlink" title="运行模式"></a>运行模式</h3><h3 id="堆内存"><a href="#堆内存" class="headerlink" title="堆内存"></a>堆内存</h3><h3 id="GC相关"><a href="#GC相关" class="headerlink" title="GC相关"></a>GC相关</h3><h3 id="分析诊断"><a href="#分析诊断" class="headerlink" title="分析诊断"></a>分析诊断</h3><h3 id="JavaAgents"><a href="#JavaAgents" class="headerlink" title="JavaAgents"></a>JavaAgents</h3></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/2020/10/19/JVM%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF/">https://liule8.github.io/2020/10/19/JVM%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/JVM/">JVM</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/11/05/Oracle%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8SQL/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Oracle的一些常用SQL</div></div></a></div><div class="next-post pull-right"><a href="/2020/10/16/SpringDataJpa%E7%9A%84Entity%E6%B3%A8%E8%A7%A3/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Spring Data Jpa 的 Entity 注解</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">73</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">63</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">35</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JVM-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">JVM 基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-JVM"><span class="toc-number">1.1.</span> <span class="toc-text">什么是 JVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRE%E3%80%81JDK-%E5%92%8C-JVM-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.2.</span> <span class="toc-text">JRE、JDK 和 JVM 的关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM-%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">JVM 原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.1.</span> <span class="toc-text">Java 体系结构介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JVM-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.2.</span> <span class="toc-text">JVM 生命周期介绍</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-number">1.4.</span> <span class="toc-text">JVM 类加载器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">1.4.1.</span> <span class="toc-text">参考资料</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">1.4.2.</span> <span class="toc-text">类的生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F"><span class="toc-number">1.4.3.</span> <span class="toc-text">类初始化顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%97%B6%E6%9C%BA"><span class="toc-number">1.4.4.</span> <span class="toc-text">类的加载时机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E4%BC%9A%E5%88%9D%E5%A7%8B%E5%8C%96%EF%BC%88%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%8A%A0%E8%BD%BD%EF%BC%89"><span class="toc-number">1.4.5.</span> <span class="toc-text">不会初始化（可能会加载）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-number">1.4.6.</span> <span class="toc-text">三类加载器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%98%BE%E7%A4%BA%E5%BD%93%E5%89%8D-ClassLoader-%E5%8A%A0%E8%BD%BD%E4%BA%86%E5%93%AA%E4%BA%9B-Jar"><span class="toc-number">1.4.7.</span> <span class="toc-text">显示当前 ClassLoader 加载了哪些 Jar?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89-ClassLoader"><span class="toc-number">1.4.8.</span> <span class="toc-text">自定义 ClassLoader</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%BC%95%E7%94%A8%E7%B1%BB%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="toc-number">1.4.9.</span> <span class="toc-text">添加引用类的几种方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.5.</span> <span class="toc-text">JVM 内存模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#JVM-%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84"><span class="toc-number">1.5.1.</span> <span class="toc-text">JVM 内存结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JVM-%E5%86%85%E5%AD%98%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">1.5.2.</span> <span class="toc-text">JVM 内存整体结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JVM-%E6%A0%88%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84"><span class="toc-number">1.5.3.</span> <span class="toc-text">JVM 栈内存结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JVM%E9%98%9F%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84"><span class="toc-number">1.5.4.</span> <span class="toc-text">JVM队内存结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CPU%E4%B8%8E%E5%86%85%E5%AD%98%E8%A1%8C%E4%B8%BA"><span class="toc-number">1.5.5.</span> <span class="toc-text">CPU与内存行为</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93%EF%BC%9A%E4%BB%80%E4%B9%88%E6%98%AF-JMM"><span class="toc-number">1.5.6.</span> <span class="toc-text">小结：什么是 JMM ?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JAVA-%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-number">1.6.</span> <span class="toc-text">JAVA 字节码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99-1"><span class="toc-number">1.6.1.</span> <span class="toc-text">参考资料</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%AD%97%E8%8A%82%E7%A0%81%EF%BC%9F"><span class="toc-number">1.6.2.</span> <span class="toc-text">什么是字节码？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-number">1.6.3.</span> <span class="toc-text">生成字节码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-number">1.6.4.</span> <span class="toc-text">最简单的字节码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E7%82%B9%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">1.6.5.</span> <span class="toc-text">复杂点的例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81%E7%9A%84%E8%BF%90%E8%A1%8C%E6%97%B6%E7%BB%93%E6%9E%84"><span class="toc-number">1.6.6.</span> <span class="toc-text">字节码的运行时结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E5%8A%A9%E8%AE%B0%E7%AC%A6%E5%88%B0%E4%BA%8C%E8%BF%9B%E5%88%B6"><span class="toc-number">1.6.7.</span> <span class="toc-text">从助记符到二进制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E5%88%99%E8%BF%90%E8%A1%8C%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">1.6.8.</span> <span class="toc-text">四则运行的例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E5%80%BC%E5%A4%84%E7%90%86%E4%B8%8E%E6%9C%AC%E5%9C%B0%E5%8F%98%E9%87%8F%E8%A1%A8"><span class="toc-number">1.6.9.</span> <span class="toc-text">数值处理与本地变量表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%97%E6%95%B0%E6%93%8D%E4%BD%9C%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="toc-number">1.6.10.</span> <span class="toc-text">算数操作与类型转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AA%E7%8E%AF%E6%8E%A7%E5%88%B6"><span class="toc-number">1.6.11.</span> <span class="toc-text">一个完整的循环控制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8%E7%9A%84%E6%8C%87%E4%BB%A4"><span class="toc-number">1.6.12.</span> <span class="toc-text">方法调用的指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E5%8A%A8%E6%80%81%E4%BE%8B%E5%AD%90"><span class="toc-number">1.6.13.</span> <span class="toc-text">一个动态例子</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM-%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0"><span class="toc-number">1.7.</span> <span class="toc-text">JVM 启动参数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E5%B1%9E%E6%80%A7"><span class="toc-number">1.7.1.</span> <span class="toc-text">系统属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.7.2.</span> <span class="toc-text">运行模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E5%86%85%E5%AD%98"><span class="toc-number">1.7.3.</span> <span class="toc-text">堆内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GC%E7%9B%B8%E5%85%B3"><span class="toc-number">1.7.4.</span> <span class="toc-text">GC相关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E8%AF%8A%E6%96%AD"><span class="toc-number">1.7.5.</span> <span class="toc-text">分析诊断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JavaAgents"><span class="toc-number">1.7.6.</span> <span class="toc-text">JavaAgents</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/02/27/%E8%B4%AB%E8%A1%80%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B/" title="贫血模型和充血模型"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="贫血模型和充血模型"/></a><div class="content"><a class="title" href="/2021/02/27/%E8%B4%AB%E8%A1%80%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B/" title="贫血模型和充血模型">贫血模型和充血模型</a><time datetime="2021-02-27T11:06:59.000Z" title="发表于 2021-02-27 11:06:59">2021-02-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/" title="分布式缓存-Memcached的原理及架构剖析"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分布式缓存-Memcached的原理及架构剖析"/></a><div class="content"><a class="title" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/" title="分布式缓存-Memcached的原理及架构剖析">分布式缓存-Memcached的原理及架构剖析</a><time datetime="2021-02-07T19:51:59.000Z" title="发表于 2021-02-07 19:51:59">2021-02-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E8%BF%9B%E9%98%B6/" title="分布式缓存-Memcached进阶"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分布式缓存-Memcached进阶"/></a><div class="content"><a class="title" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E8%BF%9B%E9%98%B6/" title="分布式缓存-Memcached进阶">分布式缓存-Memcached进阶</a><time datetime="2021-02-07T17:26:59.000Z" title="发表于 2021-02-07 17:26:59">2021-02-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/07/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E7%BC%93%E5%AD%98%E8%AE%BF%E9%97%AE%E7%9B%B8%E5%85%B3%E7%9A%84%E7%BB%8F%E5%85%B8%E9%97%AE%E9%A2%98/" title="缓存访问相关的经典问题"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="缓存访问相关的经典问题"/></a><div class="content"><a class="title" href="/2021/02/07/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E7%BC%93%E5%AD%98%E8%AE%BF%E9%97%AE%E7%9B%B8%E5%85%B3%E7%9A%84%E7%BB%8F%E5%85%B8%E9%97%AE%E9%A2%98/" title="缓存访问相关的经典问题">缓存访问相关的经典问题</a><time datetime="2021-02-06T17:00:59.000Z" title="发表于 2021-02-06 17:00:59">2021-02-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/01/31/SpringDataElasticSearch/" title="Spring Data ElasticSearch"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Data ElasticSearch"/></a><div class="content"><a class="title" href="/2021/01/31/SpringDataElasticSearch/" title="Spring Data ElasticSearch">Spring Data ElasticSearch</a><time datetime="2021-01-31T15:42:59.000Z" title="发表于 2021-01-31 15:42:59">2021-01-31</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

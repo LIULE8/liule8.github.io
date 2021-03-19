@@ -1,0 +1,271 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>分布式缓存-Memcached进阶 | Leo's notes</title><meta name="keywords" content="缓存"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Memcached进阶Memcached 是怎么定位key的key 定位哈希表 Mc 将数据存储在 Item 中，然后这些 Item 会被 slabclass 的 4 个 LRU 管理。这些 LRU 都是通过双向链表实现数据记录的。双向链表在进行增加、删除、修改位置时都非常高效，但其获取定位 key 的性能非常低下，只能通过链表遍历来实现。因此，Mc 还通过 Hashtable，也就是哈希表，来记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式缓存-Memcached进阶">
+<meta property="og:url" content="https://liule8.github.io/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E8%BF%9B%E9%98%B6/index.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="Memcached进阶Memcached 是怎么定位key的key 定位哈希表 Mc 将数据存储在 Item 中，然后这些 Item 会被 slabclass 的 4 个 LRU 管理。这些 LRU 都是通过双向链表实现数据记录的。双向链表在进行增加、删除、修改位置时都非常高效，但其获取定位 key 的性能非常低下，只能通过链表遍历来实现。因此，Mc 还通过 Hashtable，也就是哈希表，来记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-02-07T17:26:59.000Z">
+<meta property="article:modified_time" content="2021-02-20T14:03:26.839Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="缓存">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E8%BF%9B%E9%98%B6/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-02-20 14:03:26'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">73</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">63</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">35</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">分布式缓存-Memcached进阶</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-02-07T17:26:59.000Z" title="发表于 2021-02-07 17:26:59">2021-02-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-02-20T14:03:26.839Z" title="更新于 2021-02-20 14:03:26">2021-02-20</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%BC%93%E5%AD%98/">缓存</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="分布式缓存-Memcached进阶"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Memcached进阶"><a href="#Memcached进阶" class="headerlink" title="Memcached进阶"></a>Memcached进阶</h1><h2 id="Memcached-是怎么定位key的"><a href="#Memcached-是怎么定位key的" class="headerlink" title="Memcached 是怎么定位key的"></a>Memcached 是怎么定位key的</h2><h3 id="key-定位"><a href="#key-定位" class="headerlink" title="key 定位"></a>key 定位</h3><p><strong>哈希表</strong></p>
+<p>Mc 将数据存储在 Item 中，然后这些 Item 会被 slabclass 的 4 个 LRU 管理。这些 LRU 都是通过双向链表实现数据记录的。双向链表在进行增加、删除、修改位置时都非常高效，但其获取定位 key 的性能非常低下，只能通过链表遍历来实现。因此，Mc 还通过 Hashtable，也就是哈希表，来记录管理这些 Item，通过对 key 进行哈希计算，从而快速定位和读取这些 key/value 所在的 Item，如下图所示。</p>
+<p><img src="http://image.leonote.cn//20210220163845.jpg" alt=""></p>
+<p>哈希表也称散列表，可以通过把 key 映射到哈希表中的一个位置来快速访问记录，定位 key 的时间复杂度只有 O(1)。Mc 的哈希表实际是一个一维指针数组，数组的每个位置称作一个 bucket，即一个桶。性能考虑的需要，Mc 的哈希表的长度设置为 2 的 N 次方。Mc 启动时，默认会构建一个拥有 6.4万 个桶的哈希表，随着新 key 的不断插入，哈希表中的元素超过阀值后，会对哈希表进行扩容，最大可以构建 2 的 32 次方个桶的哈希表，也就是说 Mc 哈希表经过多次扩容后，最多只能有不超过 43亿 个桶。</p>
+<p><strong>哈希表设计</strong></p>
+<p>对于哈希表设计，有 2 个关键点，一个是哈希算法，一个是哈希冲突解决方案。Mc 使用的哈希算法有 2 种，分别是 Murmur3 Hash 和 Jenkins Hash。Mc 当前版本，默认使用 Murmur3 Hash 算法。不同的 key 通过 Hash 计算，被定位到了相同的桶，这就是哈希冲突。Mc 是通过对每个桶启用一个单向链表，来解决哈希冲突问题的。</p>
+<p><strong>定位 key</strong></p>
+<p>Memcached 定位 key 时，首先根据 key 采用 Murmur3 或者 Jenkins 算法进行哈希计算，得到一个 32 位的无符号整型输出，存储到变量 hv 中。因为哈希表一般没有 2^32 那么大，所以需要将 key 的哈希值映射到哈希表的范围内。Mc 采用最简单的取模算法作为映射函数，即采用 hv%hashsize 进行计算。由于普通的取模运算比较耗时，所以 Mc 将哈希表的长度设置为 2 的 n 次方，采用位运算进行优化，即采用 hv&amp;hashmask 来计算。hashmask 即 2 的 n 次方 减 1。</p>
+<p>定位到 key 所在的桶的位置后，如果是插入一个新数据，则将数据 Item 采用头部插入法插入桶的单向链表中。如果是查找，则轮询对应哈希桶中的那个单向链表，依次比对 key 字符串，key 相同则找到数据 Item。</p>
+<p><img src="http://image.leonote.cn//20210220164215.jpg" alt=""></p>
+<p>如果哈希表桶中元素太多，这个链表轮询耗时会比较长，所以在哈希表中元素达到桶数的 1.5 倍之后，Mc 会对哈希表进行 2 倍扩容。由于哈希表最多只有 43 亿左右个桶，所以性能考虑，单个 Mc 节点最多存储 65亿 个 key/value。如果要存更多 key，则需要修改 Mc 源码，将最大哈希，即 HASHPOWER_MAX， 进行调大设置。</p>
+<p><strong>哈希表扩容</strong></p>
+<p>当 Mc 的哈希表中，Item 数量大于 1.5 倍的哈希桶数量后，Mc 就对哈希表进行扩容处理。如下图所示，Mc 的哈希扩容是通过哈希维护线程进行处理的。准备开始扩容时，哈希维护线程会首先将所有 IO 工作线程和辅助线程进行暂停，其中辅助线程包括 LRU 维护线程、slab 维护线程、LRU 爬虫线程。待这些线程暂停后，哈希维护线程会将当前的主哈希表设为旧哈希表，然后将新的主哈希表扩容之前的 2 倍容量。然后，工作线程及辅助线程继续工作，同时哈希维护线程开始逐步将 Item 元素从旧哈希表迁移到主哈希表。</p>
+<p><img src="http://image.leonote.cn//20210220171554.jpg" alt=""></p>
+<p>Mc 在启动时，会根据设置的工作线程数，来构建 一个 Item 锁哈希表，线程越多，构建的锁哈希表越大，对于 4 个线程，锁哈希表有 4096 个桶，对于 10 个线程，锁哈希表会有 8192 个桶，Item 锁哈希表最多有 32k 个桶，1k 是 1024，即最多即 32768 个桶。Mc 的锁哈希表中，每个桶对应一个 Item 锁，所以 Mc 最多只有 32768 个 Item 锁。</p>
+<p>Mc 哈希表在读取、变更以及扩容迁移过程中，先将 key hash 定位到 Item 锁哈希表的锁桶，然后对 Item 锁进行加锁，然后再进行实际操作。实际上，除了在哈希表，在其他任何时候，只要涉及到在对 Item 的操作，都会根据 Item 中的 key，进行 Item 哈希锁桶加锁，以避免 Item 被同时读写而产生脏数据。Mc 默认有 4096 个锁桶，所以对 key 加锁时，冲突的概率较小，而且 Mc 全部是内存操作，操作速度很快，即便申请时锁被占用，也会很快被释放。</p>
+<p>Mc 哈希表在扩容时，哈希表维护线程，每次按 桶链表纬度 迁移，即一次迁移一个桶里单向链表的所有 Item 元素。在扩容过程中，如果要查找或插入 key，会参照迁移位置选择哈希表。如果 key 对应的哈希桶在迁移位置之前，则到新的主哈希表进行查询或插入，否则到旧哈希表进行查询和插入。待全部扩容迁移完毕，所有的处理就会全部在新的主哈希表进行。</p>
+<h2 id="Memcached-如何淘汰冷key和失效key"><a href="#Memcached-如何淘汰冷key和失效key" class="headerlink" title="Memcached 如何淘汰冷key和失效key"></a>Memcached 如何淘汰冷key和失效key</h2><h3 id="淘汰策略"><a href="#淘汰策略" class="headerlink" title="淘汰策略"></a>淘汰策略</h3><p>Mc 作为缓存组件，意味着 Mc 中只能存储访问最频繁的热数据，一旦存入数据超过内存限制，就需要对 Mc 中的冷 key 进行淘汰工作。Mc 中的 key 基本都会有过期时间，在 key 过期后，出于性能考虑，Mc 并不会立即删除过期的 key，而是由维护线程逐步清理，同时，只有这个失效的 key 被访问时，才会进行删除，从而回收存储空间。所以 Mc 对 key 生命周期的管理，即 Mc 对 key 的淘汰，包括失效和删除回收两个纬度，知识结构如下图所示。</p>
+<p><img src="http://image.leonote.cn//20210220210918.jpg" alt=""></p>
+<p>key 的失效，包括 key 在 expire 时间之后的过期，以及用户在 flush_all 之后对所有 key 的过期 2 种方式。</p>
+<p>而 Mc 对 key/value 的删除回收，则有 3 种方式。</p>
+<ol>
+<li><p>第一种是获取时的惰性删除，即 key 在失效后，不立即删除淘汰，而在获取时，检测 key 的状态，如果失效，才进行真正的删除并回收存储空间。</p>
+</li>
+<li><p>第二种方式是在需要对 Item 进行内存分配申请时，如果内存已全部用完，且该 Item 对应的slabclass 没有空闲的 chunk 可用，申请失败，则会对 LRU 队尾进行同步扫描，回收过期失效的 key，如果没有失效的 key，则会强制删除一个 key。</p>
+</li>
+<li><p>第三种方式是 LRU 维护线程，不定期扫描 4 个 LRU 队列，对过期 key/value 进行异步淘汰。</p>
+</li>
+</ol>
+<p><strong>flush_all</strong></p>
+<p>Mc 中，key 失效除了常规的到达过期时间之外，还有一种用 flush_all 的方式进行全部过期。如果缓存数据写入异常，出现大量脏数据，而又没有简单的办法快速找出所有的脏数据，可以用 flush_all 立即让所有数据失效，通过 key 重新从 DB 加载的方式来保证数据的正确性。flush_all 可以让 Mc 节点的所有 key 立即失效，不过，在某些场景下，需要让多个 Mc 节点的数据在某个时间同时失效，这时就可以用 flush_all 的延迟失效指令了。该指令通过 flush_all 指令后面加一个 expiretime 参数，可以让多个 Mc 在某个时间同时失效所有的 key。</p>
+<p>flush_all 后面没有任何参数，等价于 flush_all 0，即立即失效所有的 key。当 Mc 收到 flush_all 指令后，如果是延迟失效，会将全局 setting 中的 oldest_live 设为指定 N 秒后的时间戳，即 N 秒后失效；如果是立即失效，则将全局 setting 中的 oldest_cas 设为当前最大的全局 cas 值。设置完这个全局变量值后，立即返回。因此，在 Mc 通过 flush_all 失效所有 key 时，实际不做任何 key 的删除操作，这些 key ，后续会通过用户请求同步删除，或 LRU 维护线程的异步删除，来完成真正的删除动作。</p>
+<p><strong>惰性删除</strong></p>
+<p>Mc 中，过期失效 key 的惰性主动删除，是指在 touch、get、gets 等指令处理时，首先需要查询 key，找到 key 所在的 Item，然后校验 key 是否过期，是否被 flush，如果过期或被 flush，则直接进行真正的删除回收操作。</p>
+<p>对于校验 key 过期很容易，直接判断过期时间即可。对于检查 key 是否被 flush，处理逻辑是首先检查 key 的最近访问时间是否小于全局设置中的 oldest_live，如果小于则说明 key 被 flush 了；否则，再检查 key 的 cas 唯一 id 值，如果小于全局设置中的 oldest_cas，说明也被 flush 了。</p>
+<p><strong>内存分配失败，LRU 同步淘汰</strong></p>
+<p>Mc 在插入或变更 key 时，首先会在适合的 slabclass 为新的 key/value 分配一个空闲的 Item 空间，如果分配失败，会同步对该 slabclass 的 COLD LRU 进行队尾元素淘汰，如果淘汰回收成功，则 slabclass 会多一个空闲的 Item，这个 Item 就可以被前面那个 key 来使用。如果 COLD LRU 队列没有 Item 数据，则淘汰失败，此时会对 HOT LRU 进行队尾轮询，如果 key 过期失效则进行淘汰回收，否则进行迁移。</p>
+<p><strong>LRU 维护线程，异步淘汰</strong></p>
+<p>在 key 进行读取、插入或变更时，同步进行 key 淘汰回收，并不是一种高效的办法，因为淘汰回收操作相比请求处理，也是一个重量级操作，会导致 Mc 性能大幅下降。因此 Mc 额外增加了一个 LRU 维护线程，对过期失效 key 进行回收，在不增加请求负担的情况下，尽快回收失效 key 锁占用的空间。</p>
+<p>前面讲到，Mc 有 64 个 slabclass，其中 1<del>63 号 slabclass 用于存取 Item 数据。实际上，为了管理过期失效数据，1</del>63 号 slabclass 还分别对应了 4 个 LRU，分布是 TEMP、HOT、WARM、COLD LRU。所以这就总共有 63*4 = 252 个 LRU。LRU 维护线程，会按策略间断 sleep，待 sleep 结束，就开始对 4 个 LRU 进行队尾清理工作。</p>
+<p>Mc 在新写入 key 时，如果 key 的过期时间小于 61s，就会直接插入到 TEMP LRU 中，如下图所示。TEMP LRU 没有长度限制，可以一直插入，同时因为过期时间短，TEMP LRU 不进行队列内部的搬运和队列间的迁移，确保处理性能最佳。LRU 维护线程在 sleep 完毕后，首先会对 TEMP LRU 队尾进行 500 次轮询，然后在每次轮询时，会进行 5 次小循环。小循环时，首先检查 key是否过期失效，如果失效则进行回收淘汰，然后继续小循环；如果遇到一个没失效的 key，则回收该 key 并退出 TEMP LRU 的清理工作。如果 TEMP LRU 队尾 key 全部失效，维护线程一次可以回收 500*5 共 2500 个失效的 key。</p>
+<p><img src="http://image.leonote.cn//20210220211300.jpg" alt=""></p>
+<p>如下图，MC 在新写入 key 时，如果 key 的过期时间超过 61s，就会直接插入到 HOT LRU。HOT LRU 会有内存限制，每个 HOT LRU 所占内存不得超过所在 slabclass 总实际使用内存的 20%。LRU 维护线程在执行日常维护工作时，首先对 TEMP LRU 进行清理，接下来就会对 HOT LRU 进行维护。HOT LRU 的维护，也是首先轮询 500 次，每次轮询进行 5 次小循环，小循环时，首先检查 key 是否过期失效，如果失效则进行回收淘汰，然后继续小循环。直到遇到没失效的 key。如果这个 key 的状态是 ACTIVE，则迁移到 WARM LRU。对于非 ACTIVE 状态的 key，如果 HOT LRU 内存占用超过限制，则迁移到 COLD LRU，否则进行纾困性清理掉该 key，注意这种纾困性清理操作一般不会发生，一旦发生时，虽然会清理掉该 key，但操作函数此时也认定本次操作回收和清理 keys 数仍然为 0。</p>
+<p><img src="http://image.leonote.cn//20210220211338.jpg" alt=""></p>
+<p>如下图，如果 HOT LRU 中回收和迁移的 keys 数为 0，LRU 维护线程会对 WARM LRU 进行轮询。WARM LRU 也有内存限制，每个 WARM LRU 所占内存不得超过所在 slabclass 总实际使用内存的 40%。WARM LRU 的维护，也是首先轮询 500 次，每次轮询进行 5 次小循环，小循环时，首先检查 key 是否过期失效，如果失效则进行回收淘汰，然后继续小循环。直到遇到没失效的 key。如果这个 key 的状态是 ACTIVE，则内部搬运到 LRU 队列头部。对于非 ACTIVE 状态的 key，如果 WARM LRU 内存占用超过限制，则迁移到 COLD LRU，否则进行纾困性清理掉该 key。注意这种纾困性清理操作一般不会发生，一旦发生时，虽然会清理掉该 key，但操作函数此时也认定本次操作回收和清理 keys 数仍然为 0。</p>
+<p><img src="http://image.leonote.cn//20210220211420.jpg" alt=""></p>
+<p>LRU 维护线程最后会对 COLD LRU 进行维护，如下图。与 TEMP LRU 相同，COLD LRU 也没有长度限制，可以持续存放数据。COLD LRU 的维护，也是首先轮询 500 次，每次轮询进行 5 次小循环，小循环时，首先检查 key 是否过期失效，如果失效则进行回收淘汰，然后继续小循环。直到遇到没失效的 key。如果这个 key 的状态是 ACTIVE，则会迁移到 WARM LRU 队列头部，否则不处理直接返回。</p>
+<p><img src="http://image.leonote.cn//20210220211501.jpg" alt=""></p>
+<p>LRU 维护线程处理时，TEMP LRU 是在独立循环中进行，其他三个 LRU 在另外一个循环中进行，如果 HOT、WARM、COLD LRU 清理或移动的 keys 数为 0，则那个 500 次的大循环就立即停止。</p>
+<h2 id="为何-Memcached-能长期维持高性能读写"><a href="#为何-Memcached-能长期维持高性能读写" class="headerlink" title="为何 Memcached 能长期维持高性能读写"></a>为何 Memcached 能长期维持高性能读写</h2><h3 id="内存管理-slab-机制"><a href="#内存管理-slab-机制" class="headerlink" title="内存管理 slab 机制"></a>内存管理 slab 机制</h3><p><strong>slabclass</strong></p>
+<p>Mc 的 slab 机制是通过 slabclass 来进行运作的，如下图所示。Mc 在启动时，会构建长度为 64 的 slabclass 数组，其中 0 号 slabclass 用于 slab 的重新分配，1~63 号 slabclass 存储数据 Item。存储数据的每个 slabclass，都会记录本 slabclass 的 chunk size，同时不同 slabclass 的 chunk size 会按递增因子增加，最后一个 slabclass（即 63 号 slabclass）的 chunk size 会直接设为最大的 chunk size，默认是 0.5MB。每个 slabclass 在没有空闲的 chunk 时，Mc 就会为其分配一个默认大小为 1MB 的 slab，同时按照本 slabclass 的 chunk size 进行拆分，这些分拆出来的 chunk 会按 Item 结构体进行初始化，然后记录到 slabclass 的 freelist 链表中。当有 key/value 要存储在本 slabclass 时，就从 freelist 分配一个 Item，供其使用。同时，如果 Item 过期了，或被 flush_all 失效了，或在内存不够时被强项剔除了，也会在适当时刻，重新被回收到 freelist，以供后续分配使用。</p>
+<p><img src="http://image.leonote.cn//20210220212913.jpg" alt=""></p>
+<p><strong>存储 slab 分配</strong></p>
+<p>如下图所示，Mc 的存储空间分配是以 slab 为单位的，每个 slab 的默认大小时 1MB。因此在存数据时，Mc 的内存最小分配单位是 1MB，分配了这个 1MB 的 slab 后，才会进一步按所在 slabclass 的chunk size 进行细分，分拆出的相同 size 的 chunk。这个 chunk 用来存放 Item 数据，Item 数据包括 Item 结构体字段，以及 key/value。</p>
+<p>一般来讲，Item 结构体及 key/value 不会填满 chunk，会存在少量字节的浪费，但这个浪费的字节很少，基本可以忽略。Mc 中，slab 一旦分配，就不会再被回收，但会根据运行状况，重新在不同 slabclass 之间进行分配。</p>
+<p><img src="http://image.leonote.cn//20210220213031.jpg" alt=""></p>
+<p>当一个 slabclass 没有空闲 chunk，而新数据插入时，就会对其尝试增加一个新的 slab。slabclass 增加新 slab 时，首先会从 0 号全局 slabclass 中复用一个之前分配的 slab，如果 0 号 slabclass 没有 slab，则会尝试从内存堆空间直接分配一个 slab。如果 0 号全局 slabclass 没有空闲 slab，而且 Mc 内存分配已经达到 Mc 设定的上限值，就说明此时没有可重新分配的 slab，分配新 slab 失败，直接返回。</p>
+<p>当然，虽然 slabclass 分配 slab 失败，但并不意味着 Item分配会失败，前面已经讲到，可以通过同步 LRU 淘汰，回收之前分配出去的 Item，供新的存储请求使用。</p>
+<p><strong>Item</strong></p>
+<p>Mc 中，slabclass 中的 chunk 会首先用 Item 结构体进行初始化，然后存到 freelist 链表中，待需要分配给数据存储时，再从 freelist 中取出，存入 key/value，以及各种辅助属性，然后再存到 LRU 链表及 Hashtable 中，如下图所示。Item 结构体，首先有两个 prev、next 指针，在分配给待存储数据之前，这两个指针用来串联 freelist 链表，在分配之后，则用来串联所在的 LRU 链表。接下来是一个 h_next 指针，用来在分配之后串联哈希表的桶单向链表。Item 结构体还存储了过期时间、所属 slabclass id，key 长度、cas 唯一 id 值等，最后在 Item 结构体尾部，存储了 key、flag、value 长度，以及 value block 数据。在 value 之后的 chunk 空间，就被浪费掉了。Item 在空闲期间，即初始分配时以及被回收后，都被 freelist 管理。在存储期间，被哈希表、LRU 管理。</p>
+<p><img src="http://image.leonote.cn//20210220213232.jpg" alt=""></p>
+<p><strong>存储 Item 分配</strong></p>
+<p>Mc 采用 slab 机制管理分配内存，采用 Item 结构存储 key/value，因此对存储 key/value 的内存分配，就转换为对 Item 的分配。分配 Item 空间时，会进行 10 次大循环，直到分配到 Item  空间才会提前返回。如果循环了 10 次，还没有分配到 Item 空间，则存储失败，返回一个 SERVER_ERROR 响应。</p>
+<p>在分配过程中，首先，如果 slabclass 的 freelist 有空间，则直接分配。否则，尝试分配一个新的 slab，新 slab 依次尝试从全局 slab 池（即 0 号 slabclass）中复用一个空闲 slab，如果全局 slab 池没有 slab，则尝试从内存直接分配。分配新 slab 成功后，会按照 slabclass 记录的 chunk size 对 slab 进行分拆，并将分拆出来的 chunk 按 Item 结构初始化后记录到 freelist。如果全局 slab 池为空，且 Mc 内存分配已经达到设定的上限，则走新增 slab 的路径失败，转而进行 5 次小循环，尝试从 COLD LRU 回收过期 key，如果没有过期则直接强制剔除队尾的一个正常 key。如果该 slabclass 的 COLD LRU 没有 Item，则对其 HOT LRU 进行处理，对 HOT 链表队尾 Item 进行回收或者迁移，以方便在下次循环中找到一个可用的 Item 空间。</p>
+<p><strong>数据存储机理</strong></p>
+<p>如下图所示，当需要存储 key/value 数据时，首先根据 key/value size，以及 Item 结构体的 size，计算出存储这个 key/value 需要的字节数，然后根据这个字节数选择一个能存储的 chunk size 最小的 slabclass。再从这个 slabclass 的 freelist 分配一个空闲的 chunk 给这个 key/value 使用。如果 freelist 为空，首先尝试为该 slabclass 新分配一个 slab，如果 slab 分配成功，则将 slab 按 size 分拆出一些 chunk，通过 Item 结构初始化后填充到 freelist。如果 slab 分配失败，则通过 LRU 淘汰失效的 Item 或强行剔除一个正常的 Item，然后这些 Item 也会填充到 freelist。当 freelist 有 Item 时，即可分配给 key/value。这个过程会重试 10 次，直到分配到 Item 位置。一般情况下，Item 分配总会成功，极小概率情况下也会分配失败，如果分配失败，则会回复一个 SERVER_ERROR 响应，通知 client 存储失败。分配到一个空闲的 Item 后，就会往这个 Item 空间写入过期时间、flag、slabclass id、key，以及 value 等。对于 set 指令，如果这个 key 还有一个旧值，在存入新 value 之前，还会先将这个旧值删除掉。</p>
+<p><img src="http://image.leonote.cn//20210220214440.jpg" alt=""></p>
+<p>当对 key/value 分配 Item 成功，并写入数据后，接下来就会将这个 Item 存入哈希表。因为Mc 哈希表存在迁移的情况，所以对于正常场景，直接存入主哈希表。在哈希表迁移期间，需要根据迁移位置，选择存入主哈希表还是旧哈希表。存入哈希表之后，这个 key 就可以快速定位了。然后这个 Item 还会被存入 LRU，Mc 会根据这个 key 的过期时间进行判断，如果过期时间小于 61s，则存入 TEMP LRU，否则存入 HOT LRU。</p>
+<p>至此，这个 key/value 就被正确地存入 Mc 了，数据内容写入 slabclass 中某个 slab 的 chunk 位置，该 chunk 用 Item 结构填充，这个 Item 会被同时记录到 Hashtable 和 LRU，如下图所示。通过 Hashtable 可以快速定位查到这个 key，而 LRU 则用于 Item 生命周期的日常维护。</p>
+<p><img src="http://image.leonote.cn//20210220215002.jpg" alt=""></p>
+<p>Mc 对 Item 生命周期的日常维护，包括异步维护和同步维护。异步维护是通过 LRU 维护线程来进行的，整个过程不影响 client 的正常请求，在 LRU 维护线程内，对过期、失效 key 进行回收，并对 4 个 LRU 进行链表内搬运和链表间迁移。这是 Item 生命周期管理的主要形式。同步维护，由工作线程在处理请求命令时进行。工作线程在处理 delete 指令时，会直接将 key/value 进行删除。在存储新 key/value 时，如果分配失败，会进行失效的 key 回收，或者强行剔除正常的 Item。这些 Item 被回收后，会进入到 slabclass 的 freelist 进行重复使用。</p>
+<h2 id="协议分析"><a href="#协议分析" class="headerlink" title="协议分析"></a>协议分析</h2><p><strong>异常错误响应</strong></p>
+<p>Mc 在处理所有 client 端指令时，如果遇到错误，就会返回 3 种错误信息中的一种。</p>
+<ul>
+<li><p>第一种错误是协议错误，一个”ERROR\r\n”的字符串。表明 client 发送了一个非法命令。</p>
+</li>
+<li><p>第二种错误是 client 错误，格式为”CLIENT_ERROR &lt;error-描述信息&gt;\r\n”。这个错误信息表明 ，client 发送的协议命令格式有误，比如少了字段、多了非法字段等。</p>
+</li>
+<li><p>第三种错误是”SERVER_ERROR &lt;error-描述信息&gt;\r\n”。这个错误信息表明 Mc server 端，在处理命令时出现的错误。比如在给 key/value 分配 Item 空间失败后，会返回”SERVER_ERROR out of memory storing object” 错误信息。</p>
+</li>
+</ul>
+<p><strong>存储协议命令</strong></p>
+<p>Mc 的存储协议命令不多，只有 6 个。</p>
+<p>Mc 存储指令分 2 行。第一行是报文首部，第二行是 value 的 data block 块。这两部分用 \r\n 来进行分割和收尾。</p>
+<p>存储类指令的报文首行分 2 种格式，其中一种是在 cmd 存储指令，后面跟 key、flags、expiretime、value 字节数，以及一个可选的 noreply。</p>
+<p>其中 flags 是用户自己设计的一个特殊含义数字，Mc 对 flag 只存储，而不进行任何额外解析处理，expiretime 是 key 的过期时间，value 字节数是 value block 块的字节长度，而带上 noreply 是指 Mc 处理完后静默处理，不返回任何响应给 client。</p>
+<p>这种 cmd 指令包括我们最常用的 set 指令，另外还包括 add、replace、append、reppend ，总共 5 个指令：</p>
+<ul>
+<li><p>Set 命令用于存储一个 key/value；</p>
+</li>
+<li><p>Add 命令是在当 key 不存在时，才存储这个 key/value；</p>
+</li>
+<li><p>Replace 命令，是当 key 存在时，才存储这个 key/value；</p>
+</li>
+<li><p>Append 命令，是当 key 存在时，追加 data 到 value 的尾部；</p>
+</li>
+<li><p>Prepend 命令，是当 key 存在时，将 data 加到 value 的头部。</p>
+</li>
+</ul>
+<p>另外一种存储协议指令，主要格式和字段与前一种基本相同，只是多了一个 cas unique id，这种格式只有 cas 指令使用。cas 指令是指只有当这个 key 存在，且从本 client 获取以来，没有其他任何人修改过时，才进行修改。cas 的英文含义是 compare and set，即比较成功后设置的意思。</p>
+<p><strong>存储命令响应</strong></p>
+<p>Mc 在响应存储协议时，如果遇到错误，就返回前面说的3种错误信息中的一种。否则就会返回如下 4 种正常的响应，”STORED\r\n”、”EXISTS\r\n”、”NOT_STORED\r\n”、”NOT_FOUND\r\n“。</p>
+<p>其中，stored 表明存储修改成功。NOT_STORED 表明数据没有存储成功，但并不是遇到错误或异常。这个响应一般表明 add 或 replace 等指令，前置条件不满足时，比如 add，这个 key 已经存在 Mc，就会 add 新 key 失败。replace 时， key 不存在，也无法 replace 成功。EXISTS 表明待 cas 的key 已经被修改过了，而 NOT_FOUND 是指待 cas 的 key 在 Mc 中不存在。</p>
+<p>Mc 对存储命令的请求及响应协议，可以参考下面的思维导图来有一个完整的印象。</p>
+<p><img src="http://image.leonote.cn//20210220215930.jpg" alt=""></p>
+<p><strong>获取命令</strong></p>
+<p>Mc 的获取协议，只有 get、gets 两种指令，如下图所示。格式为 get/gets 后，跟随若干个 key，然后 \r\n 结束请求命令。get 指令只获取 key 的 flag 及 value，gets 会额外多获取一个 cas unique id值。gets 主要是为 cas 指令服务的。</p>
+<p>获取命令的响应，就是 value 字串，后面跟上 key、flag、value 字节数，以及 value 的 data block 块。最后跟一个 END\r\n 表明所有存在的 key/value 已经返回，如果没有返回的 key，则表明这个 key 在 Mc 中不存在。</p>
+<p><img src="http://image.leonote.cn//20210220220006.jpg" alt=""></p>
+<p><strong>其他指令</strong></p>
+<p>Mc 的其他协议指令包括 delete、incr、decr、touch、gat、gats、slabs、lru、stats 这 9 种指令。</p>
+<p>其中 delete 用于删除一个 key。</p>
+<p>incr/decr 用于对一个无符号长整型数字进行加或减。</p>
+<p>touch、gat、gats 是 Mc 后来增加的指令，都可以用来修改 key 的过期时间。不同点是 touch 只修改 key 的过期时间，不获取 key对应的value。</p>
+<p>而 gat、gats 指令，不仅会修改 key 的过期时间，还会获取 key 对应的 flag 和 value 数据。gats 同 gets，还会额外获取 cas 唯一 id 值。</p>
+<p>Slabs reassign 用于在 Mc 内存达到设定上限后，将 slab 重新在不同的 slabclass 之间分配。这样可以规避 Mc 启动后自动分配而产生随机性，使特殊 size 的数据也得到较好的命中率。Slabs automove 是一个开关指令，当打开时，就允许 Mc 后台线程自行决定何时将 slab 在slabclass 之间重新分配。</p>
+<p>lru 指令用于 Mc LRU 的设置和调优。比如 LRU tune 用于设置 HOT、WARM LRU 的内存占比。LRU mode 用来设置 Mc 只使用 COLD LRU，还是使用新版的 4 个 LRU 的新策略。LRU TEMP_TTL 用来设置 Mc 的 TEMP LRU 的TTL值，默认是 61s，小于这个 TMEP_TTL 的 key会被插入到 TEMP LRU。</p>
+<p>Stats 用于获取 Mc 的各种统计数据。Stats 后面可以跟 statistics、slabs、size 等参数，来进一步获取更多不同的详细统计。</p>
+<p><strong>Client 使用</strong></p>
+<p>Mc 在互联网企业应用广泛，热门语言基本都有 Mc client 的实现。以 Java 语言为例，互联网业界广泛使用的有 Memcached-Java-Client、SpyMemcached、Xmemcached 等。</p>
+<p>Memcached-Java-Client 推出时间早，10 年前就被广泛使用，这个 client 性能一般，但足够稳定，很多互联网企业至今仍在使用。不过这个 client 几年前就停止了更新。</p>
+<p>SpyMemcached 出现的比较晚，性能较好，但高并发访问场景，稳定性欠缺。近几年变更很少，基本停止了更新。</p>
+<p>Xmemcached 性能较好，综合表现最佳。而且社区活跃度高，近些年也一直在持续更新中。Java 新项目启动，推荐使用 Xmemcached。 </p>
+<p>在使用 Mc client 时，有一些通用性的调优及改进方案。比如，如果读写的 key/value 较大，需要设置更大的缓冲 buf，以提高性能。在一些业务场景中，需要启用 TCP_NODELAY，避免 40ms 的延迟问题。同时，如果存取的 key/value size 较大，可以设置一个压缩阀值，超过阀值，就对value 进行压缩算法，减少读写及存储的空间。</p>
+<p>为了避免缓存雪崩，并更好地应对极热 key 及洪水流量的问题，还可以对 Mc client 进行封装，加入多副本、多层级策略，使 Mc 缓存系统在任何场景下，都可做到高可用、高性能。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>知识点结构图如下所示。</p>
+<p><img src="http://image.leonote.cn//20210220220242.jpg" alt=""></p>
+<p>Mc 协议的思维导图</p>
+<p><img src="http://image.leonote.cn//20210220220319.jpg" alt=""></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E8%BF%9B%E9%98%B6/">https://liule8.github.io/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E8%BF%9B%E9%98%B6/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%BC%93%E5%AD%98/">缓存</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">分布式缓存-Memcached的原理及架构剖析</div></div></a></div><div class="next-post pull-right"><a href="/2021/02/07/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E7%BC%93%E5%AD%98%E8%AE%BF%E9%97%AE%E7%9B%B8%E5%85%B3%E7%9A%84%E7%BB%8F%E5%85%B8%E9%97%AE%E9%A2%98/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">缓存访问相关的经典问题</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/11/23/分布式缓存-7大缓存经典问题/" title="7大缓存经典问题"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-23</div><div class="title">7大缓存经典问题</div></div></a></div><div><a href="/2021/02/08/分布式缓存-Memcached的原理及架构剖析/" title="分布式缓存-Memcached的原理及架构剖析"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-07</div><div class="title">分布式缓存-Memcached的原理及架构剖析</div></div></a></div><div><a href="/2020/10/14/分布式缓存-缓存的原理、引入与设计/" title="缓存的原理、引入与设计"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-13</div><div class="title">缓存的原理、引入与设计</div></div></a></div><div><a href="/2021/02/07/分布式缓存-缓存访问相关的经典问题/" title="缓存访问相关的经典问题"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-06</div><div class="title">缓存访问相关的经典问题</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">73</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">63</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">35</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Memcached%E8%BF%9B%E9%98%B6"><span class="toc-number">1.</span> <span class="toc-text">Memcached进阶</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Memcached-%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9A%E4%BD%8Dkey%E7%9A%84"><span class="toc-number">1.1.</span> <span class="toc-text">Memcached 是怎么定位key的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#key-%E5%AE%9A%E4%BD%8D"><span class="toc-number">1.1.1.</span> <span class="toc-text">key 定位</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Memcached-%E5%A6%82%E4%BD%95%E6%B7%98%E6%B1%B0%E5%86%B7key%E5%92%8C%E5%A4%B1%E6%95%88key"><span class="toc-number">1.2.</span> <span class="toc-text">Memcached 如何淘汰冷key和失效key</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="toc-number">1.2.1.</span> <span class="toc-text">淘汰策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BD%95-Memcached-%E8%83%BD%E9%95%BF%E6%9C%9F%E7%BB%B4%E6%8C%81%E9%AB%98%E6%80%A7%E8%83%BD%E8%AF%BB%E5%86%99"><span class="toc-number">1.3.</span> <span class="toc-text">为何 Memcached 能长期维持高性能读写</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-slab-%E6%9C%BA%E5%88%B6"><span class="toc-number">1.3.1.</span> <span class="toc-text">内存管理 slab 机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">协议分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/02/27/%E8%B4%AB%E8%A1%80%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B/" title="贫血模型和充血模型"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="贫血模型和充血模型"/></a><div class="content"><a class="title" href="/2021/02/27/%E8%B4%AB%E8%A1%80%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B/" title="贫血模型和充血模型">贫血模型和充血模型</a><time datetime="2021-02-27T11:06:59.000Z" title="发表于 2021-02-27 11:06:59">2021-02-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/" title="分布式缓存-Memcached的原理及架构剖析"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分布式缓存-Memcached的原理及架构剖析"/></a><div class="content"><a class="title" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/" title="分布式缓存-Memcached的原理及架构剖析">分布式缓存-Memcached的原理及架构剖析</a><time datetime="2021-02-07T19:51:59.000Z" title="发表于 2021-02-07 19:51:59">2021-02-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E8%BF%9B%E9%98%B6/" title="分布式缓存-Memcached进阶"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分布式缓存-Memcached进阶"/></a><div class="content"><a class="title" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E8%BF%9B%E9%98%B6/" title="分布式缓存-Memcached进阶">分布式缓存-Memcached进阶</a><time datetime="2021-02-07T17:26:59.000Z" title="发表于 2021-02-07 17:26:59">2021-02-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/07/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E7%BC%93%E5%AD%98%E8%AE%BF%E9%97%AE%E7%9B%B8%E5%85%B3%E7%9A%84%E7%BB%8F%E5%85%B8%E9%97%AE%E9%A2%98/" title="缓存访问相关的经典问题"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="缓存访问相关的经典问题"/></a><div class="content"><a class="title" href="/2021/02/07/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E7%BC%93%E5%AD%98%E8%AE%BF%E9%97%AE%E7%9B%B8%E5%85%B3%E7%9A%84%E7%BB%8F%E5%85%B8%E9%97%AE%E9%A2%98/" title="缓存访问相关的经典问题">缓存访问相关的经典问题</a><time datetime="2021-02-06T17:00:59.000Z" title="发表于 2021-02-06 17:00:59">2021-02-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/01/31/SpringDataElasticSearch/" title="Spring Data ElasticSearch"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Data ElasticSearch"/></a><div class="content"><a class="title" href="/2021/01/31/SpringDataElasticSearch/" title="Spring Data ElasticSearch">Spring Data ElasticSearch</a><time datetime="2021-01-31T15:42:59.000Z" title="发表于 2021-01-31 15:42:59">2021-01-31</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

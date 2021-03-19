@@ -1,355 +1,232 @@
-<!DOCTYPE html>
-
-
-
-
-
-<html class="theme-next mist use-motion" lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-<meta name="generator" content="Hexo 3.9.0">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
-  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
-
-<link rel="stylesheet" href="/css/main.css?v=7.3.0">
-
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Satisfy:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
-      
-    
-      
-    
-  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
-
-
-<script id="hexo-configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Mist',
-    version: '7.3.0',
-    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
-    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
-    save_scroll: false,
-    copycode: {"enable":false,"show_result":false,"style":null},
-    fancybox: false,
-    mediumzoom: false,
-    lazyload: false,
-    pangu: false,
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    },
-    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},
-    path: 'search.xml',
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    translation: {
-      copy_button: '复制',
-      copy_success: '复制成功',
-      copy_failure: '复制失败'
-    }
-  };
-</script>
-
-  <meta property="og:type" content="website">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Leo's notes</title><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website">
 <meta property="og:title" content="Leo&#39;s notes">
 <meta property="og:url" content="https://liule8.github.io/page/5/index.html">
 <meta property="og:site_name" content="Leo&#39;s notes">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://liule8.github.io/images/avatar.png">
+<meta property="article:author" content="Leo Liu">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Leo&#39;s notes">
-  <link rel="alternate" href="/atom.xml" title="Leo's notes" type="application/atom+xml">
-  <link rel="canonical" href="https://liule8.github.io/page/5/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome: true,
-    isPost: false,
-    isPage: false,
-    isArchive: false
-  };
-</script>
-
-  <title>Leo's notes</title>
-  
-
-
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .motion-element,
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-title { opacity: initial; }
-
-  .use-motion .logo,
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
+<meta name="twitter:image" content="https://liule8.github.io/images/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/page/5/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: false,
+  isHome: true,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2021-03-19 13:12:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
   }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
 
-</head>
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
 
-  <div class="container sidebar-position-left">
-    <div class="headband"></div>
-
-    <a href="https://github.com/LIULE8" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta">
-
-    <div class="custom-logo-site-title">
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Leo's notes</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
-  </div>
-
-  <div class="site-nav-toggle">
-    <button aria-label="切换导航栏">
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
-  </div>
-</div>
-
-
-<nav class="site-nav">
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
   
-  <ul id="menu" class="menu">
-      
-      
-      
-        
-        <li class="menu-item menu-item-home">
-      
-    
-
-    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
-
-  </li>
-      
-      
-      
-        
-        <li class="menu-item menu-item-tags">
-      
-    
-
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
-
-  </li>
-      
-      
-      
-        
-        <li class="menu-item menu-item-categories">
-      
-    
-
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
-
-  </li>
-      
-      
-      
-        
-        <li class="menu-item menu-item-archives">
-      
-    
-
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a href="javascript:;" class="popup-trigger">
-        
-          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
-      </li>
-    
-  </ul>
-
-    
-
-    <div class="site-search">
-      
-  <div class="popup search-popup local-search-popup">
-  <div class="local-search-header clearfix">
-    <span class="search-icon">
-      <i class="fa fa-search"></i>
-    </span>
-    <span class="popup-btn-close">
-      <i class="fa fa-times-circle"></i>
-    </span>
-    <div class="local-search-input-wrapper">
-      <input autocomplete="off"
-             placeholder="搜索..." spellcheck="false"
-             type="text" id="local-search-input">
-    </div>
-  </div>
-  <div id="local-search-result"></div>
-</div>
-
-
-    </div>
-</nav>
-</div>
-    </header>
-
-    
-
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content page-home">
-            
-  <section id="posts" class="posts-expand">
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
   
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/09/16/面向对象设计原则/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Leo Liu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leo's notes">
-    </span>
-      <header class="post-header">
-
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
         
-          <h1 class="post-title" itemprop="name headline">
-              
-              <a href="/2020/09/16/面向对象设计原则/" class="post-title-link" itemprop="url">面向对象设计原则</a>
-            
-          </h1>
-        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">73</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">63</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">35</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">Leo's notes</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/09/22/Oracle%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" title="Oracle的基础知识">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Oracle的基础知识"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/22/Oracle%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" title="Oracle的基础知识">Oracle的基础知识</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-21T16:59:59.000Z" title="发表于 2020-09-21 16:59:59">2020-09-21</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Oracle/">Oracle</a></span></div><div class="content">Oracle 的基础知识数据库设计
+ 数据库设计是画出数据库的ER图，通过ER图生成 sql 建库代码(DDL)
+ 生成的建库代码的约束都是追加的，方便到时删除
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+SQL类型
+DQL：数据查询语言，关键字 select， 功能：查询
+DML：数据操作语言，关键字 insert、delete、update，功能：操作数据
+DDL：数据定义语言，关键字 create、drop、alter，功能：操作数据库对象
+DCL：数据控制语言，关键字 grant、revoke，功能：用户授权撤权
+TCL：事务控制语言，关键字 commit、rollback、savepoint，功能：事务处理
 
-              
-                
-              
+查询12345select [distinct]&#123;* | &lt;字段名&gt; | 表名.*&#125; from &lt;表名&gt;-- 1. 给表一个别名select * from emp e;-- 2. 给返回字段一个别名select emp.ename as 员工名 from emp;
 
-              <time title="创建时间：2020-09-15 20:24:26" itemprop="dateCreated datePublished" datetime="2020-09-15T20:24:26Z">2020-09-15</time>
-            </span>
-          
-            
+条件查询where 关键字
+查询运算符对比运算符
 
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-10-13 12:28:47" itemprop="dateModified" datetime="2020-10-13T12:28:47Z">2020-10-13</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/架构/" itemprop="url" rel="index"><span itemprop="name">架构</span></a></span>
 
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/架构/面向对象设计原则/" itemprop="url" rel="index"><span itemprop="name">面向对象设计原则</span></a></span>
+运算符
+说明
 
-                
-                
-              
-            </span>
-          
 
-          
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">本文字数：</span>
-              
-              <span>5.2k</span>
-            </span>
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              
-              <span>5 分钟</span>
-            </span>
-          
 
-        </div>
-      </header>
+=
+等号；oracle 里面 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/09/22/SpringDataJpa%E7%9A%84DQM%E8%AF%AD%E6%B3%95/" title="Defining Query Methods语法">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Defining Query Methods语法"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/22/SpringDataJpa%E7%9A%84DQM%E8%AF%AD%E6%B3%95/" title="Defining Query Methods语法">Defining Query Methods语法</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-21T16:42:59.000Z" title="发表于 2020-09-21 16:42:59">2020-09-21</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Spring-Data/">Spring Data</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring-Data/Spring-Data-Jpa/">Spring Data Jpa</a></span></div><div class="content">Defining Query MethodsSpring Data JPA 的方法名定义查询方法 （ Defining Query Methods ）可以使语义更加清晰，提升开发效率。
+DQM 语法共有 2 种
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
+直接通过方法名实现
+@Query 手动在方法上定义
 
-      
-          
-            <p>
-              面向对象设计原则面向对象设计（OOD：Object Oriented Design）的六大设计原则
+定义查询方法的配置和使用方法若想要实现 CRUD 的操作，常规做法是写一大堆 SQL 语句。但在 JPA 里面，只需要继承 Spring Data Common 里面的任意 Repository 接口或者子接口，然后直接通过方法名就可以实现。具体使用步骤：
+User 实体的 UserRepository 继承 Spring Data Common 里面的 Repository 接口
+123public interface UserRepository extends CrudRepository&lt;User, Long&gt; &#123;     User findByEmailAddress(String emailAddress);&#125;
+
+对于 Service 层就可以直接使用 UserRepositor ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/09/21/PlantUML%E8%AF%AD%E6%B3%95/" title="PlantUML语法">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PlantUML语法"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/21/PlantUML%E8%AF%AD%E6%B3%95/" title="PlantUML语法">PlantUML语法</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-21T15:40:59.000Z" title="发表于 2020-09-21 15:40:59">2020-09-21</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/UML/">UML</a></span></div><div class="content">PlantUML语法安装官方站点
+
+需要 java 环境。
+需要安装 Graphviz 依赖
+下载 plantuml
+
+使用 IDEA 来创建和预览
+下载 IDEA 编辑器
+打开 Plugins 搜索 “plantuml”，选中 PlantUML integration，点击安装即可
+配置 PlantUML 
+
+
+脚本语法puml 是脚本语言，是按照换行来识别语法的。
+一般的表达语句为:
+
+节点  连接符号  节点
+
+关键字  节点或内容
+
+开始关键字
+  内容
+结束关键字
+123456789101112131415&gt; 注意**空格**等非字符作为节点内容的使用，有些多关键字语句中需要使用**双引号**来包含带空格的语句### 活动图 ( Activity Diagram )#### Simple Activity语法是 &#96;: 节点 ;&#96; 结束&#96;&#96;&#96;plantuml@startumltitle act_new_1:步骤一;:此处有个支持简单的 mark 语法 **加粗字体**;@enduml
+
+
+
+
+Start / Stop 开始和结束开始 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/09/19/UML/" title="统一建模语言(UML)">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="统一建模语言(UML)"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/19/UML/" title="统一建模语言(UML)">统一建模语言(UML)</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-19T02:04:24.136Z" title="发表于 2020-09-19 02:04:24">2020-09-19</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%9E%B6%E6%9E%84/">架构</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E6%9E%B6%E6%9E%84/UML/">UML</a></span></div><div class="content">统一建模语言(UML)什么是模型模型是一个系统的完整的抽象。人们对某个领域特定问题的求解及解决方案，对它们的理解和认识都蕴含在模型中。通常，开发一个计算机系统是为了解决某个领域特定问题，问题的求解过程，就是从领域问题到计算机系统的映射。
+
+为什么要建造模型
+建造传统模型的目的
+为了证明某件事物能否工作
+前提：建造模型的成本远远低于建造实物的成本
+造飞机
+造高楼
+
+
+
+
+建造软件模型的目的
+为了与他人沟通
+为了保存软件设计的最终成果
+前提：除非模型比代码更说明问题
+
+
+
+通用模型元素模型元素是UML构造系统的各种元素，是UML构建模型的基本单位。
+基元素是由UML定义的模型元素，如：类、结点、构件、注释、关联、依赖和泛化(继承)等
+关联关系分类：
+
+
+泛化(继承) - 类与类，接口与接口的关系
+实现 - 是一种类与接口的关系
+组合 - 是整体与部分，是“has-a”关系，但部分不能离开整体而单独存在
+公司和部门是整体和部分的关系，没有公司就不存在部门
+也是一种关联关系，比聚合更强关联
+
+
+聚合 - 是整体与部分，是“contains-a”关系，且部分可以离开整体而单独存在
+车和轮胎是整体 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/09/16/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/" title="面向对象设计原则">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面向对象设计原则"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/16/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/" title="面向对象设计原则">面向对象设计原则</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-15T20:24:26.000Z" title="发表于 2020-09-15 20:24:26">2020-09-15</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%9E%B6%E6%9E%84/">架构</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E6%9E%B6%E6%9E%84/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/">面向对象设计原则</a></span></div><div class="content">面向对象设计原则面向对象设计（OOD：Object Oriented Design）的六大设计原则
 
 
 
@@ -370,150 +247,30 @@ Open Close Principle
 
 
 LSP
+Liskov Substitution Principle
+里氏替换原则
 
-              ...
-            </p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2020/09/16/面向对象设计原则/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
 
-    
-    
-    
+ISP
+Interface Segregation Principle
+接口分离原则
 
-    
 
-    
+DIP
+Dependency Inversion Principle
+依赖倒置原则
 
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
 
-    
-      
+LoD
+Law of Demeter （ Least Knowledge Principle）
+迪米特法则（最少知道原则）
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/09/14/数据库索引/">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Leo Liu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leo's notes">
-    </span>
-      <header class="post-header">
+前五个设计原则就是通常所说的SOLID（上方表格缩写的首字母，从上到下）
 
-        
-          <h1 class="post-title" itemprop="name headline">
-              
-              <a href="/2020/09/14/数据库索引/" class="post-title-link" itemprop="url">数据库索引</a>
-            
-          </h1>
-        
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-09-14 13:58:26" itemprop="dateCreated datePublished" datetime="2020-09-14T13:58:26Z">2020-09-14</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-17 14:40:37" itemprop="dateModified" datetime="2020-09-17T14:40:37Z">2020-09-17</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/索引/" itemprop="url" rel="index"><span itemprop="name">索引</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/索引/数据库/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">本文字数：</span>
-              
-              <span>3.1k</span>
-            </span>
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              
-              <span>3 分钟</span>
-            </span>
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-            <p>
-              数据库索引什么是索引？索引的类型数据结构角度
+开闭原则 ( OCP )定义
+📌 Software entities (classes, modules, functions, etc.) should be open for extension, but closed for mo ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/09/14/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95/" title="数据库索引">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据库索引"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/14/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95/" title="数据库索引">数据库索引</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-14T13:58:26.000Z" title="发表于 2020-09-14 13:58:26">2020-09-14</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E7%B4%A2%E5%BC%95/">索引</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E7%B4%A2%E5%BC%95/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></span></div><div class="content">数据库索引什么是索引？索引的类型数据结构角度
 B-Tree 索引
 hash 索引
 Full-test 索引
@@ -522,435 +279,48 @@ R-Tree 索引
 物理存储角度cluster
 
 聚簇索引（聚集索引）：物理索引，与基表的物理顺序相同，数据值的顺序总是按照顺序排列
-CREATE CLUSTERED INDEX mycol
-              ...
-            </p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2020/09/14/数据库索引/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
+CREATE CLUSTERED INDEX mycolumn_cindex ON mytable(mycolumn) WITH
+ALLOW_DUP_ROW(允许有重复记录的聚簇索引)
 
-    
-    
-    
 
-    
+非聚簇索引（群集索引）：CREATE UNCLUSTERED INDEX mycolumn_cindex ON mytable(mycolumn)
 
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/09/10/StringJoiner/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Leo Liu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leo's notes">
-    </span>
-      <header class="post-header">
-
-        
-          <h1 class="post-title" itemprop="name headline">
-              
-              <a href="/2020/09/10/StringJoiner/" class="post-title-link" itemprop="url">String.join()</a>
-            
-          </h1>
-        
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-09-10 11:50:26" itemprop="dateCreated datePublished" datetime="2020-09-10T11:50:26Z">2020-09-10</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-22 11:44:38" itemprop="dateModified" datetime="2020-09-22T11:44:38Z">2020-09-22</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/JDK/" itemprop="url" rel="index"><span itemprop="name">JDK</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/JDK/JDK8/" itemprop="url" rel="index"><span itemprop="name">JDK8</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">本文字数：</span>
-              
-              <span>429</span>
-            </span>
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              
-              <span>1 分钟</span>
-            </span>
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-            <p>
-              String.join()
+逻辑角度
+唯一索引 CREATE UNIQUE INDEX myclumn_uindex ON mytable(mycolumn)
+主键索引（主索引）primary key
+(复)组合索引（多列索引）：CREATE INDEX mycolumn_index ON mytable (mycolumn1, mycolumn2)
+普通索引（单列索引）：CREATE INDEX mycolumn_index ON myt ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/09/10/StringJoiner/" title="String.join()">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="String.join()"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/10/StringJoiner/" title="String.join()">String.join()</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-10T11:50:26.000Z" title="发表于 2020-09-10 11:50:26">2020-09-10</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/JDK/">JDK</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/JDK/JDK8/">JDK8</a></span></div><div class="content">String.join()
 JDK8 重载了join方法
 
 
 SpringJoiner构造函数详细信息public StringJoiner (CharSequence  delimiter, CharSequence  prefix，CharSequence  suffix )
 参数：
 
-deli
-              ...
-            </p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2020/09/10/StringJoiner/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
+delimiter - 添加到的每个元素之间要使用的字符序列
 
-    
-    
-    
+prefix - 开头使用的字符序列
 
-    
+suffix - 最后使用的字符序列
+如果 prefix，delimiter 或 suffix  是 null,  则抛出空指针异常。
 
-    
 
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/09/08/Spring Transaction/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Leo Liu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leo's notes">
-    </span>
-      <header class="post-header">
-
-        
-          <h1 class="post-title" itemprop="name headline">
-              
-              <a href="/2020/09/08/Spring Transaction/" class="post-title-link" itemprop="url">Spring Transaction</a>
-            
-          </h1>
-        
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-09-08 10:28:59" itemprop="dateCreated datePublished" datetime="2020-09-08T10:28:59Z">2020-09-08</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-09 10:42:38" itemprop="dateModified" datetime="2020-09-09T10:42:38Z">2020-09-09</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Transaction/" itemprop="url" rel="index"><span itemprop="name">Transaction</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">本文字数：</span>
-              
-              <span>499</span>
-            </span>
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              
-              <span>1 分钟</span>
-            </span>
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-            <p>
-              只读事务设置
+举例：字符串&quot;[George:Sally:Fred]&quot;可以构造如下:
+123StringJoiner sj = new StringJoiner(&quot;:&quot;, &quot;[&quot;, &quot;]&quot;);sj.add(&quot;George&quot;).add(&quot;Sally&quot;).add(&quot;Fred&quot;);String desiredString = sj.toStri ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/09/08/Spring%20Transaction/" title="Spring Transaction">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Transaction"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/08/Spring%20Transaction/" title="Spring Transaction">Spring Transaction</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-08T10:28:59.000Z" title="发表于 2020-09-08 10:28:59">2020-09-08</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Transaction/">Transaction</a></span></div><div class="content">只读事务设置
 JDBC 指定只读事务的设置：connection.setReadOnly(true)
 
 Hibernate 只读事务的设置：session.setFlushMode(FlushMode.NEVER)
 
 Spring 只读事务设置：
-@Transactional(readOnly = 
-              ...
-            </p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2020/09/08/Spring Transaction/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
+@Transactional(readOnly = true)
+&lt;tx:method name=&quot;search*&quot; read-only=&quot;true&quot; /&gt; 
 
-    
-    
-    
 
-    
 
-    
+read-only 并不是所有数据库都支持的，不同的数据库下会有不同的结果（例如：对 Mysql 生效，对 Oracle 不生效）。
+设置了read-only 后，connection 都会被赋予 read-only（希望数据库驱动开启只读优化，不一定生效） ，不应该把 read-only作为打开只读事务的判断。
+在ORM框架中，设置了read-only会赋予一些额外的优化，例如在 Hibernate 中，会被禁止 flush 等。
 
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/09/08/JDK 内置注解/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Leo Liu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leo's notes">
-    </span>
-      <header class="post-header">
-
-        
-          <h1 class="post-title" itemprop="name headline">
-              
-              <a href="/2020/09/08/JDK 内置注解/" class="post-title-link" itemprop="url">JDK 内置注解</a>
-            
-          </h1>
-        
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-09-08 09:23:59" itemprop="dateCreated datePublished" datetime="2020-09-08T09:23:59Z">2020-09-08</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-09 10:42:38" itemprop="dateModified" datetime="2020-09-09T10:42:38Z">2020-09-09</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/注解/" itemprop="url" rel="index"><span itemprop="name">注解</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">本文字数：</span>
-              
-              <span>223</span>
-            </span>
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              
-              <span>1 分钟</span>
-            </span>
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-            <p>
-              @SuppressWarnings范围：类、字段、方法、参数、构造方法，以及局部变量上。
+Oracle 11.2 的文档中表明Oracle JDBC Driver 不支持 read-on ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/09/08/JDK%20%E5%86%85%E7%BD%AE%E6%B3%A8%E8%A7%A3/" title="JDK 内置注解">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JDK 内置注解"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/08/JDK%20%E5%86%85%E7%BD%AE%E6%B3%A8%E8%A7%A3/" title="JDK 内置注解">JDK 内置注解</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-08T09:23:59.000Z" title="发表于 2020-09-08 09:23:59">2020-09-08</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%B3%A8%E8%A7%A3/">注解</a></span></div><div class="content">@SuppressWarnings范围：类、字段、方法、参数、构造方法，以及局部变量上。
 作用：告诉编译器忽略指定的警告，不用在编译完成后出现警告信息。
 参数：
 
@@ -958,1271 +328,66 @@ deprecation：忽略过时
 rawtypes：忽略类型安全
 unused：忽略不使用
 unchecked：忽略安全检查
-null：
-              ...
-            </p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2020/09/08/JDK 内置注解/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
+null：忽略空指针
+all：忽略所有
 
-    
-    
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/09/06/CAS思想/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Leo Liu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leo's notes">
-    </span>
-      <header class="post-header">
-
-        
-          <h1 class="post-title" itemprop="name headline">
-              
-              <a href="/2020/09/06/CAS思想/" class="post-title-link" itemprop="url">CAS</a>
-            
-          </h1>
-        
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-09-06 12:47:26" itemprop="dateCreated datePublished" datetime="2020-09-06T12:47:26Z">2020-09-06</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-14 11:53:25" itemprop="dateModified" datetime="2020-09-14T11:53:25Z">2020-09-14</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/锁/" itemprop="url" rel="index"><span itemprop="name">锁</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/锁/乐观锁/" itemprop="url" rel="index"><span itemprop="name">乐观锁</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">本文字数：</span>
-              
-              <span>410</span>
-            </span>
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              
-              <span>1 分钟</span>
-            </span>
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-            <p>
-              CAS什么是CAS
+例子：@SuppressWarnings(&quot;unchecked&quot;, &quot;deprecation&quot;)
+</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/09/06/CAS%E6%80%9D%E6%83%B3/" title="CAS">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CAS"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/06/CAS%E6%80%9D%E6%83%B3/" title="CAS">CAS</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-06T12:47:26.000Z" title="发表于 2020-09-06 12:47:26">2020-09-06</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E9%94%81/">锁</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E9%94%81/%E4%B9%90%E8%A7%82%E9%94%81/">乐观锁</a></span></div><div class="content">CAS什么是CAS
 CAS 全称 compare and swap (比较并替换)，是用在线程并发算法里常见的一种思想
 CAS 是原子操作，保证并发安全，但不保证并发同步
 
 CAS原理CAS 就是将内存值更新为需要的值时，设置一个条件，内存值必须与期望值相同
 
-期望值 E、内存值M、更新值U，当E 
-              ...
-            </p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2020/09/06/CAS思想/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
+期望值 E、内存值M、更新值U，当E == M的时候将M更新为U
+
+CAS应用
+数据库常见的乐观锁实现方式，使用版本号version
+JAVA里的原子类
+
+CAS优缺点优点用来实现非阻塞的轻量级的乐观锁，通过CPU指令实现，在资源竞争不激烈的情况下性能高
+缺点
+ABA 问题：线程C、D，线程D将A修改为B后又修改为A，此时C线程以为A没有改变过
+JAVA的原子类AtomicStampedReference，通过控制变量值的版本来保证CAS的正确性（其他情况也可以通过增加版本号来解决ABA问题）
+
+自旋时间过长(一直不能更新)，消耗CPU资源， 如果资源竞争激烈，多线程自旋长时间消耗资源
+
+
+</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/4/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/#content-inner">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/#content-inner">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/#content-inner">8</a><a class="extend next" rel="next" href="/page/6/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">73</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">63</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">35</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/02/27/%E8%B4%AB%E8%A1%80%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B/" title="贫血模型和充血模型"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="贫血模型和充血模型"/></a><div class="content"><a class="title" href="/2021/02/27/%E8%B4%AB%E8%A1%80%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B/" title="贫血模型和充血模型">贫血模型和充血模型</a><time datetime="2021-02-27T11:06:59.000Z" title="发表于 2021-02-27 11:06:59">2021-02-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/" title="分布式缓存-Memcached的原理及架构剖析"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分布式缓存-Memcached的原理及架构剖析"/></a><div class="content"><a class="title" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/" title="分布式缓存-Memcached的原理及架构剖析">分布式缓存-Memcached的原理及架构剖析</a><time datetime="2021-02-07T19:51:59.000Z" title="发表于 2021-02-07 19:51:59">2021-02-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E8%BF%9B%E9%98%B6/" title="分布式缓存-Memcached进阶"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分布式缓存-Memcached进阶"/></a><div class="content"><a class="title" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E8%BF%9B%E9%98%B6/" title="分布式缓存-Memcached进阶">分布式缓存-Memcached进阶</a><time datetime="2021-02-07T17:26:59.000Z" title="发表于 2021-02-07 17:26:59">2021-02-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/07/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E7%BC%93%E5%AD%98%E8%AE%BF%E9%97%AE%E7%9B%B8%E5%85%B3%E7%9A%84%E7%BB%8F%E5%85%B8%E9%97%AE%E9%A2%98/" title="缓存访问相关的经典问题"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="缓存访问相关的经典问题"/></a><div class="content"><a class="title" href="/2021/02/07/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E7%BC%93%E5%AD%98%E8%AE%BF%E9%97%AE%E7%9B%B8%E5%85%B3%E7%9A%84%E7%BB%8F%E5%85%B8%E9%97%AE%E9%A2%98/" title="缓存访问相关的经典问题">缓存访问相关的经典问题</a><time datetime="2021-02-06T17:00:59.000Z" title="发表于 2021-02-06 17:00:59">2021-02-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/01/31/SpringDataElasticSearch/" title="Spring Data ElasticSearch"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Data ElasticSearch"/></a><div class="content"><a class="title" href="/2021/01/31/SpringDataElasticSearch/" title="Spring Data ElasticSearch">Spring Data ElasticSearch</a><time datetime="2021-01-31T15:42:59.000Z" title="发表于 2021-01-31 15:42:59">2021-01-31</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            <a class="card-more-btn" href="/categories/" title="查看更多">
+    <i class="fas fa-angle-right"></i></a>
             </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/09/06/JPA用法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Leo Liu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leo's notes">
-    </span>
-      <header class="post-header">
-
-        
-          <h1 class="post-title" itemprop="name headline">
-              
-              <a href="/2020/09/06/JPA用法/" class="post-title-link" itemprop="url">JPA用法</a>
-            
-          </h1>
-        
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-09-06 12:47:26" itemprop="dateCreated datePublished" datetime="2020-09-06T12:47:26Z">2020-09-06</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-08 12:16:00" itemprop="dateModified" datetime="2020-11-08T12:16:00Z">2020-11-08</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/JPA/" itemprop="url" rel="index"><span itemprop="name">JPA</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">本文字数：</span>
-              
-              <span>7.2k</span>
-            </span>
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              
-              <span>7 分钟</span>
-            </span>
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-            <p>
-              查询用法实体@Entity@Datapublic class Employee implements Serializable &#123;    @Id    @GeneratedValue(strategy = GenerationType.IDENTITY)    private Long i
-              ...
-            </p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2020/09/06/JPA用法/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/09/06/事务/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Leo Liu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leo's notes">
-    </span>
-      <header class="post-header">
-
-        
-          <h1 class="post-title" itemprop="name headline">
-              
-              <a href="/2020/09/06/事务/" class="post-title-link" itemprop="url">事务</a>
-            
-          </h1>
-        
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-09-06 12:47:26" itemprop="dateCreated datePublished" datetime="2020-09-06T12:47:26Z">2020-09-06</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-09 10:42:38" itemprop="dateModified" datetime="2020-09-09T10:42:38Z">2020-09-09</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/事务/" itemprop="url" rel="index"><span itemprop="name">事务</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">本文字数：</span>
-              
-              <span>3.8k</span>
-            </span>
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              
-              <span>3 分钟</span>
-            </span>
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-            <p>
-              事务什么是事务
-所谓的事务，它是一个操作序列，这些操作要么都执行，要么都不执行，是一个不可分割的工作单位。
-事务是数据库维护数据一致性的单位，在每个事务结束时，都能保持数据一致性。
-
-事务的四个特性Atomic 原子性不同对象之间对于原子性定义不同：
-
-事务性数据库(ACID语境下)：原子性是指一组
-              ...
-            </p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2020/09/06/事务/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/09/06/数据库锁/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Leo Liu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leo's notes">
-    </span>
-      <header class="post-header">
-
-        
-          <h1 class="post-title" itemprop="name headline">
-              
-              <a href="/2020/09/06/数据库锁/" class="post-title-link" itemprop="url">数据库锁</a>
-            
-          </h1>
-        
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-09-06 12:47:26" itemprop="dateCreated datePublished" datetime="2020-09-06T12:47:26Z">2020-09-06</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-14 11:53:25" itemprop="dateModified" datetime="2020-09-14T11:53:25Z">2020-09-14</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/锁/" itemprop="url" rel="index"><span itemprop="name">锁</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/锁/数据库/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">本文字数：</span>
-              
-              <span>1.8k</span>
-            </span>
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              
-              <span>2 分钟</span>
-            </span>
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-            <p>
-              数据库锁锁的分类按获取锁的方式：
-
-排他锁
-共享锁
-
-按系统并发：
-
-悲观锁
-乐观锁
-
-按保护对象：
-
-DML锁：
-TX行锁
-TM表锁
-
-
-DDL锁：
-DDL排他锁
-DDL共享锁
-DDL可分解解析锁
-
-
-系统锁：
-闩锁Latch
-互斥锁Mutexes
-内部锁：
-字典缓存锁
-文件和日志管理锁
-表空间和
-              ...
-            </p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2020/09/06/数据库锁/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2020/08/25/Vue Mixin/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Leo Liu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leo's notes">
-    </span>
-      <header class="post-header">
-
-        
-          <h1 class="post-title" itemprop="name headline">
-              
-              <a href="/2020/08/25/Vue Mixin/" class="post-title-link" itemprop="url">Vue Mixin</a>
-            
-          </h1>
-        
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-08-25 15:21:59" itemprop="dateCreated datePublished" datetime="2020-08-25T15:21:59Z">2020-08-25</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 02:16:56" itemprop="dateModified" datetime="2020-09-06T02:16:56Z">2020-09-06</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Vue/" itemprop="url" rel="index"><span itemprop="name">Vue</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">本文字数：</span>
-              
-              <span>2.2k</span>
-            </span>
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              
-              <span>2 分钟</span>
-            </span>
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-            <p>
-              参考连接
-局部 mixin当多个组件都需要用到相同得到方法或者data有相同的属性，就可以使用mixin进行封装
-需要封装的方法和属性 –&gt; mixin.js （名字根据业务定义）
-export default &#123;	name: 'Mixin',	 data() &#123;	   r
-              ...
-            </p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2020/08/25/Vue Mixin/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-  </section>
-
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
-
-
-          </div>
-          
-
-        </div>
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-inner">
-
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
-        <div class="site-overview">
-
-          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image"
-      src="/images/avatar.png"
-      alt="Leo Liu">
-  <p class="site-author-name" itemprop="name">Leo Liu</p>
-  <div class="site-description motion-element" itemprop="description"></div>
-</div>
-  <nav class="site-state motion-element">
-      <div class="site-state-item site-state-posts">
-        
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">69</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-    
-      
-      
-      <div class="site-state-item site-state-categories">
-        
-          
-            <a href="/categories/">
-          
-        
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        <span class="site-state-item-count">35</span>
-        <span class="site-state-item-name">分类</span>
-        </a>
-      </div>
-    
-      
-      
-      <div class="site-state-item site-state-tags">
-        
-          
-            <a href="/tags/">
-          
-        
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        <span class="site-state-item-count">61</span>
-        <span class="site-state-item-name">标签</span>
-        </a>
-      </div>
-    
-  </nav>
-  <div class="feed-link motion-element">
-    <a href="/atom.xml" rel="alternate">
-      <i class="fa fa-rss"></i>RSS
-    </a>
-  </div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-      
-      
-      
-        
-      
-        <a href="https://github.com/LIULE8" title="GitHub &rarr; https://github.com/LIULE8" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
-      </span>
-    
-      <span class="links-of-author-item">
-      
-      
-      
-        
-      
-        <a href="mailto:leo.liu.scau@gmail.com" title="E-Mail &rarr; mailto:leo.liu.scau@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
-      </span>
-    
-  </div>
-
-
-
-
-          
-            <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
-            <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
-            <div class="widget-wrap">
-              <h5 class="widget-title">Tag Cloud</h5>
-              <div id="myCanvasContainer" class="widget tagcloud">
-                <canvas width="250" height="250" id="resCanvas" style="width: 180px">
-                  <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Annotation/">Annotation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Auditing/">Auditing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORF/">CORF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataSource/">DataSource</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Defining-Query-Methods/">Defining Query Methods</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECMAScript/">ECMAScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Entity-注解/">Entity 注解</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JPA/">JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Join/">Join</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jrebel/">Jrebel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mixin/">Mixin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Oracle/">Oracle</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Properties/">Properties</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RestTemplate/">RestTemplate</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/">Spring</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-ElasticSearch/">Spring Data ElasticSearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-JPA/">Spring Data JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-Jpa/">Spring Data Jpa</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Security/">Spring Security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Springboot/">Springboot</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/String/">String</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Time/">Time</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transaction/">Transaction</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UML/">UML</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vue/">Vue</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOL/">WOL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jar/">jar</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm/">npm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nvm/">nvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pageable/">pageable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/plantuml/">plantuml</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/">redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/乐观锁/">乐观锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/云服务器/">云服务器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同源策略/">同源策略</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/架构/">架构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注解/">注解</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/浏览器/">浏览器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/索引/">索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/缓存/">缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义返回值/">自定义返回值</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计模式/">设计模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/跨域/">跨域</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/运维/">运维</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/防止多次提交/">防止多次提交</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/集合/">集合</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面向对象设计原则/">面向对象设计原则</a><span class="tag-list-count">1</span></li></ul>
-                </canvas>
-              </div>
-            </div>
-          
-
-        </div>
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">
-    <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备20009586号 </a>
-  &copy; 
-  <span itemprop="copyrightYear">2021</span>
-  <span class="with-love" id="animate">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Leo Liu</span>
-</div>
-
-        
-  <div class="busuanzi-count">
-    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-area-chart"></i>
-      </span>
-      <span title="站点总字数">
-       站点总字数: 722k
-      </span>
-    
-      <span class="post-meta-divider">|</span>
-    
-      <span class="post-meta-item-icon">
-      <i class="fa fa-user"></i>
-    </span>
-      <span class="site-uv" title="总访客量">
-      总访客量: <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
-    </span>
-    
-      <span class="post-meta-divider">|</span>
-    
-      <span class="post-meta-item-icon">
-      <i class="fa fa-eye"></i>
-    </span>
-      <span class="site-pv" title="总访问量">
-      总访问量: <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
-    </span>
-    
-  </div>
-
-
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-      </div>
-
-    
-
-  </div>
-
-  
-    
-    
-      
-    
-  
-  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
-  <script src="/lib/jquery/index.js?v=3.4.1"></script>
-  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-<script src="/js/utils.js?v=7.3.0"></script>
-  <script src="/js/motion.js?v=7.3.0"></script>
-
-
-  <script src="/js/schemes/muse.js?v=7.3.0"></script>
-
-
-
-<script src="/js/next-boot.js?v=7.3.0"></script>
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <script src="/js/local-search.js?v=7.3.0"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-
-  
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
-</html>
-<script type="text/javascript" src="/js/src/mouse.js"></script>
+            <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JDK/"><span class="card-category-list-name">JDK</span><span class="card-category-list-count">4</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JDK/JDK8/"><span class="card-category-list-name">JDK8</span><span class="card-category-list-count">4</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JPA/"><span class="card-category-list-name">JPA</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java/"><span class="card-category-list-name">Java</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Spring-Data/"><span class="card-category-list-name">Spring Data</span><span class="card-category-list-count">26</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Spring-Data/Spring-Data-ElasticSearch/"><span class="card-category-list-name">Spring Data ElasticSearch</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Spring-Data/Spring-Data-Jpa/"><span class="card-category-list-name">Spring Data Jpa</span><span class="card-category-list-count">25</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Spring-Security/"><span class="card-category-list-name">Spring Security</span><span class="card-category-list-count">2</span></a></li>
+            </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/JPA/" style="font-size: 1.15em; color: rgb(179, 146, 122)">JPA</a><a href="/tags/Spring-Data-JPA/" style="font-size: 1.15em; color: rgb(162, 41, 67)">Spring Data JPA</a><a href="/tags/Vue/" style="font-size: 1.22em; color: rgb(14, 175, 166)">Vue</a><a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/" style="font-size: 1.15em; color: rgb(67, 150, 119)">面向对象设计原则</a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 1.22em; color: rgb(26, 164, 79)">架构</a><a href="/tags/UML/" style="font-size: 1.22em; color: rgb(11, 99, 78)">UML</a><a href="/tags/%E9%94%81/" style="font-size: 1.22em; color: rgb(189, 8, 92)">锁</a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 1.15em; color: rgb(89, 135, 66)">集合</a><a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 1.3em; color: rgb(140, 156, 163)">注解</a><a href="/tags/JVM/" style="font-size: 1.15em; color: rgb(177, 16, 43)">JVM</a><a href="/tags/JavaScript/" style="font-size: 1.15em; color: rgb(77, 13, 141)">JavaScript</a><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 1.22em; color: rgb(7, 160, 107)">数据库</a><a href="/tags/Oracle/" style="font-size: 1.22em; color: rgb(66, 62, 95)">Oracle</a><a href="/tags/SQL/" style="font-size: 1.22em; color: rgb(126, 181, 83)">SQL</a><a href="/tags/Spring-Data-Jpa/" style="font-size: 1.45em; color: rgb(8, 81, 60)">Spring Data Jpa</a><a href="/tags/pageable/" style="font-size: 1.15em; color: rgb(151, 54, 29)">pageable</a><a href="/tags/RestTemplate/" style="font-size: 1.15em; color: rgb(68, 33, 21)">RestTemplate</a><a href="/tags/Spring-Security/" style="font-size: 1.22em; color: rgb(168, 86, 171)">Spring Security</a><a href="/tags/Transaction/" style="font-size: 1.15em; color: rgb(118, 6, 37)">Transaction</a><a href="/tags/%E4%B9%90%E8%A7%82%E9%94%81/" style="font-size: 1.15em; color: rgb(0, 67, 66)">乐观锁</a><a href="/tags/Springboot/" style="font-size: 1.3em; color: rgb(92, 12, 116)">Springboot</a><a href="/tags/Annotation/" style="font-size: 1.22em; color: rgb(164, 52, 105)">Annotation</a><a href="/tags/Spring/" style="font-size: 1.22em; color: rgb(22, 126, 164)">Spring</a><a href="/tags/redis/" style="font-size: 1.15em; color: rgb(182, 112, 93)">redis</a><a href="/tags/Java/" style="font-size: 1.22em; color: rgb(56, 8, 133)">Java</a><a href="/tags/String/" style="font-size: 1.22em; color: rgb(179, 6, 120)">String</a><a href="/tags/Join/" style="font-size: 1.15em; color: rgb(193, 47, 131)">Join</a><a href="/tags/Time/" style="font-size: 1.15em; color: rgb(88, 121, 166)">Time</a><a href="/tags/Mixin/" style="font-size: 1.22em; color: rgb(130, 41, 105)">Mixin</a><a href="/tags/WOL/" style="font-size: 1.15em; color: rgb(64, 61, 163)">WOL</a><a href="/tags/docker/" style="font-size: 1.22em; color: rgb(52, 3, 73)">docker</a><a href="/tags/hexo/" style="font-size: 1.15em; color: rgb(15, 172, 90)">hexo</a><a href="/tags/lambda/" style="font-size: 1.22em; color: rgb(38, 47, 97)">lambda</a><a href="/tags/windows/" style="font-size: 1.22em; color: rgb(2, 145, 112)">windows</a><a href="/tags/nvm/" style="font-size: 1.15em; color: rgb(88, 164, 9)">nvm</a><a href="/tags/node/" style="font-size: 1.15em; color: rgb(2, 28, 62)">node</a><a href="/tags/npm/" style="font-size: 1.15em; color: rgb(63, 76, 81)">npm</a><a href="/tags/%E4%BA%8B%E5%8A%A1/" style="font-size: 1.15em; color: rgb(56, 17, 199)">事务</a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.38em; color: rgb(187, 182, 38)">缓存</a><a href="/tags/jar/" style="font-size: 1.15em; color: rgb(102, 4, 193)">jar</a></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span><a class="card-more-btn" href="/archives/" title="查看更多">
+    <i class="fas fa-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/02/"><span class="card-archive-list-date">二月 2021</span><span class="card-archive-list-count">4</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/01/"><span class="card-archive-list-date">一月 2021</span><span class="card-archive-list-count">11</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/11/"><span class="card-archive-list-date">十一月 2020</span><span class="card-archive-list-count">18</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/10/"><span class="card-archive-list-date">十月 2020</span><span class="card-archive-list-count">6</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/09/"><span class="card-archive-list-date">九月 2020</span><span class="card-archive-list-count">14</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/08/"><span class="card-archive-list-date">八月 2020</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/07/"><span class="card-archive-list-date">七月 2020</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/05/"><span class="card-archive-list-date">五月 2020</span><span class="card-archive-list-count">3</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">73</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2021-03-19T13:12:46.105Z"></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://api.btstu.cn/yan/api.php?charset=utf-8&encode=json')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        var sub = "".length == 0 ? new Array() : "".split(',')
+        var both = sub.unshift(data.text)
+        typed = new Typed('#subtitle', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('subtitle').innerHTML = data.text
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.jsdelivr.net/npm/typed.js/lib/typed.min.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

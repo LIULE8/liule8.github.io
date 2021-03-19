@@ -1,394 +1,169 @@
-<!DOCTYPE html>
-
-
-
-
-
-<html class="theme-next mist use-motion" lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-<meta name="generator" content="Hexo 3.9.0">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
-  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
-
-<link rel="stylesheet" href="/css/main.css?v=7.3.0">
-
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Satisfy:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
-      
-    
-      
-    
-  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
-
-
-<script id="hexo-configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Mist',
-    version: '7.3.0',
-    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false},
-    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
-    save_scroll: false,
-    copycode: {"enable":false,"show_result":false,"style":null},
-    fancybox: false,
-    mediumzoom: false,
-    lazyload: false,
-    pangu: false,
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    },
-    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},
-    path: 'search.xml',
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    translation: {
-      copy_button: '复制',
-      copy_success: '复制成功',
-      copy_failure: '复制失败'
-    }
-  };
-</script>
-
-  <meta name="description" content="Spring Data Rest 是什么 和 JPA 是什么关系?Spring Data Rest Demo通过以下四个步骤演示一下 Spring Data Rest 的效果。 第一步：通过 gradle 引入相关的 jar 依赖，代码如下所示。 1234567implementation &apos;org.springframework.boot:spring-boot-starter-data-jpa">
-<meta name="keywords" content="Spring Data Jpa">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Spring Data Jpa 什么是 Spring Data Rest | Leo's notes</title><meta name="keywords" content="Spring Data Jpa"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Spring Data Rest 是什么 和 JPA 是什么关系?Spring Data Rest Demo通过以下四个步骤演示一下 Spring Data Rest 的效果。 第一步：通过 gradle 引入相关的 jar 依赖，代码如下所示。 1234567implementation &amp;#x27;org.springframework.boot:spring-boot-starter-dat">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spring Data Jpa 什么是 Spring Data Rest">
-<meta property="og:url" content="https://liule8.github.io/2021/01/30/SpringDataJpa之SpringDataRest/index.html">
+<meta property="og:url" content="https://liule8.github.io/2021/01/30/SpringDataJpa%E4%B9%8BSpringDataRest/index.html">
 <meta property="og:site_name" content="Leo&#39;s notes">
-<meta property="og:description" content="Spring Data Rest 是什么 和 JPA 是什么关系?Spring Data Rest Demo通过以下四个步骤演示一下 Spring Data Rest 的效果。 第一步：通过 gradle 引入相关的 jar 依赖，代码如下所示。 1234567implementation &apos;org.springframework.boot:spring-boot-starter-data-jpa">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://image.leonote.cn//20210130165502.jpg">
-<meta property="og:image" content="http://image.leonote.cn//20210130165729.jpg">
-<meta property="og:image" content="http://image.leonote.cn//20210130165856.jpg">
-<meta property="og:image" content="http://image.leonote.cn//20210130165941.jpg">
-<meta property="og:image" content="http://image.leonote.cn//20210130170309.jpg">
-<meta property="og:image" content="http://image.leonote.cn//20210130170639.jpg">
-<meta property="og:image" content="http://image.leonote.cn//20210130171017.jpg">
-<meta property="og:image" content="http://image.leonote.cn//20210130171243.jpg">
-<meta property="og:image" content="http://image.leonote.cn//20210130171536.jpg">
-<meta property="og:image" content="http://image.leonote.cn//20210130171651.jpg">
-<meta property="og:image" content="http://image.leonote.cn//20210130171841.jpg">
-<meta property="og:updated_time" content="2021-01-31T07:40:11.259Z">
+<meta property="og:description" content="Spring Data Rest 是什么 和 JPA 是什么关系?Spring Data Rest Demo通过以下四个步骤演示一下 Spring Data Rest 的效果。 第一步：通过 gradle 引入相关的 jar 依赖，代码如下所示。 1234567implementation &amp;#x27;org.springframework.boot:spring-boot-starter-dat">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-01-30T15:33:59.000Z">
+<meta property="article:modified_time" content="2021-01-31T07:40:11.259Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="Spring Data Jpa">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spring Data Jpa 什么是 Spring Data Rest">
-<meta name="twitter:description" content="Spring Data Rest 是什么 和 JPA 是什么关系?Spring Data Rest Demo通过以下四个步骤演示一下 Spring Data Rest 的效果。 第一步：通过 gradle 引入相关的 jar 依赖，代码如下所示。 1234567implementation &apos;org.springframework.boot:spring-boot-starter-data-jpa">
-<meta name="twitter:image" content="http://image.leonote.cn//20210130165502.jpg">
-  <link rel="alternate" href="/atom.xml" title="Leo's notes" type="application/atom+xml">
-  <link rel="canonical" href="https://liule8.github.io/2021/01/30/SpringDataJpa之SpringDataRest/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome: false,
-    isPost: true,
-    isPage: false,
-    isArchive: false
-  };
-</script>
-
-  <title>Spring Data Jpa 什么是 Spring Data Rest | Leo's notes</title>
-  
-
-
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .motion-element,
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-title { opacity: initial; }
-
-  .use-motion .logo,
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/2021/01/30/SpringDataJpa%E4%B9%8BSpringDataRest/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-01-31 07:40:11'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
   }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
 
-</head>
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
 
-  <div class="container sidebar-position-left">
-    <div class="headband"></div>
-
-    <a href="https://github.com/LIULE8" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta">
-
-    <div class="custom-logo-site-title">
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Leo's notes</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
-  </div>
-
-  <div class="site-nav-toggle">
-    <button aria-label="切换导航栏">
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
-  </div>
-</div>
-
-
-<nav class="site-nav">
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
   
-  <ul id="menu" class="menu">
-      
-      
-      
-        
-        <li class="menu-item menu-item-home">
-      
-    
-
-    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
-
-  </li>
-      
-      
-      
-        
-        <li class="menu-item menu-item-tags">
-      
-    
-
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
-
-  </li>
-      
-      
-      
-        
-        <li class="menu-item menu-item-categories">
-      
-    
-
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
-
-  </li>
-      
-      
-      
-        
-        <li class="menu-item menu-item-archives">
-      
-    
-
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a href="javascript:;" class="popup-trigger">
-        
-          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
-      </li>
-    
-  </ul>
-
-    
-
-    <div class="site-search">
-      
-  <div class="popup search-popup local-search-popup">
-  <div class="local-search-header clearfix">
-    <span class="search-icon">
-      <i class="fa fa-search"></i>
-    </span>
-    <span class="popup-btn-close">
-      <i class="fa fa-times-circle"></i>
-    </span>
-    <div class="local-search-input-wrapper">
-      <input autocomplete="off"
-             placeholder="搜索..." spellcheck="false"
-             type="text" id="local-search-input">
-    </div>
-  </div>
-  <div id="local-search-result"></div>
-</div>
-
-
-    </div>
-</nav>
-</div>
-    </header>
-
-    
-
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content page-post-detail">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
   
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://liule8.github.io/2021/01/30/SpringDataJpa之SpringDataRest/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Leo Liu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leo's notes">
-    </span>
-      <header class="post-header">
-
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
         
-          <h1 class="post-title" itemprop="name headline">Spring Data Jpa 什么是 Spring Data Rest
-
-            
-          </h1>
-        
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2021-01-30 15:33:59" itemprop="dateCreated datePublished" datetime="2021-01-30T15:33:59Z">2021-01-30</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-31 07:40:11" itemprop="dateModified" datetime="2021-01-31T07:40:11Z">2021-01-31</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Data/" itemprop="url" rel="index"><span itemprop="name">Spring Data</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Data/Spring-Data-Jpa/" itemprop="url" rel="index"><span itemprop="name">Spring Data Jpa</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">本文字数：</span>
-              
-              <span>4.7k</span>
-            </span>
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              
-              <span>4 分钟</span>
-            </span>
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <h1 id="Spring-Data-Rest-是什么-和-JPA-是什么关系"><a href="#Spring-Data-Rest-是什么-和-JPA-是什么关系" class="headerlink" title="Spring Data Rest 是什么 和 JPA 是什么关系?"></a>Spring Data Rest 是什么 和 JPA 是什么关系?</h1><h2 id="Spring-Data-Rest-Demo"><a href="#Spring-Data-Rest-Demo" class="headerlink" title="Spring Data Rest Demo"></a>Spring Data Rest Demo</h2><p>通过以下四个步骤演示一下 Spring Data Rest 的效果。</p>
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">73</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">63</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">35</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Spring Data Jpa 什么是 Spring Data Rest</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-01-30T15:33:59.000Z" title="发表于 2021-01-30 15:33:59">2021-01-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-01-31T07:40:11.259Z" title="更新于 2021-01-31 07:40:11">2021-01-31</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Spring-Data/">Spring Data</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Spring-Data/Spring-Data-Jpa/">Spring Data Jpa</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Spring Data Jpa 什么是 Spring Data Rest"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Spring-Data-Rest-是什么-和-JPA-是什么关系"><a href="#Spring-Data-Rest-是什么-和-JPA-是什么关系" class="headerlink" title="Spring Data Rest 是什么 和 JPA 是什么关系?"></a>Spring Data Rest 是什么 和 JPA 是什么关系?</h1><h2 id="Spring-Data-Rest-Demo"><a href="#Spring-Data-Rest-Demo" class="headerlink" title="Spring Data Rest Demo"></a>Spring Data Rest Demo</h2><p>通过以下四个步骤演示一下 Spring Data Rest 的效果。</p>
 <p><strong>第一步：通过 gradle 引入相关的 jar 依赖</strong>，代码如下所示。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">'org.springframework.boot:spring-boot-starter-data-jpa'</span></span><br><span class="line"><span class="comment">// spring data rest的依赖，由于使用的是spring boot，所以只需要添加starter即可</span></span><br><span class="line">implementation(<span class="string">"org.springframework.boot:spring-boot-starter-data-rest"</span>)</span><br><span class="line"><span class="comment">//添加swagger方便看得出来，生成了哪些api接口</span></span><br><span class="line">implementation <span class="string">'io.springfox:springfox-boot-starter:3.0.0'</span></span><br><span class="line"><span class="comment">// swagger 对spring data rest支持需要添加 springfox-data-rest</span></span><br><span class="line">implementation <span class="string">'io.springfox:springfox-data-rest:3.0.0'</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">&#x27;org.springframework.boot:spring-boot-starter-data-jpa&#x27;</span></span><br><span class="line"><span class="comment">// spring data rest的依赖，由于使用的是spring boot，所以只需要添加starter即可</span></span><br><span class="line">implementation(<span class="string">&quot;org.springframework.boot:spring-boot-starter-data-rest&quot;</span>)</span><br><span class="line"><span class="comment">//添加swagger方便看得出来，生成了哪些api接口</span></span><br><span class="line">implementation <span class="string">&#x27;io.springfox:springfox-boot-starter:3.0.0&#x27;</span></span><br><span class="line"><span class="comment">// swagger 对spring data rest支持需要添加 springfox-data-rest</span></span><br><span class="line">implementation <span class="string">&#x27;io.springfox:springfox-data-rest:3.0.0&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <p>添加完依赖之后，可以通过 gradle 的依赖视图看一下都用了哪些 jar 包。</p>
-<p><img src="http://image.leonote.cn//20210130165502.jpg" alt></p>
+<p><img src="http://image.leonote.cn//20210130165502.jpg" alt=""></p>
 <p>通过上图可以很清晰地看到 spring-data-rest 的 jar 包引入情况，以及依赖的 spring-data-jpa 和 Swagger。</p>
 <p><strong>第二步：在项目里面添加 SpringFoxConfiguration 开启 Swagger</strong>，代码如下所示</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableSwagger</span>2</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringFoxConfiguration</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableSwagger2</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringFoxConfiguration</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
 
 <p><strong>第三步：通过 application.properties 指定一个 base-path，以方便和自己的 api 进行区分</strong>，代码如下所示。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 可以通过spring data rest里面提供的配置项，指定bast-path</span><br><span class="line">spring.data.rest.base-path=api/rest/v2</span><br></pre></td></tr></table></figure>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可以通过spring data rest里面提供的配置项，指定bast-path</span></span><br><span class="line"><span class="meta">spring.data.rest.base-path</span>=<span class="string">api/rest/v2</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="http://image.leonote.cn//20210130165729.jpg" alt></p>
-<p>这时打开 Swagger 看一下：<a href="http://127.0.0.1:8087/swagger-ui/" target="_blank" rel="noopener">http://127.0.0.1:8087/swagger-ui/</a></p>
-<p><img src="http://image.leonote.cn//20210130165856.jpg" alt></p>
+<p><img src="http://image.leonote.cn//20210130165729.jpg" alt=""></p>
+<p>这时打开 Swagger 看一下：<a target="_blank" rel="noopener" href="http://127.0.0.1:8087/swagger-ui/">http://127.0.0.1:8087/swagger-ui/</a></p>
+<p><img src="http://image.leonote.cn//20210130165856.jpg" alt=""></p>
 <p>由于 Demo 的项目结构是下图所示这样的。</p>
-<p><img src="http://image.leonote.cn//20210130165941.jpg" alt></p>
+<p><img src="http://image.leonote.cn//20210130165941.jpg" alt=""></p>
 <p>你会发现有几个 Repository 会生成几个对应的 Rest 协议的 API，除了基本的 CRUD，例如 UserInfoRespository 自定义的方法它们也会帮我们展示出来。而 Room 实体因为没有对应的 Repository，所以不会有对应的 Rest 风格 API 生成。</p>
 <p>通过这个 Demo 可以想象一下，如果要做一个 Rest 风格的 Server API 项目，只需要把对应的 Entity 和 Repository 建好，就可以直接拥有了所有的 CRUD 的 API 了，这样可以大大提高我们的开发效率。</p>
 <h2 id="Spring-Data-Rest-基本用法"><a href="#Spring-Data-Rest-基本用法" class="headerlink" title="Spring Data Rest 基本用法"></a>Spring Data Rest 基本用法</h2><p>通过 Demo 可以看得出来，Spring Data Rest 的核心功能就是把 Spring Data Resositories 里对外暴露的方法生成对应的 API，如上面的 <code>AddressRepository</code>，里面对应的实体是 Address，代码如下。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AddressRepository</span> <span class="keyword">extends</span> <span class="title">JpaRepository</span>&lt;<span class="title">Address</span>, <span class="title">Long</span>&gt;</span>&#123;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>它帮我们生成的 API 有下图所示的这些。</p>
-<p><img src="http://image.leonote.cn//20210130170309.jpg" alt></p>
+<p><img src="http://image.leonote.cn//20210130170309.jpg" alt=""></p>
 <p>从 swagger 可以看到 Spring Data Rest 的几点用法。</p>
 <h3 id="语义化的方法"><a href="#语义化的方法" class="headerlink" title="语义化的方法"></a>语义化的方法</h3><p>把实体转化成复数的形式，生成基本的 PATCH、GET、PUT、POST、DELETE 带有语义的 Rest 相应的方法，包括的子资源有如下几个。</p>
 <ul>
@@ -418,33 +193,33 @@
 </li>
 </ul>
 <h3 id="分页支持"><a href="#分页支持" class="headerlink" title="分页支持"></a>分页支持</h3><p>通过 Swagger，可以看到其完全对分页和排序进行支持，完全兼容 Spring Data JPA 的分页和排序的参数，如下图所示。</p>
-<p><img src="http://image.leonote.cn//20210130170639.jpg" alt></p>
+<p><img src="http://image.leonote.cn//20210130170639.jpg" alt=""></p>
 <h3 id="通过-RepositoryRestResource-改变资源的-metaData"><a href="#通过-RepositoryRestResource-改变资源的-metaData" class="headerlink" title="通过 @RepositoryRestResource 改变资源的 metaData"></a>通过 @RepositoryRestResource 改变资源的 metaData</h3><p>代码如下所示。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RepositoryRestResource</span>(</span><br><span class="line">      exported = <span class="keyword">true</span>, <span class="comment">//资源是否暴露，默认true</span></span><br><span class="line">      path = <span class="string">"users"</span>,<span class="comment">//资源暴露的path访问路径，默认实体名字+s</span></span><br><span class="line">      collectionResourceRel = <span class="string">"userInfo"</span>,<span class="comment">//资源名字，默认实体名字</span></span><br><span class="line">      collectionResourceDescription = <span class="meta">@Description</span>(<span class="string">"用户基本信息资源"</span>),<span class="comment">//资源描述</span></span><br><span class="line">      itemResourceRel = <span class="string">"userDetail"</span>,<span class="comment">//取资源详情的Item名字</span></span><br><span class="line">      itemResourceDescription = <span class="meta">@Description</span>(<span class="string">"用户详情"</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RepositoryRestResource(</span></span><br><span class="line"><span class="meta">      exported = true, //资源是否暴露，默认true</span></span><br><span class="line"><span class="meta">      path = &quot;users&quot;,//资源暴露的path访问路径，默认实体名字+s</span></span><br><span class="line"><span class="meta">      collectionResourceRel = &quot;userInfo&quot;,//资源名字，默认实体名字</span></span><br><span class="line"><span class="meta">      collectionResourceDescription = @Description(&quot;用户基本信息资源&quot;),//资源描述</span></span><br><span class="line"><span class="meta">      itemResourceRel = &quot;userDetail&quot;,//取资源详情的Item名字</span></span><br><span class="line"><span class="meta">      itemResourceDescription = @Description(&quot;用户详情&quot;)</span></span><br><span class="line"><span class="meta">)</span></span><br></pre></td></tr></table></figure>
 
 <p>将其放置在 UserInfoRepository 上面测试一下，代码变更如下。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RepositoryRestResource</span>(</span><br><span class="line">      exported = <span class="keyword">true</span>,</span><br><span class="line">      path = <span class="string">"users"</span>,</span><br><span class="line">      collectionResourceRel = <span class="string">"userInfo"</span>,</span><br><span class="line">      collectionResourceDescription = <span class="meta">@Description</span>(<span class="string">"用户资源"</span>),</span><br><span class="line">      itemResourceRel = <span class="string">"userDetail"</span>,</span><br><span class="line">      itemResourceDescription = <span class="meta">@Description</span>(<span class="string">"用户详情"</span>)</span><br><span class="line">)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserInfoRepository</span> <span class="keyword">extends</span> <span class="title">JpaRepository</span>&lt;<span class="title">UserInfo</span>, <span class="title">Long</span>&gt; </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RepositoryRestResource(</span></span><br><span class="line"><span class="meta">      exported = true,</span></span><br><span class="line"><span class="meta">      path = &quot;users&quot;,</span></span><br><span class="line"><span class="meta">      collectionResourceRel = &quot;userInfo&quot;,</span></span><br><span class="line"><span class="meta">      collectionResourceDescription = @Description(&quot;用户资源&quot;),</span></span><br><span class="line"><span class="meta">      itemResourceRel = &quot;userDetail&quot;,</span></span><br><span class="line"><span class="meta">      itemResourceDescription = @Description(&quot;用户详情&quot;)</span></span><br><span class="line"><span class="meta">)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserInfoRepository</span> <span class="keyword">extends</span> <span class="title">JpaRepository</span>&lt;<span class="title">UserInfo</span>, <span class="title">Long</span>&gt; </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这时通过 Swagger 可以看到，url 的 path 上面变成了 users，而 body 里面的资源名字变成了 userInfo，取 itemResource 的 URL 描述变成了 userDetail，如下图所示。</p>
-<p><img src="http://image.leonote.cn//20210130171017.jpg" alt></p>
+<p><img src="http://image.leonote.cn//20210130171017.jpg" alt=""></p>
 <p>@RepositoryRestResource 是使用在 Repository 类上面的全局设置，也可以针对具体的 Repsitory 里面的每个方法进行单独设置，这就是另外一个注解：@RestResource。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestResource</span>(</span><br><span class="line">      exported = <span class="keyword">true</span>,<span class="comment">//是否暴露给Search</span></span><br><span class="line">      path = <span class="string">"findCities"</span>,<span class="comment">//Search后面的path路径</span></span><br><span class="line">      rel = <span class="string">"cities"</span><span class="comment">//资源名字</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestResource(</span></span><br><span class="line"><span class="meta">      exported = true,//是否暴露给Search</span></span><br><span class="line"><span class="meta">      path = &quot;findCities&quot;,//Search后面的path路径</span></span><br><span class="line"><span class="meta">      rel = &quot;cities&quot;//资源名字</span></span><br><span class="line"><span class="meta">)</span></span><br></pre></td></tr></table></figure>
 
 <p>可以将其用于 ***Repository 的方法中和 @Entity 的实体关系上，那么在 address 的 findByAddress 方法上面做一个测试，看看会变成什么样，代码如下所示。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AddressRepository</span> <span class="keyword">extends</span> <span class="title">JpaRepository</span>&lt;<span class="title">Address</span>, <span class="title">Long</span>&gt;</span>&#123;</span><br><span class="line">    <span class="meta">@RestResource</span>(</span><br><span class="line">            exported = <span class="keyword">true</span>,<span class="comment">//是否暴露给Search</span></span><br><span class="line">            path = <span class="string">"findCities"</span>,<span class="comment">//Search后面的path路径</span></span><br><span class="line">            rel = <span class="string">"cities"</span><span class="comment">//资源名字</span></span><br><span class="line">    )</span><br><span class="line">    <span class="function">Page&lt;Address&gt; <span class="title">findByAddress</span><span class="params">(@Param(<span class="string">"address"</span>)</span> String address, Pageable pageable)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AddressRepository</span> <span class="keyword">extends</span> <span class="title">JpaRepository</span>&lt;<span class="title">Address</span>, <span class="title">Long</span>&gt;</span>&#123;</span><br><span class="line">    <span class="meta">@RestResource(</span></span><br><span class="line"><span class="meta">            exported = true,//是否暴露给Search</span></span><br><span class="line"><span class="meta">            path = &quot;findCities&quot;,//Search后面的path路径</span></span><br><span class="line"><span class="meta">            rel = &quot;cities&quot;//资源名字</span></span><br><span class="line"><span class="meta">    )</span></span><br><span class="line">    <span class="function">Page&lt;Address&gt; <span class="title">findByAddress</span><span class="params">(<span class="meta">@Param(&quot;address&quot;)</span> String address, Pageable pageable)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>打开 Swagger 看一下结果，会发现 search 后面的 path 路径被自定义了，如下图所示。</p>
-<p><img src="http://image.leonote.cn//20210130171243.jpg" alt></p>
+<p><img src="http://image.leonote.cn//20210130171243.jpg" alt=""></p>
 <p>同时这个注解也可以配置在关联关系上，如 @OneToMany 等。如果不想某些方法暴露成 RestAPI，就直接添加 @RestResource(exported = false) 这一注解即可，例如一些删除方法等。</p>
 <h3 id="spring-data-rest-的配置项支持"><a href="#spring-data-rest-的配置项支持" class="headerlink" title="spring data rest 的配置项支持"></a>spring data rest 的配置项支持</h3><p>这个可以直接在 application.properties 里面配置，在 IDEA 里面输入前缀的时候，就会有如下提示。</p>
-<p><img src="http://image.leonote.cn//20210130171536.jpg" alt></p>
+<p><img src="http://image.leonote.cn//20210130171536.jpg" alt=""></p>
 <p>对应的描述如下表所示。</p>
-<p><img src="http://image.leonote.cn//20210130171651.jpg" alt></p>
+<p><img src="http://image.leonote.cn//20210130171651.jpg" alt=""></p>
 <h2 id="返回结果对-Jackson-的支持"><a href="#返回结果对-Jackson-的支持" class="headerlink" title="返回结果对 Jackson 的支持"></a>返回结果对 Jackson 的支持</h2><p>通过 jackson 的注解，可以改变 rest api 的属性的名字，或者忽略具体的某个属性。在 address 的实体里面，改变一下属性 city 的名字，同时忽略 address 属性，代码会变成如下所示的样子。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@SuperBuilder</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@ToString</span>(exclude = <span class="string">"userInfo"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Address</span> <span class="keyword">extends</span> <span class="title">BaseEntity</span> </span>&#123;</span><br><span class="line">   <span class="meta">@JsonProperty</span>(<span class="string">"myCity"</span>) <span class="comment">//改变JSON响应的属性名字</span></span><br><span class="line">   <span class="keyword">private</span> String city;</span><br><span class="line">   <span class="meta">@JsonIgnore</span> <span class="comment">//JSON解析的时候忽略某个属性</span></span><br><span class="line">   <span class="keyword">private</span> String address;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@SuperBuilder</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@ToString(exclude = &quot;userInfo&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Address</span> <span class="keyword">extends</span> <span class="title">BaseEntity</span> </span>&#123;</span><br><span class="line">   <span class="meta">@JsonProperty(&quot;myCity&quot;)</span> <span class="comment">//改变JSON响应的属性名字</span></span><br><span class="line">   <span class="keyword">private</span> String city;</span><br><span class="line">   <span class="meta">@JsonIgnore</span> <span class="comment">//JSON解析的时候忽略某个属性</span></span><br><span class="line">   <span class="keyword">private</span> String address;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>通过 Swagger 里面的 Description 可以看到，当前的资源的描述发生了变化，字段名变成了 myCity，address 属性没有了，具体如下图所示。</p>
-<p><img src="http://image.leonote.cn//20210130171841.jpg" alt></p>
+<p><img src="http://image.leonote.cn//20210130171841.jpg" alt=""></p>
 <p>Spring Data Rest 返回 ResponseBody 的原理和接收 RequestBody 的原理都是基于 JSON 格式的</p>
 <h2 id="Spring-Data-Rest-和-Spring-Data-JPA-的关系"><a href="#Spring-Data-Rest-和-Spring-Data-JPA-的关系" class="headerlink" title="Spring Data Rest 和 Spring Data JPA 的关系"></a>Spring Data Rest 和 Spring Data JPA 的关系</h2><ol>
 <li><p>Spring Data JPA 基于 JPA 协议提供了一套标准的 Repository 的操作统一接口，方法名和 @Query 都是有固定语法和约定的规则的。</p>
@@ -455,617 +230,7 @@
 </li>
 </ol>
 <blockquote>
-<p>🎯JPA 的应用领域其实有很多，在写一些基于实体的框架时就可以参考 Spring Data Rest 的做法。例如 <a href="https://jsonapi.org/format/" target="_blank" rel="noopener">yahoo 团队设计的 JSONAPI 协议</a>，以及 <a href="https://github.com/yahoo/elide/blob/master/translations/zh/README.md" target="_blank" rel="noopener">Elide 的实现</a>，也是基于 JPA 的实体注解来实现的。</p>
+<p>🎯JPA 的应用领域其实有很多，在写一些基于实体的框架时就可以参考 Spring Data Rest 的做法。例如 <a target="_blank" rel="noopener" href="https://jsonapi.org/format/">yahoo 团队设计的 JSONAPI 协议</a>，以及 <a target="_blank" rel="noopener" href="https://github.com/yahoo/elide/blob/master/translations/zh/README.md">Elide 的实现</a>，也是基于 JPA 的实体注解来实现的。</p>
 <p>甚至 Spring 在研究的 graph QL，也可以基于约定的实体来做很多事情。</p>
 </blockquote>
-
-    </div>
-
-    
-    
-    
-
-    
-      <div>
-        
-  <div class="my_post_copyright">
-    <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
-
-    <!-- JS库 sweetalert 可修改路径 -->
-    <script src="//cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
-    <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <p><span>本文标题:</span><a href="/2021/01/30/SpringDataJpa之SpringDataRest/">Spring Data Jpa 什么是 Spring Data Rest</a></p>
-    <p><span>文章作者:</span><a href="/" title="访问 Leo Liu 的个人博客">Leo Liu</a></p>
-    <p><span>发布时间:</span>2021年01月30日 - 15:01</p>
-    <p><span>最后更新:</span>2021年01月31日 - 07:01</p>
-    <p><span>原始链接:</span><a href="/2021/01/30/SpringDataJpa之SpringDataRest/" title="Spring Data Jpa 什么是 Spring Data Rest">https://liule8.github.io/2021/01/30/SpringDataJpa之SpringDataRest/</a>
-      <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://liule8.github.io/2021/01/30/SpringDataJpa之SpringDataRest/"  aria-label="复制成功！"></i></span>
-    </p>
-    <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">(CC BY-NC-ND 4.0)</a> 转载请保留原文链接及作者。</p>
-  </div>
-  <script>
-      var clipboard = new Clipboard('.fa-clipboard');
-      $(".fa-clipboard").click(function(){
-          clipboard.on('success', function(){
-              swal({
-                  title: "",
-                  text: '复制成功',
-                  icon: "success",
-                  showConfirmButton: true
-              });
-          });
-      });
-  </script>
-
-
-       </div>
-    
-
-    
-      <div>
-        <div>
-  
-    <div style="text-align:center;color:#cccccc;font-size:14px;">
-      <span>-------- 本文结束 </span>
-      <i class="fa fa-rocket"></i>
-      <span> 感谢您的阅读 --------</span>
-    </div>
-  
-</div>
-
-      </div>
-    
-
-    <footer class="post-footer">
-          
-        
-        <div class="post-tags">
-            <a href="/tags/Spring-Data-Jpa/" rel="tag"><i class="fa fa-tag"></i> Spring Data Jpa</a>
-          
-        </div>
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-              <a href="/2021/01/30/SpringDataJpa二级缓存的思考-结合Redis/" rel="next" title="Spring Data Jpa 二级缓存的思考">
-                <i class="fa fa-chevron-left"></i> Spring Data Jpa 二级缓存的思考
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-              <a href="/2021/01/31/SpringDataJpa的单元测试和集成测试/" rel="prev" title="Spring Data Jpa 的单元测试和集成测试">
-                Spring Data Jpa 的单元测试和集成测试 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-  </div>
-
-
-          </div>
-          
-
-
-        </div>
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-inner">
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-overview">
-
-          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image"
-      src="/images/avatar.png"
-      alt="Leo Liu">
-  <p class="site-author-name" itemprop="name">Leo Liu</p>
-  <div class="site-description motion-element" itemprop="description"></div>
-</div>
-  <nav class="site-state motion-element">
-      <div class="site-state-item site-state-posts">
-        
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">69</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-    
-      
-      
-      <div class="site-state-item site-state-categories">
-        
-          
-            <a href="/categories/">
-          
-        
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        <span class="site-state-item-count">35</span>
-        <span class="site-state-item-name">分类</span>
-        </a>
-      </div>
-    
-      
-      
-      <div class="site-state-item site-state-tags">
-        
-          
-            <a href="/tags/">
-          
-        
-        
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-        <span class="site-state-item-count">61</span>
-        <span class="site-state-item-name">标签</span>
-        </a>
-      </div>
-    
-  </nav>
-  <div class="feed-link motion-element">
-    <a href="/atom.xml" rel="alternate">
-      <i class="fa fa-rss"></i>RSS
-    </a>
-  </div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-      
-      
-      
-        
-      
-        <a href="https://github.com/LIULE8" title="GitHub &rarr; https://github.com/LIULE8" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
-      </span>
-    
-      <span class="links-of-author-item">
-      
-      
-      
-        
-      
-        <a href="mailto:leo.liu.scau@gmail.com" title="E-Mail &rarr; mailto:leo.liu.scau@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
-      </span>
-    
-  </div>
-
-
-
-
-          
-            <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
-            <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
-            <div class="widget-wrap">
-              <h5 class="widget-title">Tag Cloud</h5>
-              <div id="myCanvasContainer" class="widget tagcloud">
-                <canvas width="250" height="250" id="resCanvas" style="width: 180px">
-                  <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Annotation/">Annotation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Auditing/">Auditing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CORF/">CORF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataSource/">DataSource</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Defining-Query-Methods/">Defining Query Methods</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECMAScript/">ECMAScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Entity-注解/">Entity 注解</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JPA/">JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Join/">Join</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jrebel/">Jrebel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mixin/">Mixin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Oracle/">Oracle</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Properties/">Properties</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RestTemplate/">RestTemplate</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/">Spring</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-ElasticSearch/">Spring Data ElasticSearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-JPA/">Spring Data JPA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Data-Jpa/">Spring Data Jpa</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Security/">Spring Security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Springboot/">Springboot</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/String/">String</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Time/">Time</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transaction/">Transaction</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UML/">UML</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vue/">Vue</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WOL/">WOL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jar/">jar</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm/">npm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nvm/">nvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pageable/">pageable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/plantuml/">plantuml</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/">redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/乐观锁/">乐观锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/云服务器/">云服务器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同源策略/">同源策略</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/架构/">架构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注解/">注解</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/浏览器/">浏览器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/索引/">索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/缓存/">缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义返回值/">自定义返回值</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计模式/">设计模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/跨域/">跨域</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/运维/">运维</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/防止多次提交/">防止多次提交</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/集合/">集合</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面向对象设计原则/">面向对象设计原则</a><span class="tag-list-count">1</span></li></ul>
-                </canvas>
-              </div>
-            </div>
-          
-
-        </div>
-      </div>
-      <!--noindex-->
-        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-            
-            
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-Data-Rest-是什么-和-JPA-是什么关系"><span class="nav-number">1.</span> <span class="nav-text">Spring Data Rest 是什么 和 JPA 是什么关系?</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Data-Rest-Demo"><span class="nav-number">1.1.</span> <span class="nav-text">Spring Data Rest Demo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Data-Rest-基本用法"><span class="nav-number">1.2.</span> <span class="nav-text">Spring Data Rest 基本用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#语义化的方法"><span class="nav-number">1.2.1.</span> <span class="nav-text">语义化的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#默认的状态码的支持"><span class="nav-number">1.2.2.</span> <span class="nav-text">默认的状态码的支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分页支持"><span class="nav-number">1.2.3.</span> <span class="nav-text">分页支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过-RepositoryRestResource-改变资源的-metaData"><span class="nav-number">1.2.4.</span> <span class="nav-text">通过 @RepositoryRestResource 改变资源的 metaData</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spring-data-rest-的配置项支持"><span class="nav-number">1.2.5.</span> <span class="nav-text">spring data rest 的配置项支持</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#返回结果对-Jackson-的支持"><span class="nav-number">1.3.</span> <span class="nav-text">返回结果对 Jackson 的支持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Data-Rest-和-Spring-Data-JPA-的关系"><span class="nav-number">1.4.</span> <span class="nav-text">Spring Data Rest 和 Spring Data JPA 的关系</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </div>
-      <!--/noindex-->
-      
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">
-    <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粤ICP备20009586号 </a>
-  &copy; 
-  <span itemprop="copyrightYear">2021</span>
-  <span class="with-love" id="animate">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Leo Liu</span>
-</div>
-
-        
-  <div class="busuanzi-count">
-    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-area-chart"></i>
-      </span>
-      <span title="站点总字数">
-       站点总字数: 722k
-      </span>
-    
-      <span class="post-meta-divider">|</span>
-    
-      <span class="post-meta-item-icon">
-      <i class="fa fa-user"></i>
-    </span>
-      <span class="site-uv" title="总访客量">
-      总访客量: <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
-    </span>
-    
-      <span class="post-meta-divider">|</span>
-    
-      <span class="post-meta-item-icon">
-      <i class="fa fa-eye"></i>
-    </span>
-      <span class="site-pv" title="总访问量">
-      总访问量: <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
-    </span>
-    
-  </div>
-
-
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-      </div>
-
-    
-
-  </div>
-
-  
-    
-    
-      
-    
-  
-  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
-  <script src="/lib/jquery/index.js?v=3.4.1"></script>
-  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-<script src="/js/utils.js?v=7.3.0"></script>
-  <script src="/js/motion.js?v=7.3.0"></script>
-
-
-  <script src="/js/schemes/muse.js?v=7.3.0"></script>
-
-
-
-<script src="/js/next-boot.js?v=7.3.0"></script>
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <script src="/js/local-search.js?v=7.3.0"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-
-  
-  <script src="/js/scrollspy.js?v=7.3.0"></script>
-<script src="/js/post-details.js?v=7.3.0"></script>
-
-
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body>
-</html>
-<script type="text/javascript" src="/js/src/mouse.js"></script>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/2021/01/30/SpringDataJpa%E4%B9%8BSpringDataRest/">https://liule8.github.io/2021/01/30/SpringDataJpa%E4%B9%8BSpringDataRest/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Spring-Data-Jpa/">Spring Data Jpa</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/01/31/SpringDataJpa%E7%9A%84%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%92%8C%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spring Data Jpa 的单元测试和集成测试</div></div></a></div><div class="next-post pull-right"><a href="/2021/01/30/SpringDataJpa%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98%E7%9A%84%E6%80%9D%E8%80%83-%E7%BB%93%E5%90%88Redis/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Spring Data Jpa 二级缓存的思考</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/08/19/Pageable/" title="Pageable分页"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-19</div><div class="title">Pageable分页</div></div></a></div><div><a href="/2020/11/10/SpringDataJpa乐观锁与重试机制/" title="Spring Data Jpa 乐观锁与重试机制"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-10</div><div class="title">Spring Data Jpa 乐观锁与重试机制</div></div></a></div><div><a href="/2019/12/08/SpringDataJpa如何实现动态部分更新/" title="spring data jpa 如何实现动态部分更新"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-12-07</div><div class="title">spring data jpa 如何实现动态部分更新</div></div></a></div><div><a href="/2020/11/18/SpringDataJpa事务与连接池/" title="Spring Data Jpa 事务与连接池"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-18</div><div class="title">Spring Data Jpa 事务与连接池</div></div></a></div><div><a href="/2021/01/30/SpringDataJpa二级缓存的思考-结合Redis/" title="Spring Data Jpa 二级缓存的思考"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-30</div><div class="title">Spring Data Jpa 二级缓存的思考</div></div></a></div><div><a href="/2021/01/25/SpringDataJpa使用SPEL/" title="Spring Data Jpa 使用 SPEL"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-25</div><div class="title">Spring Data Jpa 使用 SPEL</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">73</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">63</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">35</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring-Data-Rest-%E6%98%AF%E4%BB%80%E4%B9%88-%E5%92%8C-JPA-%E6%98%AF%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB"><span class="toc-number">1.</span> <span class="toc-text">Spring Data Rest 是什么 和 JPA 是什么关系?</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Data-Rest-Demo"><span class="toc-number">1.1.</span> <span class="toc-text">Spring Data Rest Demo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Data-Rest-%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">Spring Data Rest 基本用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E4%B9%89%E5%8C%96%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.1.</span> <span class="toc-text">语义化的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E7%9A%84%E7%8A%B6%E6%80%81%E7%A0%81%E7%9A%84%E6%94%AF%E6%8C%81"><span class="toc-number">1.2.2.</span> <span class="toc-text">默认的状态码的支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E9%A1%B5%E6%94%AF%E6%8C%81"><span class="toc-number">1.2.3.</span> <span class="toc-text">分页支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87-RepositoryRestResource-%E6%94%B9%E5%8F%98%E8%B5%84%E6%BA%90%E7%9A%84-metaData"><span class="toc-number">1.2.4.</span> <span class="toc-text">通过 @RepositoryRestResource 改变资源的 metaData</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#spring-data-rest-%E7%9A%84%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%94%AF%E6%8C%81"><span class="toc-number">1.2.5.</span> <span class="toc-text">spring data rest 的配置项支持</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%94%E5%9B%9E%E7%BB%93%E6%9E%9C%E5%AF%B9-Jackson-%E7%9A%84%E6%94%AF%E6%8C%81"><span class="toc-number">1.3.</span> <span class="toc-text">返回结果对 Jackson 的支持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Data-Rest-%E5%92%8C-Spring-Data-JPA-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.4.</span> <span class="toc-text">Spring Data Rest 和 Spring Data JPA 的关系</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/02/27/%E8%B4%AB%E8%A1%80%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B/" title="贫血模型和充血模型"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="贫血模型和充血模型"/></a><div class="content"><a class="title" href="/2021/02/27/%E8%B4%AB%E8%A1%80%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B/" title="贫血模型和充血模型">贫血模型和充血模型</a><time datetime="2021-02-27T11:06:59.000Z" title="发表于 2021-02-27 11:06:59">2021-02-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/" title="分布式缓存-Memcached的原理及架构剖析"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分布式缓存-Memcached的原理及架构剖析"/></a><div class="content"><a class="title" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90/" title="分布式缓存-Memcached的原理及架构剖析">分布式缓存-Memcached的原理及架构剖析</a><time datetime="2021-02-07T19:51:59.000Z" title="发表于 2021-02-07 19:51:59">2021-02-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E8%BF%9B%E9%98%B6/" title="分布式缓存-Memcached进阶"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分布式缓存-Memcached进阶"/></a><div class="content"><a class="title" href="/2021/02/08/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Memcached%E8%BF%9B%E9%98%B6/" title="分布式缓存-Memcached进阶">分布式缓存-Memcached进阶</a><time datetime="2021-02-07T17:26:59.000Z" title="发表于 2021-02-07 17:26:59">2021-02-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/07/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E7%BC%93%E5%AD%98%E8%AE%BF%E9%97%AE%E7%9B%B8%E5%85%B3%E7%9A%84%E7%BB%8F%E5%85%B8%E9%97%AE%E9%A2%98/" title="缓存访问相关的经典问题"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="缓存访问相关的经典问题"/></a><div class="content"><a class="title" href="/2021/02/07/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E7%BC%93%E5%AD%98%E8%AE%BF%E9%97%AE%E7%9B%B8%E5%85%B3%E7%9A%84%E7%BB%8F%E5%85%B8%E9%97%AE%E9%A2%98/" title="缓存访问相关的经典问题">缓存访问相关的经典问题</a><time datetime="2021-02-06T17:00:59.000Z" title="发表于 2021-02-06 17:00:59">2021-02-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/01/31/SpringDataElasticSearch/" title="Spring Data ElasticSearch"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Data ElasticSearch"/></a><div class="content"><a class="title" href="/2021/01/31/SpringDataElasticSearch/" title="Spring Data ElasticSearch">Spring Data ElasticSearch</a><time datetime="2021-01-31T15:42:59.000Z" title="发表于 2021-01-31 15:42:59">2021-01-31</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>
