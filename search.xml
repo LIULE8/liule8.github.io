@@ -33,29 +33,6 @@
       </tags>
   </entry>
   <entry>
-    <title>JDK 内置注解</title>
-    <url>/2020/09/08/JDK%20%E5%86%85%E7%BD%AE%E6%B3%A8%E8%A7%A3/</url>
-    <content><![CDATA[<h1 id="SuppressWarnings"><a href="#SuppressWarnings" class="headerlink" title="@SuppressWarnings"></a>@SuppressWarnings</h1><p><strong>范围</strong>：类、字段、方法、参数、构造方法，以及局部变量上。</p>
-<p><strong>作用</strong>：告诉编译器忽略指定的警告，不用在编译完成后出现警告信息。</p>
-<p><strong>参数</strong>：</p>
-<ol>
-<li>deprecation：忽略过时</li>
-<li>rawtypes：忽略类型安全</li>
-<li>unused：忽略不使用</li>
-<li>unchecked：忽略安全检查</li>
-<li>null：忽略空指针</li>
-<li>all：忽略所有</li>
-</ol>
-<p><strong>例子</strong>：<code>@SuppressWarnings(&quot;unchecked&quot;, &quot;deprecation&quot;)</code></p>
-]]></content>
-      <categories>
-        <category>注解</category>
-      </categories>
-      <tags>
-        <tag>注解</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>CollectionUtils工具类</title>
     <url>/2020/10/13/CollectionUtils%E5%B7%A5%E5%85%B7%E7%B1%BB/</url>
     <content><![CDATA[<h1 id="CollectionUtils工具类"><a href="#CollectionUtils工具类" class="headerlink" title="CollectionUtils工具类"></a>CollectionUtils工具类</h1><p><a href="https://mvnrepository.com/artifact/org.apache.commons/commons-collections4">Apache Commons Collections</a> 使操作集合时，代码更加简洁</p>
@@ -95,6 +72,29 @@
       </categories>
       <tags>
         <tag>集合</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JDK 内置注解</title>
+    <url>/2020/09/08/JDK%20%E5%86%85%E7%BD%AE%E6%B3%A8%E8%A7%A3/</url>
+    <content><![CDATA[<h1 id="SuppressWarnings"><a href="#SuppressWarnings" class="headerlink" title="@SuppressWarnings"></a>@SuppressWarnings</h1><p><strong>范围</strong>：类、字段、方法、参数、构造方法，以及局部变量上。</p>
+<p><strong>作用</strong>：告诉编译器忽略指定的警告，不用在编译完成后出现警告信息。</p>
+<p><strong>参数</strong>：</p>
+<ol>
+<li>deprecation：忽略过时</li>
+<li>rawtypes：忽略类型安全</li>
+<li>unused：忽略不使用</li>
+<li>unchecked：忽略安全检查</li>
+<li>null：忽略空指针</li>
+<li>all：忽略所有</li>
+</ol>
+<p><strong>例子</strong>：<code>@SuppressWarnings(&quot;unchecked&quot;, &quot;deprecation&quot;)</code></p>
+]]></content>
+      <categories>
+        <category>注解</category>
+      </categories>
+      <tags>
+        <tag>注解</tag>
       </tags>
   </entry>
   <entry>
