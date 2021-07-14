@@ -1,0 +1,243 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>分布式缓存-分布式Memcached实战 | Leo's notes</title><meta name="keywords" content="缓存"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="分布式Memcached实战大数据时代，MC如何应对新的常见问题大数据时代 Memcached 经典问题随着互联网的快速发展和普及，人类进入了大数据时代。在大数据时代，移动设备全面融入了人们的工作和生活，各种数据以前所未有的速度被生产、挖掘和消费。移动互联网系统也不断演进和发展，存储、计算和分析这些海量数据，以满足用户的需要。在大数据时代，大中型互联网系统具有如下特点。  首先，系统存储的数据量巨">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式缓存-分布式Memcached实战">
+<meta property="og:url" content="https://liule8.github.io/2021/06/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E5%88%86%E5%B8%83%E5%BC%8FMemcached%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="分布式Memcached实战大数据时代，MC如何应对新的常见问题大数据时代 Memcached 经典问题随着互联网的快速发展和普及，人类进入了大数据时代。在大数据时代，移动设备全面融入了人们的工作和生活，各种数据以前所未有的速度被生产、挖掘和消费。移动互联网系统也不断演进和发展，存储、计算和分析这些海量数据，以满足用户的需要。在大数据时代，大中型互联网系统具有如下特点。  首先，系统存储的数据量巨">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-06-16T12:50:37.000Z">
+<meta property="article:modified_time" content="2021-06-17T12:13:56.621Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="缓存">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/2021/06/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E5%88%86%E5%B8%83%E5%BC%8FMemcached%E5%AE%9E%E6%88%98/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-06-17 12:13:56'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">81</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">63</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">37</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">分布式缓存-分布式Memcached实战</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-06-16T12:50:37.000Z" title="发表于 2021-06-16 12:50:37">2021-06-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-06-17T12:13:56.621Z" title="更新于 2021-06-17 12:13:56">2021-06-17</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%BC%93%E5%AD%98/">缓存</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="分布式缓存-分布式Memcached实战"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="分布式Memcached实战"><a href="#分布式Memcached实战" class="headerlink" title="分布式Memcached实战"></a>分布式Memcached实战</h1><h2 id="大数据时代，MC如何应对新的常见问题"><a href="#大数据时代，MC如何应对新的常见问题" class="headerlink" title="大数据时代，MC如何应对新的常见问题"></a>大数据时代，MC如何应对新的常见问题</h2><h3 id="大数据时代-Memcached-经典问题"><a href="#大数据时代-Memcached-经典问题" class="headerlink" title="大数据时代 Memcached 经典问题"></a>大数据时代 Memcached 经典问题</h3><p>随着互联网的快速发展和普及，人类进入了大数据时代。在大数据时代，移动设备全面融入了人们的工作和生活，各种数据以前所未有的速度被生产、挖掘和消费。移动互联网系统也不断演进和发展，存储、计算和分析这些海量数据，以满足用户的需要。在大数据时代，大中型互联网系统具有如下特点。</p>
+<ol>
+<li><p>首先，系统存储的数据量巨大，比如微博系统，每日有数亿条记录，历史数据达百亿甚至千亿条记录。</p>
+</li>
+<li><p>其次，用户多，访问量巨大，每日峰值流量高达百万级QPS。</p>
+</li>
+<li><p>要存储百千亿级的海量数据，同时满足大量用户的高并发访问，互联网系统需要部署较多的服务实例，不少大中型互联网系统需要部署万级，甚至十万级的服务实例。</p>
+</li>
+<li><p>再次，由于大数据时代，社会信息获取扁平化，热点事件、突发事件很容易瞬间引爆，引来大量场外用户集中关注，从而形成流量洪峰。</p>
+</li>
+<li><p>最后，任何硬件资源都有发生故障的概率，而且存在 4 年故障效应，即服务资源在使用 4 年后，出现故障的概率会陡增；由于大中型互联网系统的部署，需要使用大量的服务器、路由器和交换机，同时部署在多个地区的不同 IDC，很多服务资源的使用时间远超 4 年，局部出现硬件故障、网络访问异常就比较常见了。 </p>
+</li>
+</ol>
+<p>由于互联网系统会大量使用 Memcached 作为缓存，而在使用 Memcached 的过程中，同样也会受到前面所说的系统特点的影响，从而产生特有的经典问题。</p>
+<h4 id="容量问题"><a href="#容量问题" class="headerlink" title="容量问题"></a>容量问题</h4><p>第一个问题是容量问题。Memcached 在使用中，除了存储数据占用内存外，连接的读写缓冲、哈希表分配、辅助线程处理、进程运行等都会占用内存空间，而且操作系统本身也会占用不少内存，为了确保 Mc 的稳定运行，Mc 的内存设置，一般设为物理内存的 80%。另外，设置的内存，也不完全是存储有效数据，因为每个 Item 数据存储在 chunk 时，会有部分字节浪费，另外 key 在过期、失效后，不是立即删除，而是采用延迟淘汰、异步 LRU 队尾扫描的方式清理，这些暂时没有淘汰的、过期失效的 key ，也会占用不少的存储空间。当前大数据时代，互联网系统中的很多核心业务，需要缓存的热数据在 300~500GB 以上，远远超过单机物理内存的容量。</p>
+<h4 id="性能瓶颈"><a href="#性能瓶颈" class="headerlink" title="性能瓶颈"></a>性能瓶颈</h4><p>第二个问题是性能瓶颈问题。出于系统稳定性考虑，线上 Mc 的访问，最大 QPS 要在 10~20w 以下，超过则可能会出现慢查的问题。而对中大型互联网系统，核心业务的缓存请求高达百万级 QPS，仅仅靠简单部署单个物理机、单个资源池很难达到线上的业务要求。</p>
+<h4 id="连接瓶颈"><a href="#连接瓶颈" class="headerlink" title="连接瓶颈"></a>连接瓶颈</h4><p>第三个问题是连接瓶颈的问题。出于稳定性考虑，线上 Mc 的连接数要控制在 10w 以下。以避免连接数过多，导致连接占用大量内存，从而出现命中率下降、甚至慢查超时的问题。对于大中型系统，线上实例高达万级、甚至十万级，单个实例的最小、最大连接数，一般设置在 5~60 个之间。业务实例的连接数远超过单个机器的稳定支撑范围。</p>
+<h4 id="硬件资源局部故障"><a href="#硬件资源局部故障" class="headerlink" title="硬件资源局部故障"></a>硬件资源局部故障</h4><p>第四个问题是硬件资源局部故障，导致的缓存体系的可用性问题。由于任何硬件资源，都有一定故障概率，而且在使用 4 年后，故障率陡增。对于数以万计的硬件设备，随时都有可能出现机器故障，从而导致 Mc 节点访问性能下降、宕机，海量访问穿透到 DB，引发 DB 过载，最终导致整个系统无法访问，引发雪崩现象。</p>
+<h4 id="流量洪峰下快速扩展"><a href="#流量洪峰下快速扩展" class="headerlink" title="流量洪峰下快速扩展"></a>流量洪峰下快速扩展</h4><p>第五个问题是在流量洪峰的场景下，如何快速扩展的问题。大数据时代，由于信息扩散的扁平化，突发事件、重大活动发生时，海量用户同时蜂拥而至，短时间引发巨大流量。整个系统的访问量相比日常峰值增大 70% 以上，同时出现大量的极热 key 的访问，这些极热 key 所在的 Mc 节点，访问量相比日常高峰，增大 2~3 倍以上，很容易出现 CPU 飙升、带宽打满、机器负荷严重过载的现象。</p>
+<h3 id="Memchcaed-经典问题及应对方案"><a href="#Memchcaed-经典问题及应对方案" class="headerlink" title="Memchcaed 经典问题及应对方案"></a>Memchcaed 经典问题及应对方案</h3><p>为了解决大中型互联网系统在使用 Mc 时的这些问题。可以使用下面的解决方案。</p>
+<h4 id="Memcached-分拆缓存池"><a href="#Memcached-分拆缓存池" class="headerlink" title="Memcached 分拆缓存池"></a>Memcached 分拆缓存池</h4><p>首先对系统内的核心业务数据进行分拆，让访问量大的数据，使用独立的缓存池。同时每个缓存池 4~8 个节点，这样就可以支撑足够大的容量，还避免单个缓存节点压力过大。对于缓存池的分布策略，可以采用<strong>一致性哈希分布</strong>和<strong>哈希取模分布</strong>。</p>
+<p>一致性哈希分布算法中，首先计算 Mc 服务节点的哈希值，然后将其持续分散配置在圆中，这样每个缓存节点，实际包括大量大小各异的 N 个 hash 点。如下图所示，在数据存储或请求时，对 key 采用相同的 hash 算法，并映射到前面的那个圆中，从映射位置顺时针查找，找到的第一个 Mc 节点，就是目标存取节点。</p>
+<p><img src="http://image.leonote.cn/20210617195100.png" alt=""></p>
+<p>而哈希取模分布算法，则比较简单，对 key 做 hash 后，对 Mc 节点数取模，即可找到待存取的目标 Mc 节点。</p>
+<p>系统运行过程中，Mc 节点故障不可避免，有时候甚至短期内出现多次故障。在 Mc 节点故障下线后，如果采用一致性 hash 分布，可以方便得通过 rehash 策略，将该 Mc 节点的 hash 点、访问量，均匀分散到其他 Mc 节点。如果采用取模分布，则会直接导致 1/N 的访问 miss，N 是 Mc 资源池的节点数。</p>
+<p>因此，对于单层 Mc 缓存架构，一致性 hash 分布配合 rehash 策略，是一个更佳的方案。通过将业务数据分拆到独立 Mc 资源池，同时在每个资源池采用合适的分布算法，可以很好的解决 Mc 使用中容量问题、性能瓶颈问题，以及连接瓶颈问题。</p>
+<h4 id="Master-Slave-两级架构"><a href="#Master-Slave-两级架构" class="headerlink" title="Master-Slave 两级架构"></a>Master-Slave 两级架构</h4><p>在系统的访问量比较大，比如峰值 QPS 达到 20w 以上时，如果缓存节点故障，即便采用一致性 hash，也会在一段时间内给 DB 造成足够大的压力，导致大量慢查询和访问超时的问题。另外，如果某些缓存服务器短期多次故障，反复上下线，多次 rehash 还会产生脏数据。对此，可以采用 Master-Slave 的两级架构方案。</p>
+<p>在这种架构方案下，将业务正常访问的 Memcached 缓存池作为 master，然后在 master 之后，再加一个slave 资源池作 master 的热备份。slave 资源池也用 6<del>8 个节点，内存设置只用 master 的 1/2</del>1/3 即可。因为 slave 的应用，主要是考虑在 master 访问 miss 或异常时，Mc 缓存池整体的命中率不会过度下降，所以并不需要设置太大内存。</p>
+<p>日常访问，对于读操作，直接访问 master，如果访问 miss，再访问 slave。如果 slave 命中，就将读取到的 key 回写到 master。对于写操作，set、touch 等覆盖类指令，直接更新master 和 slave；而 cas、append 等，以 master 为准，master 在 cas、add 成功后，再将 key 直接 set 到 slave，以保持 master、slave 的数据一致性。</p>
+<p>如下图，在 master 部分节点异常后，由 slave 层来承接。任何一层，部分节点的异常，不会影响整体缓存的命中率、请求耗时等 SLA 指标。同时分布方式采用哈希取模方案，mc 节点异常不rehash，直接穿透，方案简洁，还可以避免一致性 hash 在 rehash 后产生的脏数据问题。</p>
+<p><img src="http://image.leonote.cn/20210617195139.png" alt=""></p>
+<p>Master-Slave 架构，在访问量比较大的场景下，可以很好得解决局部设备故障的问题。在部分节点异常或访问 miss 时，多消耗 1ms 左右的时间，访问 slave 资源，实现以时间换系统整体可用性的目的。</p>
+<h4 id="M-S-L1-架构"><a href="#M-S-L1-架构" class="headerlink" title="M-S-L1 架构"></a>M-S-L1 架构</h4><p>20世纪初，意大利统计学家帕累托提出来一个观点：在任何特定群体中，重要的因子通常只占少数，而不重要的因子则占多数，因此只要能控制具有重要性的少数因子，即能控制全局。这个理论经过多年演化，就成为当前大家所熟悉的 80/20 定律。80/20 定律在互联网系统中也广泛存在，如 80% 的用户访问会集中在系统 20% 的功能上，80% 的请求会集中在 20% 的数据上。因此，互联网系统的数据，有明显的冷热区分，而且这个冷热程度往往比 80/20 更大，比如微博、微信最近一天的数据，被访问的特别频繁，而一周前的数据就很少被访问了。而且最近几天的热数据中，部分 feed 信息会被大量传播和交互，比其他 大部分数据的访问量要高很多倍，形成明显的头部请求。</p>
+<p><strong>头部请求</strong>，会导致日常大量访问，被集中在其中一小部分 key 上。同时，在突发新闻、重大事件发生时，请求量短期增加 50~70% 以上，而这些请求，又集中在突发事件的关联 key 上，造就大量的热 key 的出现。热 key 具有随机性，如果集中在某少数几个节点，就会导致这些节点的压力陡增数倍，负荷严重过载，进而引发大量查询变慢超时的问题。</p>
+<p>为了应对日常峰值的热数据访问，特别是在应对突发事件时，洪峰流量带来的极热数据访问，可以通过增加 L1 层来解决。如下图所示，L1 层包含 2<del>6 组 L1 资源池，每个 L1 资源池，用 4</del>6 个节点，但内存容量只要 Master 的 1/10 左右即可。</p>
+<p><img src="http://image.leonote.cn/20210617195214.png" alt=""></p>
+<p>如图，读请求时，首先随机选择一个 L1 进行读取，如果 miss 则访问 master，如果 master 也 miss，最后访问 slave。中途，只要任何一层命中，则对上一层资源池进行回写。</p>
+<p>写请求时，同 Master-Slave 架构类似，对于 set 覆盖类指令，直接 set 三层所有的资源池。对于 add/cas/append 等操作，以 master 为准，master 操作成功后，将最后的 key/value set 到 L1 和 slave 层所有资源池。</p>
+<p>由于 L1 的内存只有 master 的 1/10，且 L1 优先被读取，所以 L1 中 Memcached 只会保留最热的 key，因为 key 一旦稍微变冷，就会排到 COLD LRU 队尾，并最终被剔除。虽然 L1 的内存小，但由于 L1 里，永远只保存了系统访问量最大最热的数据，根据统计L1 可以满足整个系统的 60~80% 以上的请求数据。这也与 80/20 原则相符合。</p>
+<p>master 存放全量的热数据，用于满足 L1 读取 miss 或异常后的访问流量。slave 用来存放绝大部分的热数据，而且与 master 存在一定的差异，用来满足 L1、master 读取 miss 或异常的访问流量。</p>
+<p>这里面有个可以进一步优化的地方，即为确保 master、slave 的热度，让 master、slave 也尽可能只保留最热的那部分数据，可以在读取 L1 时，保留适当的概率，直接读取 master 或slave，让最热的 key 被访问到，从而不会被 master、slave 剔除。此时，访问路径需要稍做调整，即如果首先访问了 master，如果 miss，接下来只访问 slave。而如果首先访问了 slave，如果 miss，接下来只访问 master。</p>
+<p>通过 Master-Slave-L1 架构，在流量洪峰到来之际，可以用很少的资源，快速部署多组L1资源池，然后加入 L1 层中，从而让整个系统的抗峰能力达到 N 倍的提升。从而以最简洁的办法，快速应对流量洪峰，把极热 key 分散到 N 组 L1 中，每个 L1 资源池只用负责 1/N 的请求。除了抗峰，另外，还可以轻松应对局部故障，避免雪崩的发生。</p>
+<h3 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h3><p><img src="http://image.leonote.cn/20210617195300.png" alt=""></p>
+<h2 id="如何深入理解、应用及扩展-Twemproxy"><a href="#如何深入理解、应用及扩展-Twemproxy" class="headerlink" title="如何深入理解、应用及扩展 Twemproxy"></a>如何深入理解、应用及扩展 Twemproxy</h2><h3 id="Twemproxy-架构及应用"><a href="#Twemproxy-架构及应用" class="headerlink" title="Twemproxy 架构及应用"></a>Twemproxy 架构及应用</h3><p>Twemproxy 是 Twitter 的一个开源架构，它是一个分片资源访问的代理组件。如下图所示，它可以封装资源池的分布及 hash 规则，解决后端部分节点异常后的探测和重连问题，让 client 访问尽可能简单，同时资源变更时，只要在 Twemproxy 变更即可，不用更新数以万计的 client，让资源变更更轻量。最后，Twemproxy 跟后端通过单个长连接访问，可以大大减少后端资源的连接压力。</p>
+<h4 id="系统架构"><a href="#系统架构" class="headerlink" title="系统架构"></a>系统架构</h4><p>接下来分析基于 Twemproxy 的应用系统架构，以及 Twemproxy 组件的内部架构。</p>
+<p>如下图所示， 在应用系统中，Twemproxy 是一个介于 client 端和资源端的中间层。它的后端，支持Memcached 资源池和 Redis 资源池的分片访问。Twemproxy 支持取模分布和一致性 hash 分布，还支持随机分布，不过使用场景较少。 </p>
+<p><img src="http://image.leonote.cn/20210617200127.png" alt=""></p>
+<p>应用前端在请求缓存数据时，直接访问 Twemproxy 的对应端口，然后 Twemproxy 解析命令得到 key，通过 hash 计算后，按照分布策略，将 key 路由到后端资源的分片。在后端资源响应后，再将响应结果返回给对应的 client。</p>
+<p>在系统运行中，Twemproxy 会自动维护后端资源服务的状态。如果后端资源服务异常，会自动进行剔除，并定期探测，在后端资源恢复后，再对缓存节点恢复正常使用。</p>
+<h4 id="组件架构"><a href="#组件架构" class="headerlink" title="组件架构"></a>组件架构</h4><p>Twemproxy 是基于 epoll 事件驱动模型开发的，架构如下图所示。它是一个单进程、单线程组件。核心进程处理所有的事件，包括网络 IO，协议解析，消息路由等。Twemproxy 可以监听多个端口，每个端口接受并处理一个业务的缓存请求。Twemproxy 支持 Redis、Memcached 协议，支持一致性 hash 分布、取模分布、随机分布三种分布方案。Twemproxy 通过 YAML 文件进行配置，简单清晰，且便于人肉读写。</p>
+<p><img src="http://image.leonote.cn/20210617200328.png" alt=""></p>
+<p>Twemproxy 与后端资源通过单个长连接访问，在收到业务大量并发请求后，会通过 pipeline 的方式，将多个请求批量发到后端。在后端资源持续访问异常时，Twemproxy 会将其从正常列表中剔除，并不断探测，待其恢复后再进行请求的路由分发。</p>
+<p>Twemproxy 运行中，会持续产生海量请求及响应的消息流，于是开发者精心设计了内存管理机制，尽可能的减少内存分配和复制，最大限度的提升系统性能。Twemproxy 内部，请求和响应都是一个消息，而这个消息结构体，以及消息存放数据的缓冲都是重复使用的，避免反复分配和回收的开销，提升消息处理的性能。为了解决短连接的问题，Twemproxy 的连接也是复用的，这样在面对 PHP client 等短连接访问时，也可以反复使用之前分配的 connection，提升连接性能。</p>
+<p>另外，Twemproxy 对消息还采用了 zero copy（即零拷贝）方案。对于请求消息，只在client 接受时读取一次，后续的解析、处理、转发都不进行拷贝，全部共享最初的那个消息缓冲。对于后端的响应也采用类似方案，只在接受后端响应时，读取到消息缓冲，后续的解析、处理及回复 client 都不进行拷贝。通过共享消息体及消息缓冲，虽然 Twemproxy 是单进程/单线程处理，仍然可以达到 6~8w 以上的 QPS。</p>
+<h3 id="Twemproxy-请求及响应"><a href="#Twemproxy-请求及响应" class="headerlink" title="Twemproxy 请求及响应"></a>Twemproxy 请求及响应</h3><p>接下来看一下 Twemproxy 是如何进行请求路由及响应的。</p>
+<p>Twemproxy 监听端口，当有 client 连接进来时，则 accept 新连接，并构建初始化一个 client_conn。当建连完毕，client 发送数据到来时，client_conn 收到网络读事件，则从网卡读取数据，并记入请求消息的缓冲中。读取完毕，则开始按照配置的协议进行解析，解析成功后，就将请求 msg 放入到 client_conn 的 out 队列中。接下来，就对解析的命令 key 进行 hash 计算，并根据分布算法，找到对应 server 分片的连接，即一个 server_conn 结构体，如下图。</p>
+<p><img src="http://image.leonote.cn/20210617200745.png" alt=""></p>
+<p>如果 server_conn的 in 队列为空，首先对 server_conn 触发一个写事件。然后将 req msg 存入到 server_conn 的 in 队列。Server_conn 在处理写事件时，会对 in 队列中的 req msg 进行聚合，按照 pipeline 的方式批量发送到后端资源。待发送完毕后，将该条请求 msg 从 server_conn 的 in 队列删除，并插入到 out 队列中。</p>
+<p>后端资源服务完成请求后，会将响应发送给 Twemproxy。当响应到 Twemproxy 后，对应的 server_conn 会收到 epoll 读事件，则开始读取响应 msg。响应读取并解析后，会首先将server_conn 中，out 队列的第一个 req msg 删除，并将这个 req msg 和最新收到的 rsp msg 进行配对。在 req 和 rsp 匹配后，触发 client_conn 的写事件，如下图。</p>
+<p><img src="http://image.leonote.cn/20210617200824.png" alt=""></p>
+<p>然后 client_conn 在处理 epoll 写事件时，则按照请求顺序，批量将响应发送给 client 端。发送完毕后，将 req msg 从 client 的 out 队列删除。最后，再回收消息缓冲，以及消息结构体，供后续请求处理的时候复用。至此一个请求的处理彻底完成。</p>
+<h3 id="Twemproxy-安装和使用"><a href="#Twemproxy-安装和使用" class="headerlink" title="Twemproxy 安装和使用"></a>Twemproxy 安装和使用</h3><p>Twemproxy 的安装和使用比较简单。首先通过 Git，将 Twemproxy 从 GitHub clone 到目标服务器，然后进入 Twemproxy 路径，首先执行 $ autoreconf -fvi，然后执行 ./configure ，最后执行 make（当然，也可以再执行 make install），这样就完成了 Temproxy 的编译和安装。然后就可以通过 src/nutcracker -c /xxx/conf/nutcracker.yml 来启动 Twemproxy 了。</p>
+<p>Twemproxy 代理后端资源访问，这些后端资源的部署信息及访问策略都是在 YAML 文件中配置。所以接下来，我们简单看一下 Twemproxy 的配置。如图所示，这个配置中代理了 2 个业务数据的缓存访问。一个是 alpha，另一个是 beta。在每个业务的配置详情里。首先是 listen 配置项，用于设置监听该业务的端口。然后是 hash 算法和分布算法。Auto_eject_hosts 用于设置在后端 server 异常时，是否将这个异常 server 剔除，然后进行 rehash，默认不剔除。Redis配置项用于指示后端资源类型，是 Redis 还是 Memcached。最后一个配置项 servers，用于设置资源池列表。</p>
+<p>以 Memcached 访问为例，将业务的 Memcached 资源部署好之后，然后将 Mc 资源列表、访问方式等设到 YAML 文件的配置项，然后启动 Twemproxy，业务端就可以通过访问 Twemproxy ，来获取后端资源的数据了。后续，Mc 资源有任何变更，业务都不用做任何改变，运维直接修改 Twemproxy 的配置即可。</p>
+<p>Twemproxy 在实际线的使用中，还是存在不少问题的。首先，它是单进程/单线程模型，一个 event_base 要处理所有的事件，这些事件包括 client 请求的读入，转发请求给后端 server，从 server 接受响应，以及将响应发送给 client。单个 Twemproxy 实例，压测最大可以到 8w 左右的 QPS，出于线上稳定性考虑，QPS 最多支撑到 3<del>4w。而 Memcached 的线上 QPS，一般可以达到 10</del>20w，一个 Mc 实例前面要挂 3~5 个 Twemproxy 实例。实例数太多，就会引发诸如管理复杂、成本过高等一系列问题。</p>
+<p>其次，基于性能及预防单点故障的考虑，Twemproxy 需要进行多实例部署，而且还需要根据业务访问量的变化，进行新实例的加入或冗余实例的下线。多个 Twemproxy 实例同时被访问，如果 client 访问策略不当，就会出现有些 Twemproxy 压力过大，而有些却很空闲，造成访问不均的问题。</p>
+<p>再次，后端资源在 Twemproxy 的 YAML 文件集中配置，资源变更的维护，比直接在所有业务 client 端维护，有了很大的简化。但在多个 Twemproxy 修改配置，让这些配置同时生效，也是一个复杂的工作。</p>
+<p>最后，Twemproxy 也无法支持 Mc 多副本、多层次架构的访问策略，无法支持 Redis 的Master-Slave 架构的读写分离访问。</p>
+<p>为此，你可以对 Twemproxy 进行扩展，以更好得满足业务及运维的需要。</p>
+<h3 id="Twemproxy-扩展"><a href="#Twemproxy-扩展" class="headerlink" title="Twemproxy 扩展"></a>Twemproxy 扩展</h3><h4 id="多进程改造"><a href="#多进程改造" class="headerlink" title="多进程改造"></a>多进程改造</h4><p>性能首当其冲。首先可以对 Twemproxy 的单进程/单线程动刀，改为并行处理模型。并行方案可以用多线程方案，也可以采用多进程方案。由于 Twemproxy 只是一个消息路由中间件，不需要额外共享数据，采用多进程方案会更简洁，更适合。</p>
+<p>多进程改造中，可以分别构建一个 master 进程和多个 worker 进程来进行任务处理，如下图所示。每个进程维护自己独立的 epoll 事件驱动。其中 master 进程，主要用于监听端口，accept 新连接，并将连接调度给 worker 进程。</p>
+<p><img src="http://image.leonote.cn/20210617200958.png" alt=""><br>而 worker 进程，基于自己独立的 event_base，管理从 master 调度给自己的所有 client 连接。在 client 发送网络请求到达时，进行命令读取、解析，并在进程内的 IO 队列流转，最后将请求打包，pipeline 给后端的 server。</p>
+<p>在 server 处理完毕请求，发回响应时。对应 worker 进程，会读取并解析响应，然后批量回复给 client。</p>
+<p>通过多进程改造，Twemproxy 的 QPS 可以从 8w 提升到 40w+。业务访问时，需要部署的Twemproxy 的实例数会大幅减少，运维会更加简洁。</p>
+<h4 id="增加负载均衡"><a href="#增加负载均衡" class="headerlink" title="增加负载均衡"></a>增加负载均衡</h4><p>对于多个 Twemproxy 访问，如何进行负载均衡的问题。一般有三种方案。</p>
+<p>第一种方案，是在 Twemproxy 和业务访问端之间，再增加一组 LVS，作为负载均衡层，通过 LVS 负载均衡层，你可以方便得增加或减少 Twemproxy 实例，由 LVS 负责负载均衡和请求分发，如下图。</p>
+<p><img src="http://image.leonote.cn/20210617201100.png" alt=""><br>第二种方案，是将 Twemproxy 的 IP 列表加入 DNS。业务 client 通过域名来访问 Twemproxy，每次建连时，DNS 随机返回一个 IP，让连接尽可能均衡。</p>
+<p>第三种方案，是业务 client 自定义均衡策略。业务 client 从配置中心或 DNS 获取所有的Twemproxy 的 IP 列表，然后对这些 Twemproxy 进行均衡访问，从而达到负载均衡。</p>
+<p>方案一，可以通过成熟的 LVS 方案，高效稳定的支持负载均衡策略，但多了一层，成本和运维的复杂度会有所增加。方案二，只能做到连接均衡，访问请求是否均衡，无法保障。方案三，成本最低，性能也比前面 2 个方案更高效。推荐使用方案三，微博内部也是采用第三种方案。</p>
+<h4 id="增加配置中心"><a href="#增加配置中心" class="headerlink" title="增加配置中心"></a>增加配置中心</h4><p>对于 Twemproxy 配置的维护，可以通过增加一个配置中心服务来解决。将 YAML 配置文件中的所有配置信息，包括后端资源的部署信息、访问信息，以配置的方式存储到配置中心，如下图。</p>
+<p><img src="http://image.leonote.cn/20210617201128.png" alt=""></p>
+<p>Twemproxy 启动时，首先到配置中心订阅并拉取配置，然后解析并正常启动。Twemproxy 将自己的 IP 和监听端口信息，也注册到配置中心。业务 client 从配置中心，获取Twemproxy 的部署信息，然后进行均衡访问。</p>
+<p>在后端资源变更时，直接更新配置中心的配置。配置中心会通知所有 Twemproxy 实例，收到事件通知，Twemproxy 即可拉取最新配置，并调整后端资源的访问，实现在线变更。整个过程自动完成，更加高效和可靠。</p>
+<h4 id="支持-M-S-L1-多层访问"><a href="#支持-M-S-L1-多层访问" class="headerlink" title="支持 M-S-L1 多层访问"></a>支持 M-S-L1 多层访问</h4><p>前面提到，为了应对突发洪水流量，避免硬件局部故障的影响，对 Mc 访问采用了Master-Slave-L1 架构。可以将该缓存架构体系的访问策略，封装到 Twemproxy 内部。实现方案也比较简单。首先在 servers 配置中，增加 Master、Slave、L1 三层，如下图。</p>
+<p><img src="http://image.leonote.cn/20210617201225.png" alt=""></p>
+<p>Twemproxy 启动时，每个 worker 进程预连所有的 Mc 后端，当收到 client 请求时，根据解析出来的指令，分别采用不同访问策略即可。</p>
+<ul>
+<li><p>对于 get 请求，首先随机选择一个 L1 来访问，如果 miss，继续访问 Master 和 Slave。中间在任何一层命中，则回写。</p>
+</li>
+<li><p>对于 gets 请求，需要以 master 为准，从 master 读取。如果 master 获取失败，则从 slave获取，获取后回种到 master，然后再次从 master 获取，确保得到 cas unique id 来自 master。</p>
+</li>
+<li><p>对于 add/cas 等请求，首先请求 master，成功后，再将 key/value 通过 set 指令，写到 slave 和所有 L1。</p>
+</li>
+<li><p>对于 set 请求，最简单，直接 set 所有资源池即可。</p>
+</li>
+<li><p>对于 stats 指令的响应，由 Twemproxy 自己统计，或者到后端 Mc 获取后聚合获得。</p>
+</li>
+</ul>
+<h4 id="Redis-主从访问"><a href="#Redis-主从访问" class="headerlink" title="Redis 主从访问"></a>Redis 主从访问</h4><p>Redis 支持主从复制，为了支持更大并发访问量，同时减少主库的压力，一般会部署多个从库，写操作直接请求 Redis 主库，读操作随机选择一个 Redis 从库。这个逻辑同样可以封装在Twemproxy 中。如下图所示，Redis 的主从配置信息，可以用域名的方式，也可以用 IP 端口的方式记录在配置中心，由 Twemproxy 订阅并实时更新，从而在 Redis 增减 slave、主从切换时，及时对后端进行访问变更。</p>
+<p><img src="http://image.leonote.cn/20210617201322.png" alt=""></p>
+<h3 id="思维导图-1"><a href="#思维导图-1" class="headerlink" title="思维导图"></a>思维导图</h3><p><img src="http://image.leonote.cn/20210617201351.png" alt=""></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/2021/06/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E5%88%86%E5%B8%83%E5%BC%8FMemcached%E5%AE%9E%E6%88%98/">https://liule8.github.io/2021/06/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E5%88%86%E5%B8%83%E5%BC%8FMemcached%E5%AE%9E%E6%88%98/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%BC%93%E5%AD%98/">缓存</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/06/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Redis%E5%8E%9F%E7%90%86%E3%80%81%E5%8D%8F%E8%AE%AE%E5%8F%8A%E4%BD%BF%E7%94%A8/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">分布式缓存-Redis原理、协议及使用</div></div></a></div><div class="next-post pull-right"><a href="/2021/04/17/Java%20Future%E7%B1%BB%E8%AF%A6%E8%A7%A3/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Java Future 类详解</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/11/23/分布式缓存-7大缓存经典问题/" title="7大缓存经典问题"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-23</div><div class="title">7大缓存经典问题</div></div></a></div><div><a href="/2021/07/09/分布式缓存-分布式Redis实战/" title="分布式缓存-分布式Redis实战"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-09</div><div class="title">分布式缓存-分布式Redis实战</div></div></a></div><div><a href="/2021/02/08/分布式缓存-Memcached的原理及架构剖析/" title="分布式缓存-Memcached的原理及架构剖析"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-07</div><div class="title">分布式缓存-Memcached的原理及架构剖析</div></div></a></div><div><a href="/2021/02/08/分布式缓存-Memcached进阶/" title="分布式缓存-Memcached进阶"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-07</div><div class="title">分布式缓存-Memcached进阶</div></div></a></div><div><a href="/2021/06/16/分布式缓存-Redis原理、协议及使用/" title="分布式缓存-Redis原理、协议及使用"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-06-16</div><div class="title">分布式缓存-Redis原理、协议及使用</div></div></a></div><div><a href="/2021/07/02/分布式缓存-Redis进阶(上)/" title="分布式缓存-Redis进阶(上)"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-02</div><div class="title">分布式缓存-Redis进阶(上)</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">81</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">63</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">37</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8FMemcached%E5%AE%9E%E6%88%98"><span class="toc-number">1.</span> <span class="toc-text">分布式Memcached实战</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%97%B6%E4%BB%A3%EF%BC%8CMC%E5%A6%82%E4%BD%95%E5%BA%94%E5%AF%B9%E6%96%B0%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.</span> <span class="toc-text">大数据时代，MC如何应对新的常见问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%97%B6%E4%BB%A3-Memcached-%E7%BB%8F%E5%85%B8%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.1.</span> <span class="toc-text">大数据时代 Memcached 经典问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%B9%E9%87%8F%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">容量问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E7%93%B6%E9%A2%88"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">性能瓶颈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E7%93%B6%E9%A2%88"><span class="toc-number">1.1.1.3.</span> <span class="toc-text">连接瓶颈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A1%AC%E4%BB%B6%E8%B5%84%E6%BA%90%E5%B1%80%E9%83%A8%E6%95%85%E9%9A%9C"><span class="toc-number">1.1.1.4.</span> <span class="toc-text">硬件资源局部故障</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E6%B4%AA%E5%B3%B0%E4%B8%8B%E5%BF%AB%E9%80%9F%E6%89%A9%E5%B1%95"><span class="toc-number">1.1.1.5.</span> <span class="toc-text">流量洪峰下快速扩展</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Memchcaed-%E7%BB%8F%E5%85%B8%E9%97%AE%E9%A2%98%E5%8F%8A%E5%BA%94%E5%AF%B9%E6%96%B9%E6%A1%88"><span class="toc-number">1.1.2.</span> <span class="toc-text">Memchcaed 经典问题及应对方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Memcached-%E5%88%86%E6%8B%86%E7%BC%93%E5%AD%98%E6%B1%A0"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">Memcached 分拆缓存池</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Master-Slave-%E4%B8%A4%E7%BA%A7%E6%9E%B6%E6%9E%84"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">Master-Slave 两级架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#M-S-L1-%E6%9E%B6%E6%9E%84"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">M-S-L1 架构</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE"><span class="toc-number">1.1.3.</span> <span class="toc-text">思维导图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E3%80%81%E5%BA%94%E7%94%A8%E5%8F%8A%E6%89%A9%E5%B1%95-Twemproxy"><span class="toc-number">1.2.</span> <span class="toc-text">如何深入理解、应用及扩展 Twemproxy</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Twemproxy-%E6%9E%B6%E6%9E%84%E5%8F%8A%E5%BA%94%E7%94%A8"><span class="toc-number">1.2.1.</span> <span class="toc-text">Twemproxy 架构及应用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">系统架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">组件架构</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Twemproxy-%E8%AF%B7%E6%B1%82%E5%8F%8A%E5%93%8D%E5%BA%94"><span class="toc-number">1.2.2.</span> <span class="toc-text">Twemproxy 请求及响应</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Twemproxy-%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.3.</span> <span class="toc-text">Twemproxy 安装和使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Twemproxy-%E6%89%A9%E5%B1%95"><span class="toc-number">1.2.4.</span> <span class="toc-text">Twemproxy 扩展</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E8%BF%9B%E7%A8%8B%E6%94%B9%E9%80%A0"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">多进程改造</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">增加负载均衡</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83"><span class="toc-number">1.2.4.3.</span> <span class="toc-text">增加配置中心</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%AF%E6%8C%81-M-S-L1-%E5%A4%9A%E5%B1%82%E8%AE%BF%E9%97%AE"><span class="toc-number">1.2.4.4.</span> <span class="toc-text">支持 M-S-L1 多层访问</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-%E4%B8%BB%E4%BB%8E%E8%AE%BF%E9%97%AE"><span class="toc-number">1.2.4.5.</span> <span class="toc-text">Redis 主从访问</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">思维导图</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/07/15/SpringSecurity%E4%B9%8B%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/" title="Spring Security 用户认证">Spring Security 用户认证</a><time datetime="2021-07-14T16:54:26.000Z" title="发表于 2021-07-14 16:54:26">2021-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/07/13/SpringSecurity%E7%AE%80%E4%BB%8B/" title="Spring Security 简介">Spring Security 简介</a><time datetime="2021-07-13T08:54:26.000Z" title="发表于 2021-07-13 08:54:26">2021-07-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/07/09/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E5%88%86%E5%B8%83%E5%BC%8FRedis%E5%AE%9E%E6%88%98/" title="分布式缓存-分布式Redis实战">分布式缓存-分布式Redis实战</a><time datetime="2021-07-09T14:45:42.000Z" title="发表于 2021-07-09 14:45:42">2021-07-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/07/09/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Redis%E8%BF%9B%E9%98%B6(%E4%B8%8B)/" title="分布式缓存-Redis进阶(下)">分布式缓存-Redis进阶(下)</a><time datetime="2021-07-09T12:47:27.000Z" title="发表于 2021-07-09 12:47:27">2021-07-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/07/02/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Redis%E8%BF%9B%E9%98%B6(%E4%B8%8A)/" title="分布式缓存-Redis进阶(上)">分布式缓存-Redis进阶(上)</a><time datetime="2021-07-02T13:01:37.000Z" title="发表于 2021-07-02 13:01:37">2021-07-02</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

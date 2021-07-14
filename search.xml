@@ -166,8 +166,8 @@
         <category>JPA</category>
       </categories>
       <tags>
-        <tag>JPA</tag>
-        <tag>Spring Data JPA</tag>
+        <tag>Spring Data</tag>
+        <tag>Spring Data Jpa</tag>
       </tags>
   </entry>
   <entry>
@@ -292,6 +292,94 @@
 <h3 id="一个动态例子"><a href="#一个动态例子" class="headerlink" title="一个动态例子"></a>一个动态例子</h3><h2 id="JVM-启动参数"><a href="#JVM-启动参数" class="headerlink" title="JVM 启动参数"></a>JVM 启动参数</h2><h3 id="系统属性"><a href="#系统属性" class="headerlink" title="系统属性"></a>系统属性</h3><h3 id="运行模式"><a href="#运行模式" class="headerlink" title="运行模式"></a>运行模式</h3><h3 id="堆内存"><a href="#堆内存" class="headerlink" title="堆内存"></a>堆内存</h3><h3 id="GC相关"><a href="#GC相关" class="headerlink" title="GC相关"></a>GC相关</h3><h3 id="分析诊断"><a href="#分析诊断" class="headerlink" title="分析诊断"></a>分析诊断</h3><h3 id="JavaAgents"><a href="#JavaAgents" class="headerlink" title="JavaAgents"></a>JavaAgents</h3>]]></content>
       <tags>
         <tag>JVM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java Future 类详解</title>
+    <url>/2021/04/17/Java%20Future%E7%B1%BB%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<h1 id="Java-Future-类详解"><a href="#Java-Future-类详解" class="headerlink" title="Java Future 类详解"></a>Java Future 类详解</h1><h2 id="生活中的-Future-模式"><a href="#生活中的-Future-模式" class="headerlink" title="生活中的 Future 模式"></a>生活中的 Future 模式</h2><p><strong>场景1</strong></p>
+<p>午饭时间到了，要去吃饭了，小王下楼，走了20分钟，来到了肯德基，点餐，排队，吃饭一共花了20分钟，又花了20分钟走回公司继续工作，合计1小时。</p>
+<p><strong>场景2</strong></p>
+<p>午饭时间到了，同学们要去吃饭了，小王点了个肯德基外卖，很快，它就拿到了一个订单（虽然订单不能当饭吃，但是有了订单，还怕吃不上饭嘛）。接着小王可以继续干活，30分钟后，外卖到了，接着小王花了10分钟吃饭，接着又可以继续工作了，成功的卷到了隔壁的小王。</p>
+<p><img src="http://image.leonote.cn//20210417140641.jfif" alt=""></p>
+<p>在这两个场景中，场景2的小王工作时间更加紧凑，特别是那些排队的时间都可以让外卖员去干，因此可以更加专注于自己的本职工作。</p>
+<p>场景1就是典型的函数同步调用，而场景2是典型的异步调用。</p>
+<p>而场景2的异步调用，还有一个特点，就是它拥有一个返回值，这个返回值就是我们的订单。这个订单很重要，凭借着这个订单，才能够取得当前这个调用所对应的结果。</p>
+<p>这里的订单就如同Future模式中的Future，这是一个合约，一份承诺。虽然订单不能吃，但是手握订单，不怕没吃的，虽然Future不是我们想要的结果，但是拿着Future就能在将来得到我们想要的结果。</p>
+<p>因此，<strong><em>Future模式很好的解决了那些需要返回值的异步调用</em></strong>。</p>
+<h3 id="Future-模式中的主要角色"><a href="#Future-模式中的主要角色" class="headerlink" title="Future 模式中的主要角色"></a>Future 模式中的主要角色</h3><p>一个典型的Future模式由以下几个部分组成：</p>
+<ul>
+<li><p>Main：系统启动，调用Client发出请求；</p>
+</li>
+<li><p>Client：返回Data对象，立即返回 Future Data，并开启 Client Thread 线程装配 Real Data；</p>
+</li>
+<li><p>Data：返回数据的接口；</p>
+</li>
+<li><p>Future Data： Future 数据，构造很快，但是是一个虚拟的数据，需要装配 Real Data，好比一个订单；</p>
+</li>
+<li><p>Real Data：真实数据，其构造是比较慢的，好比上面例子中的肯德基午餐。</p>
+<p>它们之间的相互关系如下图：</p>
+</li>
+</ul>
+<p><img src="http://image.leonote.cn//20210417141035.jfif" alt=""></p>
+<p>其中，值得注意是 Data，Real Data 和 Future Data。这是一组典型的代理模式：</p>
+<ul>
+<li>Data 接口表示对外数据；</li>
+<li>Real Data表示真实的数据，就好比午餐，获得它的成本比较高，需要很多时间；</li>
+<li>Future Data 作为 Real Data 的代理，类似于一个订单/契约，通过 Future Data，可以在将来获得 Real Data。</li>
+</ul>
+<p>因此，<strong><em>Future模式本质上是代理模式的一种实际应用</em></strong>。</p>
+<h3 id="实现一个简单的-Future-模式"><a href="#实现一个简单的-Future-模式" class="headerlink" title="实现一个简单的 Future 模式"></a>实现一个简单的 Future 模式</h3><h4 id="Data-接口"><a href="#Data-接口" class="headerlink" title="Data 接口"></a>Data 接口</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Data</span> </span>&#123;</span><br><span class="line">   <span class="function">String <span class="title">getResult</span> <span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Future-Data-类"><a href="#Future-Data-类" class="headerlink" title="Future Data 类"></a>Future Data 类</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FutureData</span> <span class="keyword">implements</span> <span class="title">Data</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 内部需要维护 RealData</span></span><br><span class="line">  <span class="keyword">protected</span> RealData realdata = <span class="keyword">null</span>;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">boolean</span> isReady = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">setRealData</span><span class="params">(RealData realdata)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (isReady) <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">this</span>.realdata = realdata;</span><br><span class="line">    isReady = <span class="keyword">true</span>;</span><br><span class="line">    <span class="comment">// RealData 已经被注入，通知 getResult()</span></span><br><span class="line">    notifyAll();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 会等待 RealData 构造完成</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> String <span class="title">getResult</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (!isReady) &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 一直等待，直到RealData被注入</span></span><br><span class="line">        wait();</span><br><span class="line">      &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 真正需要的数据从RealData获取</span></span><br><span class="line">    <span class="keyword">return</span> realdata.getResult();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Real-Data-类"><a href="#Real-Data-类" class="headerlink" title="Real Data 类"></a>Real Data 类</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RealData</span> <span class="keyword">implements</span> <span class="title">Data</span> </span>&#123;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> String result;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">RealData</span><span class="params">(String query)</span> </span>&#123;</span><br><span class="line">    StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 假设这里实际业务花费时间很长，构造 RealData 不容易</span></span><br><span class="line">      sb.append(query);</span><br><span class="line">      TimeUnit.MINUTES.sleep(<span class="number">3</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">      </span><br><span class="line">    &#125;</span><br><span class="line">    result = sb.toString();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">getResult</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Client-类"><a href="#Client-类" class="headerlink" title="Client 类"></a>Client 类</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 这是一个异步方法，返回的 Data接口 是一个 Future</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Data <span class="title">request</span><span class="params">(<span class="keyword">final</span> String queryStr)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> FutureData future = <span class="keyword">new</span> FutureData();</span><br><span class="line">    <span class="keyword">new</span> Thread(</span><br><span class="line">            () -&gt; &#123;</span><br><span class="line">              <span class="comment">// RealData 的构建很慢，所以在单独的线程中进行</span></span><br><span class="line">              RealData realdata = <span class="keyword">new</span> RealData(queryStr);</span><br><span class="line">              <span class="comment">// setRealData() 的时候会 notify() 等待在这个 future 上的对象</span></span><br><span class="line">              future.setRealData(realdata);</span><br><span class="line">            &#125;)</span><br><span class="line">        .start();</span><br><span class="line">    <span class="comment">// FutureData 会被立即返回，不会等待 RealData 被构造完</span></span><br><span class="line">    <span class="keyword">return</span> future;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Test-类"><a href="#Test-类" class="headerlink" title="Test 类"></a>Test 类</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Client client = <span class="keyword">new</span> Client();</span><br><span class="line">    <span class="comment">// 这里会立即返回，因为得到的是 FutureData 而不是 RealData</span></span><br><span class="line">    Data data = client.request(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;请求完毕&quot;</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 这里可以用一个sleep代替了对其他业务逻辑的处理</span></span><br><span class="line">      <span class="comment">// 在处理这些业务逻辑的过程中，RealData被创建，从而充分利用了等待时间</span></span><br><span class="line">      TimeUnit.SECONDS.sleep(<span class="number">2</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 使用真实的数据，如果到这里数据还没有准备好，getResult()会等待数据准备完，再返回</span></span><br><span class="line">    System.out.println(<span class="string">&quot;数据 = &quot;</span> + data.getResult());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Java-中的-Future-模式"><a href="#Java-中的-Future-模式" class="headerlink" title="Java 中的 Future 模式"></a>Java 中的 Future 模式</h2><p>JDK 内部的 Future 实现：</p>
+<p><img src="http://image.leonote.cn//20210417143205.jfif" alt=""></p>
+<p>首先，JDK 内部有一个 Future 接口，这就是类似前面提到的订单，当然了，作为一个完整的商业化产品，这里的 Future 的功能更加丰富了，除了 get() 方法来获得真实数据以外，还提供一组辅助方法，比如：</p>
+<ul>
+<li>cancel()：如果等太久，可以直接取消这个任务；</li>
+<li>isCancelled()：任务是不是已经取消了；</li>
+<li>isDone()：任务是不是已经完成了；</li>
+<li>get()：不带参数的表示无穷等待，或者指定等待时间。</li>
+</ul>
+<p>下面代码演示了这个Future的使用方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 异步操作 可以用一个线程池</span></span><br><span class="line">      ExecutorService executor = Executors.newFixedThreadPool(<span class="number">1</span>);</span><br><span class="line">      <span class="comment">// 执行 FutureTask，相当于上例中的 client.request(&quot;name&quot;) 发送请求</span></span><br><span class="line">      <span class="comment">// 在这里开启线程进行 RealData 的 call() 执行</span></span><br><span class="line">      Future&lt;String&gt; future = executor.submit(() -&gt; <span class="keyword">new</span> RealData(<span class="string">&quot;name&quot;</span>).getResult());</span><br><span class="line">      System.out.println(<span class="string">&quot;请求完毕，数据准备中&quot;</span>);</span><br><span class="line">      <span class="comment">// 这里依然可以做额外的数据操作，这里使用sleep代替其他业务逻辑的处理</span></span><br><span class="line">      TimeUnit.SECONDS.sleep(<span class="number">2</span>);</span><br><span class="line">      <span class="comment">// 如果此时call()方法没有执行完成，则依然会等待</span></span><br><span class="line">      System.out.println(<span class="string">&quot;数据 = &quot;</span> + future.get());</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException | ExecutionException ignored) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整个使用过程非常简单，下面来分析一下 <code>executor.submit()</code> 里面究竟发生了什么：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">submit</span><span class="params">(Callable&lt;T&gt; task)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (task == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">  <span class="comment">// 根据 Callable 对象，创建一个 RunnableFuture，这里其实就是 FutureTask</span></span><br><span class="line">  RunnableFuture&lt;T&gt; ftask = newTaskFor(task);</span><br><span class="line">  <span class="comment">// 将 ftask 推送到线程池</span></span><br><span class="line">  <span class="comment">// 在新线程中执行的，就是 run() 方法，在下面的代码中有给出</span></span><br><span class="line">  execute(ftask);</span><br><span class="line">  <span class="comment">// 返回这个 Future，将来通过这个 Future 就可以得到执行的结果</span></span><br><span class="line">  <span class="keyword">return</span> ftask;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span> &lt;T&gt; <span class="function">RunnableFuture&lt;T&gt; <span class="title">newTaskFor</span><span class="params">(Callable&lt;T&gt; callable)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> FutureTask&lt;T&gt;(callable);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最关键的部分在下面，<code>FutureTask</code> 作为一个线程单独执行时，会将结果保存到 outcome 中，并设置任务的状态,下面是<code>FutureTask</code>的 run() 方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 如果任务是新的才会执行，已经完成的任务不会再执行了</span></span><br><span class="line">    <span class="keyword">if</span> (state != NEW ||</span><br><span class="line">        !UNSAFE.compareAndSwapObject(<span class="keyword">this</span>, runnerOffset,</span><br><span class="line">                                     <span class="keyword">null</span>, Thread.currentThread()))</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Callable&lt;V&gt; c = callable;</span><br><span class="line">        <span class="keyword">if</span> (c != <span class="keyword">null</span> &amp;&amp; state == NEW) &#123;</span><br><span class="line">            V result;</span><br><span class="line">            <span class="keyword">boolean</span> ran;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// 调用Callable的call()方法，就是真正干活的地方</span></span><br><span class="line">                result = c.call();</span><br><span class="line">                ran = <span class="keyword">true</span>;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">                result = <span class="keyword">null</span>;</span><br><span class="line">                ran = <span class="keyword">false</span>;</span><br><span class="line">                setException(ex);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//这里的set()方法就是把result放到outcome里保存</span></span><br><span class="line">            <span class="comment">//同时设置任务状态为NORMAL，表示已完成</span></span><br><span class="line">            <span class="comment">//最后，还会通知等待在这个Future上的所有的线程，unpark这些线程</span></span><br><span class="line">            <span class="keyword">if</span> (ran)</span><br><span class="line">                set(result);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">// runner must be non-null until state is settled to</span></span><br><span class="line">        <span class="comment">// prevent concurrent calls to run()</span></span><br><span class="line">        runner = <span class="keyword">null</span>;</span><br><span class="line">        <span class="comment">// state must be re-read after nulling runner to prevent</span></span><br><span class="line">        <span class="comment">// leaked interrupts</span></span><br><span class="line">        <span class="keyword">int</span> s = state;</span><br><span class="line">        <span class="keyword">if</span> (s &gt;= INTERRUPTING)</span><br><span class="line">            handlePossibleCancellationInterrupt(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从<code>FutureTask</code>中获得结果的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> CancellationException &#123;<span class="doctag">@inheritDoc</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">get</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException, ExecutionException </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> s = state;</span><br><span class="line">    <span class="comment">//如果没有完成就等待，回到用park()方法阻塞线程</span></span><br><span class="line">    <span class="comment">//同时，所有等待线程会在FutureTask的waiters字段中排队等待</span></span><br><span class="line">    <span class="keyword">if</span> (s &lt;= COMPLETING)</span><br><span class="line">        s = awaitDone(<span class="keyword">false</span>, <span class="number">0L</span>);</span><br><span class="line">    <span class="keyword">return</span> report(s);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns result or throws exception for completed task.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> s completed state value</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> V <span class="title">report</span><span class="params">(<span class="keyword">int</span> s)</span> <span class="keyword">throws</span> ExecutionException </span>&#123;</span><br><span class="line">    <span class="comment">//outcome里保存的就是最终的计算结果</span></span><br><span class="line">    Object x = outcome;</span><br><span class="line">    <span class="keyword">if</span> (s == NORMAL)</span><br><span class="line">         <span class="comment">//正常完成，就返回outcome</span></span><br><span class="line">        <span class="keyword">return</span> (V)x;</span><br><span class="line">     <span class="comment">//如果没有正常完成， 比如被用户取消了，或者有异常了，就抛出异常</span></span><br><span class="line">    <span class="keyword">if</span> (s &gt;= CANCELLED)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> CancellationException();</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> ExecutionException((Throwable)x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Future-高阶版本——-CompletableFuture"><a href="#Future-高阶版本——-CompletableFuture" class="headerlink" title="Future 高阶版本—— CompletableFuture"></a>Future 高阶版本—— CompletableFuture</h2><p>Future模式虽然好用，但也有一个问题，那就是将任务提交给线程后，调用线程并不知道这个任务什么时候执行完，如果执行调用get()方法或者isDone()方法判断，可能会进行不必要的等待，那么系统的吞吐量很难提高。</p>
+<p>为了解决这个问题，JDK 对Future模式又进行了加强，创建了一个<code>CompletableFuture</code>，它可以理解为Future模式的升级版本，它最大的作用是<strong><em>提供了一个回调机制</em></strong>，可以在任务完成后，自动回调一些后续的处理，这样，整个程序可以把“结果等待”完全给移除了。</p>
+<p>下面来看一个简单的例子：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建异步执行任务</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">  CompletableFuture.supplyAsync(Test::getPrice)</span><br><span class="line">      <span class="comment">// 当 getPrice()执行完成后，会自动回调thenAccept()中的函数</span></span><br><span class="line">      .thenAccept(result -&gt; System.out.println(<span class="string">&quot;price: &quot;</span> + result))</span><br><span class="line">      <span class="comment">// 当出现异常时，会自动回调exceptionally()里的函数</span></span><br><span class="line">      .exceptionally(</span><br><span class="line">          e -&gt; &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">          &#125;);</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    TimeUnit.MILLISECONDS.sleep(<span class="number">200</span>);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> Double <span class="title">getPrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    TimeUnit.MILLISECONDS.sleep(<span class="number">100</span>);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 模拟一个异常</span></span><br><span class="line">  <span class="keyword">if</span> (Math.random() &lt; <span class="number">0.3</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;Error when get Price&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> Math.random() * <span class="number">20</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，首先以 getPrice() 为基础创建一个异步调用，接着，使用 thenAccept() 方法，设置了一个后续的操作，也就是当 getPrice() 执行完成后的后续处理。</p>
+<p>不难看到，<code>CompletableFuture</code> 比一般的Future更具有实用性，因为它可以在Future执行成功后，自动回调进行下一步的操作，因此整个程序不会有任何阻塞的地方（也就是说你不用去到处等待Future的执行，而是让Future执行成功后，自动来告诉你）。</p>
+<p>以上面的代码为例，<code>CompletableFuture</code>之所有会有那么神奇的功能，完全得益于<code>AsyncSupply</code>类（由上述代码中的 supplyAsync() 方法创建）。</p>
+<p><code>AsyncSupply</code> 在执行时，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    CompletableFuture&lt;T&gt; d; Supplier&lt;T&gt; f;</span><br><span class="line">    <span class="keyword">if</span> ((d = dep) != <span class="keyword">null</span> &amp;&amp; (f = fn) != <span class="keyword">null</span>) &#123;</span><br><span class="line">        dep = <span class="keyword">null</span>; fn = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (d.result == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">//这里就是要执行的异步方法</span></span><br><span class="line">                <span class="comment">//结果会被保存下来，放到d.result字段中</span></span><br><span class="line">                d.completeValue(f.get());</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">                d.completeThrowable(ex);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//执行成功进行后续处理，在这个后续处理中，就会调用thenAccept()中的消费者</span></span><br><span class="line">        <span class="comment">//这里就相当于Future完成后的通知</span></span><br><span class="line">        d.postComplete();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继续看 d.postComplete()，这里会调用后续一系列操作</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Pops and tries to trigger all reachable dependents.  Call only</span></span><br><span class="line"><span class="comment"> * when known to be done.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">postComplete</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * On each step, variable f holds current dependents to pop</span></span><br><span class="line"><span class="comment">     * and run.  It is extended along only one path at a time,</span></span><br><span class="line"><span class="comment">     * pushing others to avoid unbounded recursion.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    CompletableFuture&lt;?&gt; f = <span class="keyword">this</span>; Completion h;</span><br><span class="line">    <span class="keyword">while</span> ((h = f.stack) != <span class="keyword">null</span> ||</span><br><span class="line">           (f != <span class="keyword">this</span> &amp;&amp; (h = (f = <span class="keyword">this</span>).stack) != <span class="keyword">null</span>)) &#123;</span><br><span class="line">        CompletableFuture&lt;?&gt; d; Completion t;</span><br><span class="line">        <span class="keyword">if</span> (f.casStack(h, t = h.next)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (t != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (f != <span class="keyword">this</span>) &#123;</span><br><span class="line">                    pushStack(h);</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                h.next = <span class="keyword">null</span>;    <span class="comment">// detach</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//在tryFire()里，真正触发了后续的调用，也就是thenAccept()中的部分</span></span><br><span class="line">            f = (d = h.tryFire(NESTED)) == <span class="keyword">null</span> ? <span class="keyword">this</span> : d;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>多线程</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>Future</tag>
       </tags>
   </entry>
   <entry>
@@ -1058,9 +1146,11 @@
 <h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>  在认证和访问授权过程前，首先必须进行WebSecurityConfigurer符合自身应用的security Configurer，也要清楚filter链的先后顺序，才能更好理解spring security的工作原理以及在项目中出现的问题定位。</p>
 ]]></content>
       <categories>
+        <category>Spring</category>
         <category>Spring Security</category>
       </categories>
       <tags>
+        <tag>Spring</tag>
         <tag>Spring Security</tag>
       </tags>
   </entry>
@@ -1397,6 +1487,81 @@
       </tags>
   </entry>
   <entry>
+    <title>Spring Security 用户认证</title>
+    <url>/2021/07/15/SpringSecurity%E4%B9%8B%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/</url>
+    <content><![CDATA[<h1 id="用户认证：如何使用-Spring-Security-构建用户认证体系？"><a href="#用户认证：如何使用-Spring-Security-构建用户认证体系？" class="headerlink" title="用户认证：如何使用 Spring Security 构建用户认证体系？"></a>用户认证：如何使用 Spring Security 构建用户认证体系？</h1>]]></content>
+      <categories>
+        <category>Spring</category>
+        <category>Spring Security</category>
+      </categories>
+      <tags>
+        <tag>Spring</tag>
+        <tag>Spring Security</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Spring Security 简介</title>
+    <url>/2021/07/13/SpringSecurity%E7%AE%80%E4%BB%8B/</url>
+    <content><![CDATA[<h1 id="Spring-Security-简介"><a href="#Spring-Security-简介" class="headerlink" title="Spring Security 简介"></a>Spring Security 简介</h1><h2 id="初识-Spring-Security"><a href="#初识-Spring-Security" class="headerlink" title="初识 Spring Security"></a>初识 Spring Security</h2><p>其实在 Spring Boot 出现之前，Spring Security 就已经诞生多年了。但 Spring Security 的发展一直都不是很顺利，主要问题在于应用程序中集成和配置 Spring Security 框架的过程比较复杂。但是随着 Spring Boot 的兴起，基于 Spring Boot 所提供的针对 Spring Security 的自动配置方案，开发人员可以零配置使用 Spring Security。如果想要在 Spring Boot 应用程序中使用 Spring Security，只需要在 Maven 工程的 pom 文件中添加如下依赖：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>接下来，构建一个简单的 HTTP 端点，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoController</span> </span>&#123; </span><br><span class="line">    <span class="meta">@GetMapping(&quot;/hello&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello World!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在，启动这个 Spring Boot 应用程序，然后通过浏览器访问”/hello”端点。你可能希望得到的是”Hello World!”这个输出结果，但事实上，浏览器会跳转到一个如下所示的登录界面：</p>
+<p><img src="http://image.leonote.cn/20210714222255.jpg" alt=""></p>
+<p>添加了 spring-boot-starter-security 依赖之后，Spring Security 为应用程序自动嵌入了用户认证机制。就会弹出这个登录界面。</p>
+<p>接下来，针对这个登录场景，分析如何获取登录所需的用户名和密码。在 Spring Boot 的控制台启动日志中，出现了如下所示的一行日志：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Using generated security password: 707d7469-631f-4d92-ab71-3809620fe0dc</span><br></pre></td></tr></table></figure>
+
+<p>这行日志就是 Spring Security 生成的一个密码，而用户名则是系统默认的“user”。通过输入正确的用户名和密码，浏览器就会输出”Hello World!”这个响应结果。</p>
+<p>上述过程演示的就是 Spring Security 提供的认证功能，也是 Spring Security 众多功能中的一项基础功能。</p>
+<h2 id="Spring-Security-功能体系"><a href="#Spring-Security-功能体系" class="headerlink" title="Spring Security 功能体系"></a>Spring Security 功能体系</h2><p>Spring Security 提供的是一整套完整的安全性解决方案。面向不同的业务需求和应用场景，Spring Security 分别提供了对应的安全性功能，在接下来的内容中，将从单体应用、微服务架构以及响应式系统这三个维度对这些功能展开讨论。</p>
+<h3 id="Spring-Security-与单体应用"><a href="#Spring-Security-与单体应用" class="headerlink" title="Spring Security 与单体应用"></a>Spring Security 与单体应用</h3><p>在软件系统中，可以把需要访问的内容定义为是一种资源（Resource），而安全性设计的核心目标就是对这些资源进行保护，确保对它们的访问是安全可控的。例如，在一个 Web 应用程序中，对外暴露的 HTTP 端点就可以被理解为是资源。对于资源的安全性访问，业界也存在一些常见的技术体系。在讲解这些技术体系之前，先来理解在安全领域中非常常见但又容易混淆的两个概念，即认证（Authentication）和授权（Authorization）。</p>
+<p>首先需要明确，所谓认证，解决的是“你是谁”这一个问题，也就是说对于每一次访问请求，系统都能判断出访问者是否具有合法的身份标识。</p>
+<p>一旦明确 “你是谁”，下一步就可以判断“你能做什么”，这个步骤就是授权。通用的授权模型大多基于权限管理体系，即对资源、权限、角色和用户的一种组合处理。</p>
+<p>如果将认证和授权结合起来，就构成了对系统中的资源进行安全性管理的最常见解决方案，即先判断资源访问者的有效身份，再来确定其是否有对这个资源进行访问的合法权限，如下图所示：</p>
+<p><img src="http://image.leonote.cn/20210714222411.jpg" alt=""></p>
+<p>上图代表的是一种通用方案，而不同的应用场景和技术体系下可以衍生出很多具体的实现策略。Web 应用系统中的认证和授权模型与上图类似，但在具体设计和实现过程中也有其特殊性。</p>
+<ul>
+<li><p>针对认证：这部分的需求相对比较明确。显然需要构建一套完整的存储体系来保存和维护用户信息，并且确保这些用户信息在处理请求的过程中能够得到合理的利用。</p>
+</li>
+<li><p>针对授权：情况可能会比较复杂。对于某一个特定的 Web 应用程序而言，面临的第一个问题是如何判断一个 HTTP 请求是否具备访问自己的权限。更进一步，就算这个请求具备访问该应用程序的权限，但并不意味着该请求能够访问应用程序所有的 HTTP 端点。某些核心功能需要具备较高的权限才能访问，而有些则不需要。这就是需要解决的第二个问题，如何对访问的权限进行精细化管理？如下图所示：</p>
+</li>
+</ul>
+<p><img src="http://image.leonote.cn/20210714222446.jpg" alt=""></p>
+<p>在上图中，假设该请求具备对应用程序中端点 2、3、4 的访问权限，但不具备访问端点 1 的权限。想要达到这种效果，一般的做法是引入角色体系。针对不同的用户设置不同等级的角色，角色等级不同对应的访问权限也不同。而每一个请求都可以绑定到某一个角色，也就具备了访问权限。</p>
+<p>接下来，把认证和授权结合起来，梳理出 Web 应用程序访问场景下的安全性实现方案，如下图所示：</p>
+<p><img src="http://image.leonote.cn/20210714222522.jpg" alt=""></p>
+<p>结合示意图可以看到，通过请求传递用户凭证完成用户认证，然后根据该用户信息中具备的角色信息获取访问权限，并最终完成对 HTTP 端点的访问授权。</p>
+<p>围绕认证和授权，还需要一系列的额外功能确保整个流程得以实现。这些功能包括用于密码保护的加解密机制、用于实现方法级的安全访问，以及支持跨域等。</p>
+<h3 id="Spring-Security-与微服务架构"><a href="#Spring-Security-与微服务架构" class="headerlink" title="Spring Security 与微服务架构"></a>Spring Security 与微服务架构</h3><p>微服务架构的情况要比单体应用复杂很多，因为涉及了服务与服务之间的调用关系。继续沿用“资源”这个概念，对应到微服务系统中，服务提供者充当的角色就是资源的服务器，而服务消费者就是客户端。所以各个服务本身既可以是客户端，也可以作为资源服务器，或者两者兼之。</p>
+<p>接下来，把认证和授权结合起来，梳理出微服务访问场景下的安全性实现方案，如下图所示：</p>
+<p><img src="http://image.leonote.cn/20210714222624.jpg" alt=""></p>
+<p>可以看到，与单体应用相比，在微服务架构中需要把认证和授权的过程进行集中化管理，所以在上图中出现了一个授权中心。 授权中心会获取客户端请求中所带有的身份凭证信息，然后基于凭证信息生成一个 Token，这个 Token 中就包含了权限范围和有效期。</p>
+<p>客户端获取 Token 之后就可以基于这个 Token 发起对微服务的访问。这个时候，服务的提供者需要对这个 Token 进行认证，并根据 Token 的权限范围和有效期从授权中心获取该请求能够访问的特定资源。在微服务系统中，对外的资源表现形式同样可以理解为一个个 HTTP 端点。</p>
+<p>上图中关键点就在于构建用于生成和验证 Token 的授权中心，为此需要引入OAuth2 协议。OAuth2 协议为我们在客户端程序和资源服务器之间设置了一个授权层，并确保 Token 能够在各个微服务中进行有效传递，如下图所示：</p>
+<p><img src="http://image.leonote.cn/20210714222719.jpg" alt=""></p>
+<p>OAuth2 是一个相对复杂的协议，综合应用摘要认证、签名认证、HTTPS 等安全性手段，需要提供 Token 生成和校验以及公私钥管理等功能，同时需要开发者入驻并进行权限粒度控制。一般应该避免自行实现这类复杂的协议，倾向于借助于特定工具以免重复造轮子。而 Spring Security 提供了实现这一协议的完整解决方案，可以使用该框架完成适用于微服务系统中的认证授权机制。</p>
+<h3 id="Spring-Security-与响应式系统"><a href="#Spring-Security-与响应式系统" class="headerlink" title="Spring Security 与响应式系统"></a>Spring Security 与响应式系统</h3><p>随着 Spring 5 的发布，迎来了响应式编程（Reactive Programming）的全新发展时期。响应式编程是 Spring 5 最核心的新功能，也是 Spring 家族目前重点推广的技术体系。Spring 5 的响应式编程模型以 Project Reactor 库为基础，后者则实现了响应式流规范。</p>
+<p>事实上，Spring Boot 从 2.x 版本开始也全面依赖 Spring 5。同样，在 Spring Security 中，用户账户体系的建立、用户认证和授权、方法级别的安全访问、OAuth2 协议等传统开发模式下具备的安全性功能都具备对应的响应式版本。</p>
+<blockquote>
+<p>🎯思考</p>
+<p>单体应用架构和微服务架构，各自的认证和授权机制流程</p>
+<p>单体应用架构：用户登录后，只需要对用户调用某个接口时进行鉴权即可。</p>
+<p>微服务架构：能够访问资源的对象，用户和上游服务，和单体应用架构相比，增加了对上游服务的鉴权</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Spring</category>
+        <category>Spring Security</category>
+      </categories>
+      <tags>
+        <tag>Spring</tag>
+        <tag>Spring Security</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Springboot开启Gizp压缩</title>
     <url>/2021/01/02/Springboot%E5%BC%80%E5%90%AFGizp%E5%8E%8B%E7%BC%A9/</url>
     <content><![CDATA[<h1 id="Springboot开启Gizp压缩"><a href="#Springboot开启Gizp压缩" class="headerlink" title="Springboot开启Gizp压缩"></a>Springboot开启Gizp压缩</h1><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><blockquote>
@@ -1574,8 +1739,8 @@
       </categories>
       <tags>
         <tag>注解</tag>
-        <tag>Spring</tag>
         <tag>Java</tag>
+        <tag>Spring</tag>
       </tags>
   </entry>
   <entry>
@@ -2795,6 +2960,35 @@
 <p><strong>业务场景</strong></p>
 <p>很多业务场景，稍不注意，就出现大量的缓存失效，进而导致系统 DB 压力大、请求变慢的情况。比如同一批火车票、飞机票，当可以售卖时，系统会一次性加载到缓存，如果缓存写入时，过期时间按照预先设置的过期值，那过期时间到期后，系统就会因缓存失效出现变慢的问题。类似的业务场景还有很多，比如微博业务，会有后台离线系统，持续计算热门微博，每当计算结束，会将这批热门微博批量写入对应的缓存。还比如，很多业务，在部署新 IDC 或新业务上线时，会进行缓存预热，也会一次性加载大批热数据。</p>
 <p>解决方案<br>对于批量 key 缓存失效的问题，原因既然是预置的固定过期时间，那解决方案也从这里入手。设计缓存的过期时间时，使用公式：过期时间=baes 时间+随机时间。即相同业务数据写缓存时，在基础过期时间之上，再加一个随机的过期时间，让数据在未来一段时间内慢慢过期，避免瞬时全部过期，对 DB 造成过大压力，如下图所示。</p>
+]]></content>
+      <categories>
+        <category>缓存</category>
+      </categories>
+      <tags>
+        <tag>缓存</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>分布式缓存-分布式Redis实战</title>
+    <url>/2021/07/09/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E5%88%86%E5%B8%83%E5%BC%8FRedis%E5%AE%9E%E6%88%98/</url>
+    <content><![CDATA[<h1 id="分布式Redis实战"><a href="#分布式Redis实战" class="headerlink" title="分布式Redis实战"></a>分布式Redis实战</h1><h2 id="Redis-复制原理"><a href="#Redis-复制原理" class="headerlink" title="Redis 复制原理"></a>Redis 复制原理</h2><p>为了避免单点故障，数据存储需要进行多副本构建。同时由于 Redis 的核心操作是单线程模型的，单个 Redis 实例能处理的请求 TPS 有限。因此 Redis 自面世起，基本就提供了复制功能，而且对复制策略不断进行优化。</p>
+<p><img src="http://image.leonote.cn/20210714221629.png" alt=""></p>
+<p>通过数据复制，Redis 的一个 master 可以挂载多个 slave，而 slave 下还可以挂载多个 slave，形成多层嵌套结构。所有写操作都在 master 实例中进行，master 执行完毕后，将写指令分发给挂在自己下面的 slave 节点。slave 节点下如果有嵌套的 slave，会将收到的写指令进一步分发给挂在自己下面的 slave。通过多个 slave，Redis 的节点数据就可以实现多副本保存，任何一个节点异常都不会导致数据丢失，同时多 slave 可以 N 倍提升读性能。master 只写不读，这样整个 master-slave 组合，读写能力都可以得到大幅提升。</p>
+<p>master 在分发写请求时，同时会将写指令复制一份存入复制积压缓冲，这样当 slave 短时间断开重连时，只要 slave 的复制位置点仍然在复制积压缓冲，则可以从之前的复制位置点之后继续进行复制，提升复制效率。</p>
+<p><img src="http://image.leonote.cn/20210714221643.png" alt=""></p>
+<p>主库 master 和从库 slave 之间通过复制 id 进行匹配，避免 slave 挂到错误的 master。Redis 的复制分为全量同步和增量同步。Redis 在进行全量同步时，master 会将内存数据通过 bgsave 落地到 rdb，同时，将构建 内存快照期间 的写指令，存放到复制缓冲中，当 rdb 快照构建完毕后，master 将 rdb 和复制缓冲队列中的数据全部发送给 slave，slave 完全重新创建一份数据。这个过程，对 master 的性能损耗较大，slave 构建数据的时间也比较长，而且传递 rdb 时还会占用大量带宽，对整个系统的性能和资源的访问影响都比较大。而增量复制，master 只发送 slave 上次复制位置之后的写指令，不用构建 rdb，而且传输内容非常有限，对 master、slave 的负荷影响很小，对带宽的影响可以忽略，整个系统受影响非常小。</p>
+<p>在 Redis 2.8 之前，Redis 基本只支持全量复制。在 slave 与 master 断开连接，或 slave 重启后，都需要进行全量复制。在 2.8 版本之后，Redis 引入 psync，增加了一个复制积压缓冲，在将写指令同步给 slave 时，会同时在复制积压缓冲中也写一份。在 slave 短时断开重连后，上报master runid 及复制偏移量。如果 runid 与 master 一致，且偏移量仍然在 master 的复制缓冲积压中，则 master 进行增量同步。</p>
+<p>但如果 slave 重启后，master runid 会丢失，或者切换 master 后，runid 会变化，仍然需要全量同步。因此 Redis 自 4.0 强化了 psync，引入了 psync2。在 pysnc2 中，主从复制不再使用 runid，而使用 replid（即复制id） 来作为复制判断依据。同时 Redis 实例在构建 rdb 时，会将 replid 作为 aux 辅助信息存入 rbd。重启时，加载 rdb 时即可得到 master 的复制 id。从而在 slave 重启后仍然可以增量同步。</p>
+<p>在 psync2 中，Redis 每个实例除了会有一个复制 id 即 replid 外，还有一个 replid2。Redis 启动后，会创建一个长度为 40 的随机字符串，作为 replid 的初值，在建立主从连接后，会用 master的 replid 替换自己的 replid。同时会用 replid2 存储上次 master 主库的 replid。这样切主时，即便 slave 汇报的复制 id 与新 master 的 replid 不同，但和新 master 的 replid2 相同，同时复制偏移仍然在复制积压缓冲区内，仍然可以实现增量复制。</p>
+<h2 id="Redis-复制分析"><a href="#Redis-复制分析" class="headerlink" title="Redis 复制分析"></a>Redis 复制分析</h2><p>在设置 master、slave 时，首先通过配置或者命令 slaveof no one 将节点设置为主库。然后其他各个从库节点，通过 slaveof $master_ip $master_port，将其他从库挂在到 master 上。同样方法，还可以将 slave 节点挂载到已有的 slave 节点上。在准备开始数据复制时，slave 首先会主动与 master 创建连接，并上报信息。具体流程如下。</p>
+<p><img src="http://image.leonote.cn/20210714221659.png" alt=""><br>slave 创建与 master 的连接后，首先发送 ping 指令，如果 master 没有返回异常，而是返回 pong，则说明 master 可用。如果 Redis 设置了密码，slave 会发送 auth $masterauth 指令，进行鉴权。当鉴权完毕，从库就通过 replconf 发送自己的端口及 IP 给 master。接下来，slave 继续通过 replconf 发送 capa eof capa psync2 进行复制版本校验。如果 master 校验成功。从库接下来就通过 psync 将自己的复制 id、复制偏移发送给 master，正式开始准备数据同步。</p>
+<p>主库接收到从库发来的 psync 指令后，则开始判断可以进行数据同步的方式。前面讲到，Redis 当前保存了复制 id，replid 和 replid2。如果从库发来的复制 id，与 master 的复制 id（即 replid 和 replid2）相同，并且复制偏移在复制缓冲积压中，则可以进行增量同步。master 发送 continue 响应，并返回 master 的 replid。slave 将 master 的 replid 替换为自己的 replid，并将之前的复制 id 设置为 replid2。之后，master 则可继续发送，复制偏移位置 之后的指令，给 slave，完成数据同步。</p>
+<p>如果主库发现从库传来的复制 id 和自己的 replid、replid2 都不同，或者复制偏移不在复制积压缓冲中，则判定需要进行全量复制。master 发送 fullresync 响应，附带 replid 及复制偏移。然后， master 根据需要构建 rdb，并将 rdb 及复制缓冲发送给 slave。</p>
+<p>对于增量复制，slave 接下来就等待接受 master 传来的复制缓冲及新增的写指令，进行数据同步。</p>
+<p>而对于全量同步，slave 会首先进行，嵌套复制的清理工作，比如 slave 当前还有嵌套的子slave，则该 slave 会关闭嵌套子slave 的所有连接，并清理自己的复制积压缓冲。然后，slave 会构建临时 rdb 文件，并从 master 连接中读取 rdb 的实际数据，写入 rdb 中。在写 rdb 文件时，每写 8M，就会做一个 fsync操作， 刷新文件缓冲。当接受 rdb 完毕则将 rdb 临时文件改名为 rdb 的真正名字。</p>
+<p>接下来，slave 会首先清空老数据，即删除本地所有 DB 中的数据，并暂时停止从 master 继续接受数据。然后，slave 就开始全力加载 rdb 恢复数据，将数据从 rdb 加载到内存。在 rdb 加载完毕后，slave 重新利用与 master 的连接 socket，创建与 master 连接的 client，并在此注册读事件，可以开始接受 master 的写指令了。此时，slave 还会将 master 的 replid 和复制偏移设为自己的复制 id 和复制偏移 offset，并将自己的 replid2 清空，因为，slave 的所有嵌套子slave 接下来也需要进行全量复制。最后，slave 就会打开 aof 文件，在接受 master 的写指令后，执行完毕并写入到自己的 aof 中。</p>
+<p>相比之前的 sync，psync2 优化很明显。在短时间断开连接、slave 重启、切主等多种场景，只要延迟不太久，复制偏移仍然在复制积压缓冲，均可进行增量同步。master 不用构建并发送巨大的 rdb，可以大大减轻 master 的负荷和网络带宽的开销。同时，slave 可以通过轻量的增量复制，实现数据同步，快速恢复服务，减少系统抖动。</p>
+<p>但是，psync 依然严重依赖于复制缓冲积压，太大会占用过多内存，太小会导致频繁的全量复制。而且，由于内存限制，即便设置相对较大的复制缓冲区，在 slave 断开连接较久时，仍然很容易被复制缓冲积压冲刷，从而导致全量复制。</p>
 ]]></content>
       <categories>
         <category>缓存</category>
@@ -4034,9 +4228,11 @@
 <h2 id="小节总结："><a href="#小节总结：" class="headerlink" title="小节总结："></a>小节总结：</h2><p>. AbstractAuthenticationProcessingFilter:主要处理登录<br>. FilterSecurityInterceptor:主要处理鉴权</p>
 ]]></content>
       <categories>
+        <category>Spring</category>
         <category>Spring Security</category>
       </categories>
       <tags>
+        <tag>Spring</tag>
         <tag>Spring Security</tag>
       </tags>
   </entry>
@@ -4092,7 +4288,7 @@
 </tbody></table>
 <p>由于版本越新越便利，所以一般情况下直接采用最新的版本。</p>
 <p><strong>第一步：利用 Helm Chart 安装一个 Elasticsearch 集群 7.9.3 版本</strong>，执行命令如下。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">1. helm2 repo add elastic https://helm.elastic.co</span><br><span class="line">2. helm2 install --name myelasticsearch elastic/elasticsearch  --set imageTag=7.9.3</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">1. helm2 repo add elastic https://helm.elastic.co</span><br><span class="line">2. helm2 install --name myelasticsearch elastic/elasticsearch  --set imageTag=7.9.3</span><br></pre></td></tr></table></figure>
 
 <p>安装完之后，就可以看到如下信息。</p>
 <p><img src="http://image.leonote.cn//20210131155146.jpg" alt=""></p>
@@ -4130,7 +4326,7 @@
 <figure class="highlight"><table><tr><td class="code"><pre><span class="line">GET http://127.0.0.1:8080/topics?title=jack</span><br></pre></td></tr></table></figure>
 
 <p>得到如下结果。</p>
-<figure class="highlight"><table><tr><td class="code"><pre><span class="line">GET http://127.0.0.1:8080/topics?title=jack</span><br><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">200</span> </span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/json</span><br><span class="line"><span class="attribute">Transfer-Encoding</span><span class="punctuation">: </span>chunked</span><br><span class="line"><span class="attribute">Date</span><span class="punctuation">: </span>Wed, 30 Dec 2020 15:12:16 GMT</span><br><span class="line"><span class="attribute">Keep-Alive</span><span class="punctuation">: </span>timeout=60</span><br><span class="line"><span class="attribute">Connection</span><span class="punctuation">: </span>keep-alive</span><br><span class="line"></span><br><span class="line">[</span><br><span class="line">  &#123;</span><br><span class="line">    &quot;id&quot;: 1,</span><br><span class="line">    &quot;title&quot;: &quot;jack&quot;,</span><br><span class="line">    &quot;authors&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;jk1&quot;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;jk2&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    &quot;id&quot;: 3,</span><br><span class="line">    &quot;title&quot;: &quot;jack&quot;,</span><br><span class="line">    &quot;authors&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;jk1&quot;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;jk2&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    &quot;id&quot;: 2,</span><br><span class="line">    &quot;title&quot;: &quot;jack&quot;,</span><br><span class="line">    &quot;authors&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;jk1&quot;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;jk2&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 348ms; Content length: 199 bytes</span><br><span class="line">Cannot preserve cookies, cookie storage file is included in ignored list:</span><br><span class="line">&gt; /Users/jack/Company/git_hub/spring-data-jpa-guide/2.3/elasticsearch-data/.idea/httpRequests/http-client.cookies</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">GET http://127.0.0.1:8080/topics?title=jack</span><br><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">200</span> </span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/json</span><br><span class="line"><span class="attribute">Transfer-Encoding</span><span class="punctuation">: </span>chunked</span><br><span class="line"><span class="attribute">Date</span><span class="punctuation">: </span>Wed, 30 Dec 2020 15:12:16 GMT</span><br><span class="line"><span class="attribute">Keep-Alive</span><span class="punctuation">: </span>timeout=60</span><br><span class="line"><span class="attribute">Connection</span><span class="punctuation">: </span>keep-alive</span><br><span class="line"></span><br><span class="line">[</span><br><span class="line">  &#123;</span><br><span class="line">    &quot;id&quot;: 1,</span><br><span class="line">    &quot;title&quot;: &quot;jack&quot;,</span><br><span class="line">    &quot;authors&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;jk1&quot;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;jk2&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    &quot;id&quot;: 3,</span><br><span class="line">    &quot;title&quot;: &quot;jack&quot;,</span><br><span class="line">    &quot;authors&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;jk1&quot;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;jk2&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    &quot;id&quot;: 2,</span><br><span class="line">    &quot;title&quot;: &quot;jack&quot;,</span><br><span class="line">    &quot;authors&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;jk1&quot;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;jk2&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 348ms; Content length: 199 bytes</span><br><span class="line">Cannot preserve cookies, cookie storage file is included in ignored list:</span><br><span class="line">&gt; /Users/jack/Company/git_hub/spring-data-jpa-guide/2.3/elasticsearch-data/.idea/httpRequests/http-client.cookies</span><br></pre></td></tr></table></figure>
 
 <p>使用 Spring Data Elasticsearch 来操作 ES 相关的 API 的话，比直接写 Http 的 client 要简单很多，因为这里面封装了很多基础逻辑，省去了很多重复造轮子的过程。</p>
 <p><strong>第十步：Elasticsearch Repository 的测试用例写法</strong>，如下面的代码和注释所示。</p>
@@ -5293,7 +5489,7 @@
 <p>回调函数时可以加上参数，这个参数可以是父类 Object，可以是 <code>BaseEntity</code>，也可以是具体的某一个实体；推荐用 <code>BaseEntity</code>，因为这样的方法是类型安全的，它可以约定一些框架逻辑，比如 <code>getCreateUserId</code>、<code>getLastModifiedUserId</code> 等。</p>
 <p>第二步：写一个测试用例。</p>
 <p>这次执行 <code>testCallBackDelete()</code>，看看会得到什么样的效果。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">2020-10-05 13:55:19.332  INFO 62541 --- [    Test worker] c.e.j.e.base.EntityLoggingListener       : prePersist::User(super=BaseEntity(id=null, createUserId=13, createTime=2020-10-05T05:55:19.246Z, lastModifiedUserId=13, lastModifiedTime=2020-10-05T05:55:19.246Z, version=null), name=jack, email=123456@126.com, sex=BOY, age=20, deleted=null)</span><br><span class="line">2020-10-05 13:55:19.449  INFO 62541 --- [    Test worker] c.e.j.e.base.EntityLoggingListener       : postPersist::User(super=BaseEntity(id=1, createUserId=13, createTime=2020-10-05T05:55:19.246Z, lastModifiedUserId=13, lastModifiedTime=2020-10-05T05:55:19.246Z, version=0), name=jack, email=123456@126.com, sex=BOY, age=20, deleted=null)</span><br><span class="line">2020-10-05 13:55:19.698  INFO 62541 --- [    Test worker] c.e.j.e.base.EntityLoggingListener       : postLoad::User(super=BaseEntity(id=1, createUserId=13, createTime=2020-10-05T05:55:19.246Z, lastModifiedUserId=13, lastModifiedTime=2020-10-05T05:55:19.246Z, version=0), name=jack, email=123456@126.com, sex=BOY, age=20, deleted=null)</span><br><span class="line">2020-10-05 13:55:19.719  INFO 62541 --- [    Test worker] c.e.j.e.base.EntityLoggingListener       : preRemove::User(super=BaseEntity(id=1, createUserId=13, createTime=2020-10-05T05:55:19.246Z, lastModifiedUserId=13, lastModifiedTime=2020-10-05T05:55:19.246Z, version=0), name=jack, email=123456@126.com, sex=BOY, age=20, deleted=null)</span><br><span class="line">2020-10-05 13:55:19.798  INFO 62541 --- [    Test worker] c.e.j.e.base.EntityLoggingListener       : postRemove::User(super=BaseEntity(id=1, createUserId=13, createTime=2020-10-05T05:55:19.246Z, lastModifiedUserId=13, lastModifiedTime=2020-10-05T05:55:19.246Z, version=0), name=jack, email=123456@126.com, sex=BOY, age=20, deleted=null)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">2020-10-05 13:55:19.332  INFO 62541 --- [    Test worker] c.e.j.e.base.EntityLoggingListener       : prePersist::User(super=BaseEntity(id=null, createUserId=13, createTime=2020-10-05T05:55:19.246Z, lastModifiedUserId=13, lastModifiedTime=2020-10-05T05:55:19.246Z, version=null), name=jack, email=123456@126.com, sex=BOY, age=20, deleted=null)</span><br><span class="line">2020-10-05 13:55:19.449  INFO 62541 --- [    Test worker] c.e.j.e.base.EntityLoggingListener       : postPersist::User(super=BaseEntity(id=1, createUserId=13, createTime=2020-10-05T05:55:19.246Z, lastModifiedUserId=13, lastModifiedTime=2020-10-05T05:55:19.246Z, version=0), name=jack, email=123456@126.com, sex=BOY, age=20, deleted=null)</span><br><span class="line">2020-10-05 13:55:19.698  INFO 62541 --- [    Test worker] c.e.j.e.base.EntityLoggingListener       : postLoad::User(super=BaseEntity(id=1, createUserId=13, createTime=2020-10-05T05:55:19.246Z, lastModifiedUserId=13, lastModifiedTime=2020-10-05T05:55:19.246Z, version=0), name=jack, email=123456@126.com, sex=BOY, age=20, deleted=null)</span><br><span class="line">2020-10-05 13:55:19.719  INFO 62541 --- [    Test worker] c.e.j.e.base.EntityLoggingListener       : preRemove::User(super=BaseEntity(id=1, createUserId=13, createTime=2020-10-05T05:55:19.246Z, lastModifiedUserId=13, lastModifiedTime=2020-10-05T05:55:19.246Z, version=0), name=jack, email=123456@126.com, sex=BOY, age=20, deleted=null)</span><br><span class="line">2020-10-05 13:55:19.798  INFO 62541 --- [    Test worker] c.e.j.e.base.EntityLoggingListener       : postRemove::User(super=BaseEntity(id=1, createUserId=13, createTime=2020-10-05T05:55:19.246Z, lastModifiedUserId=13, lastModifiedTime=2020-10-05T05:55:19.246Z, version=0), name=jack, email=123456@126.com, sex=BOY, age=20, deleted=null)</span><br></pre></td></tr></table></figure>
 
 <p>通过日志我们可以很清晰地看到 callback 注解标注的方法的执行过程，及其实体参数的值。你就会发现，原来自定义 <code>EntityListener</code> 回调函数的方法也是如此简单。</p>
 <p>细心的你这个时候可能也会发现，我们上面其实应用了两个 <code>EntityListener</code>，所以这个时候 <code>@EntityListeners</code> 有个加载顺序的问题，你需要重点注意一下。</p>
@@ -5575,7 +5771,7 @@
 <p>具有语义清晰、功能完整的特性，我们实际工作中 80% 的 API 查询都可以简单实现。</p>
 </blockquote>
 <p>举例说明：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">PersonRepository</span> <span class="keyword">extends</span> <span class="title">Repository</span>&lt;<span class="title">User</span>, <span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line">   <span class="comment">// and 的查询关系</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findByEmailAddressAndLastname</span><span class="params">(EmailAddress emailAddress, String lastname)</span></span>;</span><br><span class="line">   <span class="comment">// 包含 distinct 去重，or 的 sql 语法</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findDistinctPeopleByLastnameOrFirstname</span><span class="params">(String lastname, String firstname)</span></span>;</span><br><span class="line">   <span class="comment">// 根据 lastname 字段查询忽略大小写</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findByLastnameIgnoreCase</span><span class="params">(String lastname)</span></span>;</span><br><span class="line">   <span class="comment">// 根据 lastname 和 firstname 查询 equal 并且忽略大小写</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findByLastnameAndFirstnameAllIgnoreCase</span><span class="params">(String lastname, String firstname)</span></span>; </span><br><span class="line">  <span class="comment">// 对查询结果根据 lastname 排序，正序</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findByLastnameOrderByFirstnameAsc</span><span class="params">(String lastname)</span></span>;</span><br><span class="line">  <span class="comment">// 对查询结果根据 lastname 排序，倒序</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findByLastnameOrderByFirstnameDesc</span><span class="params">(String lastname)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">PersonRepository</span> <span class="keyword">extends</span> <span class="title">Repository</span>&lt;<span class="title">User</span>, <span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line">   <span class="comment">// and 的查询关系</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findByEmailAddressAndLastname</span><span class="params">(EmailAddress emailAddress, String lastname)</span></span>;</span><br><span class="line">   <span class="comment">// 包含 distinct 去重，or 的 sql 语法</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findDistinctPeopleByLastnameOrFirstname</span><span class="params">(String lastname, String firstname)</span></span>;</span><br><span class="line">   <span class="comment">// 根据 lastname 字段查询忽略大小写</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findByLastnameIgnoreCase</span><span class="params">(String lastname)</span></span>;</span><br><span class="line">   <span class="comment">// 根据 lastname 和 firstname 查询 equal 并且忽略大小写</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findByLastnameAndFirstnameAllIgnoreCase</span><span class="params">(String lastname, String firstname)</span></span>; </span><br><span class="line">  <span class="comment">// 对查询结果根据 lastname 排序，正序</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findByLastnameOrderByFirstnameAsc</span><span class="params">(String lastname)</span></span>;</span><br><span class="line">  <span class="comment">// 对查询结果根据 lastname 排序，倒序</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findByLastnameOrderByFirstnameDesc</span><span class="params">(String lastname)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="常用的关键字列表"><a href="#常用的关键字列表" class="headerlink" title="常用的关键字列表"></a>常用的关键字列表</h2><table>
 <thead>
@@ -5744,7 +5940,7 @@
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">List&lt;User&gt; <span class="title">findByLastname</span><span class="params">(String lastname, Pageable pageable)</span></span>;</span><br></pre></td></tr></table></figure>
 
 <p>PageRequest 里面提供的几个 of 静态方法（多态），分别构建页码、页面大小、排序等。如下所示：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//查询user里面的lastname=jk的第一页，每页大小是20条；并会返回一共有多少页的信息</span></span><br><span class="line">Page&lt;User&gt; users = userRepository.findByLastname(<span class="string">&quot;jk&quot;</span>, PageRequest.of(<span class="number">1</span>, <span class="number">20</span>));</span><br><span class="line"><span class="comment">//查询user里面的lastname=jk的第一页的20条数据，不知道一共多少条</span></span><br><span class="line">Slice&lt;User&gt; users = userRepository.findByLastname(<span class="string">&quot;jk&quot;</span>, PageRequest.of(<span class="number">1</span>, <span class="number">20</span>));</span><br><span class="line"><span class="comment">//查询出来所有的user里面的lastname=jk的User数据，并按照name正序返回List</span></span><br><span class="line">List&lt;User&gt; users = userRepository.findByLastname(<span class="string">&quot;jk&quot;</span>, <span class="keyword">new</span> Sort(Sort.Direction.ASC, <span class="string">&quot;name&quot;</span>))</span><br><span class="line"><span class="comment">//按照createdAt倒序，查询前一百条User数据</span></span><br><span class="line">List&lt;User&gt; users = userRepository.findByLastname(<span class="string">&quot;jk&quot;</span>, PageRequest.of(<span class="number">0</span>, <span class="number">100</span>, Sort.Direction.DESC, <span class="string">&quot;createdAt&quot;</span>));</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//查询user里面的lastname=jk的第一页，每页大小是20条；并会返回一共有多少页的信息</span></span><br><span class="line">Page&lt;User&gt; users = userRepository.findByLastname(<span class="string">&quot;jk&quot;</span>, PageRequest.of(<span class="number">1</span>, <span class="number">20</span>));</span><br><span class="line"><span class="comment">//查询user里面的lastname=jk的第一页的20条数据，不知道一共多少条</span></span><br><span class="line">Slice&lt;User&gt; users = userRepository.findByLastname(<span class="string">&quot;jk&quot;</span>, PageRequest.of(<span class="number">1</span>, <span class="number">20</span>));</span><br><span class="line"><span class="comment">//查询出来所有的user里面的lastname=jk的User数据，并按照name正序返回List</span></span><br><span class="line">List&lt;User&gt; users = userRepository.findByLastname(<span class="string">&quot;jk&quot;</span>, <span class="keyword">new</span> Sort(Sort.Direction.ASC, <span class="string">&quot;name&quot;</span>))</span><br><span class="line"><span class="comment">//按照createdAt倒序，查询前一百条User数据</span></span><br><span class="line">List&lt;User&gt; users = userRepository.findByLastname(<span class="string">&quot;jk&quot;</span>, PageRequest.of(<span class="number">0</span>, <span class="number">100</span>, Sort.Direction.DESC, <span class="string">&quot;createdAt&quot;</span>));</span><br></pre></td></tr></table></figure>
 
 <h2 id="限制查询结果-First-和-Top"><a href="#限制查询结果-First-和-Top" class="headerlink" title="限制查询结果 First 和 Top"></a>限制查询结果 First 和 Top</h2><p>有的时候我们想直接查询前几条数据，也不需要动态排序，那么就可以简单地在方法名字中使用 First 和 Top 关键字，来限制返回条数。</p>
 <p>我们可以在 userRepository 里面定义的一些限制返回结果的使用。在查询方法上加限制查询结果的关键字 First 和 Top。</p>
@@ -5897,7 +6093,7 @@
 <p><img src="http://image.leonote.cn//20201115191837.png" alt=""></p>
 <ol start="3">
 <li><p>通过开启 <code>com.zaxxer.hikari.pool.HikariPool</code> 类的 debug 级别，可以实时看到连接池的使用情况：软件日志如下（上图也有体现）：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">com.zaxxer.hikari.pool.HikariPool        : jpa-hikari-pool - Pool stats (total&#x3D;8, active&#x3D;1, idle&#x3D;7, waiting&#x3D;0)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">com.zaxxer.hikari.pool.HikariPool        : jpa-hikari-pool - Pool stats (total&#x3D;8, active&#x3D;1, idle&#x3D;7, waiting&#x3D;0)</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
@@ -6032,7 +6228,7 @@
 </li>
 </ol>
 <p>除此之外，也可以将持久化注解运用在 Entity 里面的 get/set 方法上，通常我们是放在 get 方法中，如下所示：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Column(length = 20, nullable = false)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getUserName</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> userName;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Column(length = 20, nullable = false)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getUserName</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> userName;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p>概括起来，就是 Entity 里面的注解生效只有两种方式：将注解写在字段上或者将注解写在方法上（JPA 里面称 Property）。</p>
@@ -6057,7 +6253,7 @@
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target(TYPE)</span> <span class="comment">//一样只能用在类上面</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Table &#123;</span><br><span class="line">   <span class="comment">//表的名字，可选。如果不填写，系统认为和实体的名字一样为表名。</span></span><br><span class="line">   <span class="function">String <span class="title">name</span><span class="params">()</span> <span class="keyword">default</span> &quot;&quot;</span>;</span><br><span class="line">   <span class="comment">//此表所在schema，可选</span></span><br><span class="line">   <span class="function">String <span class="title">schema</span><span class="params">()</span> <span class="keyword">default</span> &quot;&quot;</span>;</span><br><span class="line">   <span class="comment">//唯一性约束，在创建表的时候有用，表创建之后后面就不需要了。</span></span><br><span class="line">   UniqueConstraint[] uniqueConstraints() <span class="keyword">default</span> &#123; &#125;;</span><br><span class="line">   <span class="comment">//索引，在创建表的时候使用，表创建之后后面就不需要了。</span></span><br><span class="line">   Index[] indexes() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p><code>@Access</code> 用于指定 entity 里面的注解是写在字段上面，还是 get/set 方法上面生效，非必填。在默认不填写的情况下，当实体里面的第一个注解出现在字段上或者 get/set 方法上面，就以第一次出现的方式为准；也就是说，一个实体里面的注解既有用在 field 上面，又有用在 properties 上面的时候，看下面的代码你就会明白。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Id</span></span><br><span class="line"><span class="keyword">private</span> Long id;</span><br><span class="line"><span class="meta">@Column(length = 20, nullable = false)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getUserName</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> userName;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Id</span></span><br><span class="line"><span class="keyword">private</span> Long id;</span><br><span class="line"><span class="meta">@Column(length = 20, nullable = false)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getUserName</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> userName;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>那么由于 <code>@Id</code> 是实体里面第一个出现的注解，并且作用在字段上面，所以所有写在 get/set 方法上面的注解就会失效。而 <code>@Access</code> 可以干预默认值，指定是在 fields 上面生效还是在 properties 上面生效。我们通过源码看下语法：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//表示此注解可以运用在class上(那么这个时候就可以指定此实体的默认注解生效策略了)，也可以用在方法上或者字段上(表示可以独立设置某一个字段或者方法的生效策略)；</span></span><br><span class="line"><span class="meta">@Target( &#123; TYPE, METHOD, FIELD &#125;)</span></span><br><span class="line"><span class="meta">@Retention(RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Access &#123;</span><br><span class="line">    <span class="comment">//指定是字段上面生效还是方法上面生效</span></span><br><span class="line">    <span class="function">AccessType <span class="title">value</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">AccessType</span> </span>&#123;</span><br><span class="line">    FIELD,</span><br><span class="line">    PROPERTY</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -6436,7 +6632,7 @@
 <figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">o.hibernate.LazyInitializationException  : failed to lazily initialize a collection of role: com.example.jpa.demo.db.UserInfo.addressList, could not initialize proxy - no Session</span><br><span class="line">   org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: com.example.jpa.demo.db.UserInfo.addressList, could not initialize proxy - no Session</span><br></pre></td></tr></table></figure>
 
 <p>此 VO 发生的异常与其他 Lazy 异常不同的时候，仔细观察，会发现如下信息。</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"> Resolved [<span class="type">org.springframework.http.converter.HttpMessageNotWritableException</span>: <span class="type">Could</span> <span class="type">not</span> <span class="type">write</span> <span class="type">JSON</span>:  <span class="type">failed</span> <span class="type">to</span> <span class="type">lazily</span> <span class="type">initialize</span> <span class="type">a</span> <span class="type">collection</span> <span class="type">of</span> <span class="type">role</span>: <span class="type">com.example.jpa.demo.db.UserInfo.addressList</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">Resolved [<span class="type">org.springframework.http.converter.HttpMessageNotWritableException</span>: <span class="type">Could</span> <span class="type">not</span> <span class="type">write</span> <span class="type">JSON</span>:  <span class="type">failed</span> <span class="type">to</span> <span class="type">lazily</span> <span class="type">initialize</span> <span class="type">a</span> <span class="type">collection</span> <span class="type">of</span> <span class="type">role</span>: <span class="type">com.example.jpa.demo.db.UserInfo.addressList</span></span><br></pre></td></tr></table></figure>
 
 <p>通过日志可以知道，此时发生 Lazy 异常的主要原因是 JSON 系列化的时候会触发 Lazy 加载。这个时候就有了<strong>第五种解决 Lazy 异常的方式，就是利用 @JsonIgnoreProperties(“addressList”) 排除我们不想序列化的属性即可。</strong></p>
 <p>但是这种方式的弊端是用这个集合的只能全局配置，没办法有特例配置。因此最佳实践还是采用上面所说的第一种方式和第四种方式。</p>
@@ -7312,7 +7508,7 @@
 <figure class="highlight"><table><tr><td class="code"><pre><span class="line">GET http://localhost:8089/user/1</span><br></pre></td></tr></table></figure>
 
 <p>就会得到如下结果，返回的 JSON 结果多了一个 Data 包装。</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;data&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;id&quot;</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">&quot;version&quot;</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">&quot;createUserId&quot;</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="attr">&quot;createTime&quot;</span>: <span class="string">&quot;2020-10-23T00:23:10.185Z&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;lastModifiedUserId&quot;</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="attr">&quot;lastModifiedTime&quot;</span>: <span class="string">&quot;2020-10-23T00:23:10.185Z&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;ages&quot;</span>: <span class="number">10</span>,</span><br><span class="line">    <span class="attr">&quot;telephone&quot;</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="attr">&quot;hibernateLazyInitializer&quot;</span>: &#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;data&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;id&quot;</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">&quot;version&quot;</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">&quot;createUserId&quot;</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="attr">&quot;createTime&quot;</span>: <span class="string">&quot;2020-10-23T00:23:10.185Z&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;lastModifiedUserId&quot;</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="attr">&quot;lastModifiedTime&quot;</span>: <span class="string">&quot;2020-10-23T00:23:10.185Z&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;ages&quot;</span>: <span class="number">10</span>,</span><br><span class="line">    <span class="attr">&quot;telephone&quot;</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="attr">&quot;hibernateLazyInitializer&quot;</span>: &#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Spring Data</category>
         <category>Spring Data Jpa</category>
@@ -8267,6 +8463,698 @@
 <p><img src="http://image.leonote.cn//20210220220242.jpg" alt=""></p>
 <p>Mc 协议的思维导图</p>
 <p><img src="http://image.leonote.cn//20210220220319.jpg" alt=""></p>
+]]></content>
+      <categories>
+        <category>缓存</category>
+      </categories>
+      <tags>
+        <tag>缓存</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>分布式缓存-Redis原理、协议及使用</title>
+    <url>/2021/06/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Redis%E5%8E%9F%E7%90%86%E3%80%81%E5%8D%8F%E8%AE%AE%E5%8F%8A%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<h1 id="Redis原理、协议及使用"><a href="#Redis原理、协议及使用" class="headerlink" title="Redis原理、协议及使用"></a>Redis原理、协议及使用</h1><h2 id="Redis是如何运行的"><a href="#Redis是如何运行的" class="headerlink" title="Redis是如何运行的"></a>Redis是如何运行的</h2><h3 id="Redis-基本原理"><a href="#Redis-基本原理" class="headerlink" title="Redis 基本原理"></a>Redis 基本原理</h3><h4 id="Redis-简介"><a href="#Redis-简介" class="headerlink" title="Redis 简介"></a>Redis 简介</h4><p>Redis 是一款基于 ANSI C 语言编写的，BSD 许可的，日志型 key-value 存储组件，它的所有数据结构都存在内存中，可以用作缓存、数据库和消息中间件。</p>
+<p>Redis 是 Remote dictionary server 即远程字典服务的缩写，一个 Redis 实例可以有多个存储数据的字典，客户端可以通过 select 来选择字典即 DB 进行数据存储。</p>
+<h4 id="Redis-特性"><a href="#Redis-特性" class="headerlink" title="Redis 特性"></a>Redis 特性</h4><p>同为 key-value 存储组件，Memcached 只能支持二进制字节块这一种数据类型。而 Redis 的数据类型却丰富的多，它具有 8 种核心数据类型，每种数据类型都有一系列操作指令对应。Redis 性能很高，单线程压测可以达到 10~11w 的 QPS。</p>
+<p>虽然 Redis 所有数据的读写操作，都在内存中进行，但也可以将所有数据进行落盘做持久化。Redis 提供了 2 种持久化方式。</p>
+<ul>
+<li><p>快照方式，将某时刻所有数据都写入硬盘的 RDB 文件；</p>
+</li>
+<li><p>追加文件方式，即将所有写命令都以追加的方式写入硬盘的 AOF 文件中。</p>
+</li>
+</ul>
+<p>线上 Redis 一般会同时使用两种方式，通过开启 appendonly 及关联配置项，将写命令及时追加到 AOF 文件，同时在每日流量低峰时，通过 bgsave 保存当时所有内存数据快照。 </p>
+<p>对于互联网系统的线上流量，读操作远远大于写操作。以微博为例，读请求占总体流量的 90%左右。大量的读请求，通常会远超 Redis 的可承载范围。此时，可以使用 Redis 的复制特性，让一个 Redis 实例作为 master，然后通过复制挂载多个不断同步更新的副本，即多个 slave。通过读写分离，把所有写操作落在 Redis 的 master，所有读操作随机落在 Redis 的多个 slave 中，从而大幅提升 Redis 的读写能力。</p>
+<p>Lua 是一个高效、简洁、易扩展的脚本语言，可以方便的嵌入其他语言中使用。Redis 自 2.6 版本开始支持 Lua。通过支持 client 端自定义的 Lua 脚本，Redis 可以减少网络开销，提升处理性能，还可以把脚本中的多个操作作为一个整体来操作，实现原子性更新。</p>
+<p>Redis 还支持事务，在 multi 指令后，指定多个操作，然后通过 exec 指令一次性执行，中途如果出现异常，则不执行所有命令操作，否则，按顺序一次性执行所有操作，执行过程中不会执行任何其他指令。</p>
+<p>Redis 还支持 Cluster 特性，可以通过自动或手动方式，将所有 key 按哈希分散到不同节点，在容量不足时，还可以通过 Redis 的迁移指令，把其中一部分 key 迁移到其他节点。</p>
+<p><strong>思维导图</strong></p>
+<p><img src="http://image.leonote.cn/20210714221853.png" alt=""></p>
+<p>作为缓存组件，Redis 的最大优势是支持丰富的数据类型。目前，Redis 支持 8 种核心数据类型，包括 string、list、set、sorted set、hash、bitmap、geo、hyperloglog。</p>
+<p>Redis 的所有内存数据结构都存在全局的 dict 字典中，dict 类似 Memcached 的 hashtable。Redis 的 dict 也有 2 个哈希表，插入新 key 时，一般用 0 号哈希表，随着 key 的插入或删除，当 0 号哈希表的 keys 数大于哈希表桶数，或 kyes 数小于哈希桶的 1/10 时，就对 hash 表进行扩缩。dict 中，哈希表解决冲突的方式，与 Memcached 相同，也是使用桶内单链表，来指向多个 hash 相同的 key/value 数据。</p>
+<h4 id="Redis-高性能"><a href="#Redis-高性能" class="headerlink" title="Redis 高性能"></a>Redis 高性能</h4><p>Redis 一般被看作单进程/单线程组件，因为 Redis 的网络 IO 和命令处理，都在核心进程中由单线程处理。Redis 基于 Epoll 事件模型开发，可以进行非阻塞网络 IO，同时由于单线程命令处理，整个处理过程不存在竞争，不需要加锁，没有上下文切换开销，所有数据操作都是在内存中操作，所以 Redis 的性能很高，单个实例即可以达到 10w 级的 QPS。核心线程除了负责网络 IO 及命令处理外，还负责写数据到缓冲，以方便将最新写操作同步到 AOF、slave。</p>
+<p>除了主进程，Redis 还会 fork 一个子进程，来进行重负荷任务的处理。Redis fork 子进程主要有 3 种场景。</p>
+<ul>
+<li><p>收到 bgrewriteaof 命令时，Redis 调用 fork，构建一个子进程，子进程往临时 AOF文件中，写入重建数据库状态的所有命令，当写入完毕，子进程则通知父进程，父进程把新增的写操作也追加到临时 AOF 文件，然后将临时文件替换老的 AOF 文件，并重命名。</p>
+</li>
+<li><p>收到 bgsave 命令时，Redis 构建子进程，子进程将内存中的所有数据通过快照做一次持久化落地，写入到 RDB 中。</p>
+</li>
+<li><p>当需要进行全量复制时，master 也会启动一个子进程，子进程将数据库快照保存到 RDB 文件，在写完 RDB 快照文件后，master 就会把 RDB 发给 slave，同时将后续新的写指令都同步给 slave。</p>
+</li>
+</ul>
+<p><img src="http://image.leonote.cn/20210714221918.png" alt=""></p>
+<p>主进程中，除了主线程处理网络 IO 和命令操作外，还有 3 个辅助 BIO 线程。这 3 个 BIO 线程分别负责处理，文件关闭、AOF 缓冲数据刷新到磁盘，以及清理对象这三个任务队列。</p>
+<p>Redis 在启动时，会同时启动这三个 BIO 线程，然后 BIO 线程休眠等待任务。当需要执行相关类型的后台任务时，就会构建一个 bio_job 结构，记录任务参数，然后将 bio_job 追加到任务队列尾部。然后唤醒 BIO 线程，即可进行任务执行。</p>
+<h4 id="Redis-持久化"><a href="#Redis-持久化" class="headerlink" title="Redis 持久化"></a>Redis 持久化</h4><p>Redis 的持久化是通过 RDB 和 AOF 文件进行的。RDB 只记录某个时间点的快照，可以通过设置指定时间内修改 keys 数的阀值，超过则自动构建 RDB 内容快照，不过线上运维，一般会选择在业务低峰期定期进行。RDB 存储的是构建时刻的数据快照，内存数据一旦落地，不会理会后续的变更。而 AOF，记录是构建整个数据库内容的命令，它会随着新的写操作不断进行追加操作。由于不断追加，AOF 会记录数据大量的中间状态，AOF 文件会变得非常大，此时，可以通过 bgrewriteaof 指令，对 AOF 进行重写，只保留数据的最后内容，来大大缩减 AOF 的内容。</p>
+<p><img src="http://image.leonote.cn/20210714221944.png" alt=""><br>为了提升系统的可扩展性，提升读操作的支撑能力，Redis 支持 master-slave 的复制功能。当 Redis 的 slave 部署并设置完毕后，slave 会和 master 建立连接，进行全量同步。</p>
+<p>第一次建立连接，或者长时间断开连接后，缺失的指令超过 master 复制缓冲区的大小，都需要先进行一次全量同步。全量同步时，master 会启动一个子进程，将数据库快照保存到文件中，然后将这个快照文件发给 slave，同时将快照之后的写指令也同步给 slave。</p>
+<p>全量同步完成后，如果 slave 短时间中断，然后重连复制，缺少的写指令长度小于 master 的复制缓冲大小，master 就会把 slave 缺失的内容全部发送给 slave，进行增量复制。</p>
+<p>Redis 的 master 可以挂载多个 slave，同时 slave 还可以继续挂载 slave，通过这种方式，可以有效减轻 master 的压力，同时在 master 挂掉后，可以在 slave 通过 slaveof no one 指令，使当前 slave 停止与 master 的同步，转而成为新的 master。</p>
+<h4 id="Redis-集群管理"><a href="#Redis-集群管理" class="headerlink" title="Redis 集群管理"></a>Redis 集群管理</h4><p>Redis 的集群管理有 3 种方式。</p>
+<ul>
+<li><p>client 分片访问，client 对 key 做 hash，然后按取模或一致性 hash，把 key 的读写分散到不同的 Redis 实例上。</p>
+</li>
+<li><p>在 Redis 前加一个 proxy，把路由策略、后端 Redis 状态维护的工作都放到 proxy 中进行，client 直接访问 proxy，后端 Redis 变更，只需修改 proxy 配置即可。</p>
+</li>
+<li><p>直接使用 Redis cluster。Redis 创建之初，使用方直接给 Redis 的节点分配 slot，后续访问时，对 key 做 hash 找到对应的 slot，然后访问 slot 所在的 Redis 实例。在需要扩容缩容时，可以在线通过 cluster setslot 指令，以及 migrate 指令，将 slot 下所有 key 迁移到目标节点，即可实现扩缩容的目的。</p>
+</li>
+</ul>
+<h2 id="如何使用Redis核心数据类型"><a href="#如何使用Redis核心数据类型" class="headerlink" title="如何使用Redis核心数据类型"></a>如何使用Redis核心数据类型</h2><h3 id="Redis-数据类型"><a href="#Redis-数据类型" class="headerlink" title="Redis 数据类型"></a>Redis 数据类型</h3><p>Redis 有 8 种核心数据类型，分别是 ：</p>
+<ul>
+<li><p>string 字符串类型；</p>
+</li>
+<li><p>list 列表类型；</p>
+</li>
+<li><p>set 集合类型；</p>
+</li>
+<li><p>sorted set 有序集合类型；</p>
+</li>
+<li><p>hash 类型；</p>
+</li>
+<li><p>bitmap 位图类型； </p>
+</li>
+<li><p>geo 地理位置类型；</p>
+</li>
+<li><p>HyperLogLog 基数统计类型。</p>
+</li>
+</ul>
+<h4 id="string-字符串"><a href="#string-字符串" class="headerlink" title="string 字符串"></a>string 字符串</h4><p>string 是 Redis 的最基本数据类型。可以把它理解为 Mc 中 key 对应的 value 类型。string 类型是二进制安全的，即 string 中可以包含任何数据。</p>
+<p>Redis 中的普通 string 采用 raw encoding 即原始编码方式，该编码方式会动态扩容，并通过提前预分配冗余空间，来减少内存频繁分配的开销。</p>
+<p>在字符串长度小于 1MB 时，按所需长度的 2 倍来分配，超过 1MB，则按照每次额外增加 1MB 的容量来预分配。</p>
+<p>Redis 中的数字也存为 string 类型，但编码方式跟普通 string 不同，数字采用整型编码，字符串内容直接设为整数值的二进制字节序列。</p>
+<p>在存储普通字符串，序列化对象，以及计数器等场景时，都可以使用 Redis 的字符串类型，字符串数据类型对应使用的指令包括 set、get、mset、incr、decr 等。</p>
+<h4 id="list-列表"><a href="#list-列表" class="headerlink" title="list 列表"></a>list 列表</h4><p>Redis 的 list 列表，是一个快速双向链表，存储了一系列的 string 类型的字串值。list 中的元素按照插入顺序排列。插入元素的方式，可以通过 lpush 将一个或多个元素插入到列表的头部，也可以通过 rpush 将一个或多个元素插入到队列尾部，还可以通过 lset、linsert 将元素插入到指定位置或指定元素的前后。</p>
+<p>list 列表的获取，可以通过 lpop、rpop 从对头或队尾弹出元素，如果队列为空，则返回 nil。还可以通过 Blpop、Brpop 从队头/队尾阻塞式弹出元素，如果 list 列表为空，没有元素可供弹出，则持续阻塞，直到有其他 client 插入新的元素。这里阻塞弹出元素，可以设置过期时间，避免无限期等待。最后，list 列表还可以通过 LrangeR 获取队列内指定范围内的所有元素。Redis 中，list 列表的偏移位置都是基于 0 的下标，即列表第一个元素的下标是 0，第二个是 1。偏移量也可以是负数，倒数第一个是 -1，倒数第二个是 -2，依次类推。</p>
+<p><img src="http://image.leonote.cn/20210714222016.png" alt=""></p>
+<p>list 列表，对于常规的 pop、push 元素，性能很高，时间复杂度为 O(1)，因为是列表直接追加或弹出。但对于通过随机插入、随机删除，以及随机范围获取，需要轮询列表确定位置，性能就比较低下了。</p>
+<p>feed timeline 存储时，由于 feed id 一般是递增的，可以直接存为 list，用户发表新 feed，就直接追加到队尾。另外消息队列、热门 feed 等业务场景，都可以使用 list 数据结构。</p>
+<p>操作 list 列表时，可以用 lpush、lpop、rpush、rpop、lrange 来进行常规的队列进出及范围获取操作，在某些特殊场景下，也可以用 lset、linsert 进行随机插入操作，用 lrem 进行指定元素删除操作；最后，在消息列表的消费时，还可以用 Blpop、Brpop 进行阻塞式获取，从而在列表暂时没有元素时，可以安静的等待新元素的插入，而不需要额外持续的查询。</p>
+<h4 id="set-集合"><a href="#set-集合" class="headerlink" title="set 集合"></a>set 集合</h4><p>set 是 string 类型的无序集合，set 中的元素是唯一的，即 set 中不会出现重复的元素。Redis 中的集合一般是通过 dict 哈希表实现的，所以插入、删除，以及查询元素，可以根据元素 hash 值直接定位，时间复杂度为 O(1)。</p>
+<p>对 set 类型数据的操作，除了常规的添加、删除、查找元素外，还可以用以下指令对 set 进行操作。</p>
+<ul>
+<li><p>sismember 指令判断该 key 对应的 set 数据结构中，是否存在某个元素，如果存在返回 1，否则返回 0；</p>
+</li>
+<li><p>sdiff 指令来对多个 set 集合执行差集；</p>
+</li>
+<li><p>sinter 指令对多个集合执行交集；</p>
+</li>
+<li><p>sunion 指令对多个集合执行并集；</p>
+</li>
+<li><p>spop 指令弹出一个随机元素；</p>
+</li>
+<li><p>srandmember 指令返回一个或多个随机元素。</p>
+</li>
+</ul>
+<p>set 集合的特点是查找、插入、删除特别高效，时间复杂度为 O(1)，所以在社交系统中，可以用于存储关注的好友列表，用来判断是否关注，还可以用来做好友推荐使用。另外，还可以利用 set 的唯一性，来对服务的来源业务、来源 IP 进行精确统计。</p>
+<h4 id="sorted-set-有序集合"><a href="#sorted-set-有序集合" class="headerlink" title="sorted set 有序集合"></a>sorted set 有序集合</h4><p>Redis 中的 sorted set 有序集合也称为 zset，有序集合同 set 集合类似，也是 string 类型元素的集合，且所有元素不允许重复。</p>
+<p>但有序集合中，每个元素都会关联一个 double 类型的 score 分数值。有序集合通过这个 score 值进行由小到大的排序。有序集合中，元素不允许重复，但 score 分数值却允许重复。</p>
+<p>有序集合除了常规的添加、删除、查找元素外，还可以通过以下指令对 sorted set 进行操作。</p>
+<ul>
+<li><p>zscan 指令：按顺序获取有序集合中的元素；</p>
+</li>
+<li><p>zscore 指令：获取元素的 score 值；</p>
+</li>
+<li><p>zrange指令：通过指定 score 返回指定 score 范围内的元素；</p>
+</li>
+</ul>
+<ul>
+<li><p>在某个元素的 score 值发生变更时，还可以通过 zincrby 指令对该元素的 score 值进行加减。</p>
+</li>
+<li><p>通过 zinterstore、zunionstore 指令对多个有序集合进行取交集和并集，然后将新的有序集合存到一个新的 key 中，如果有重复元素，重复元素的 score 进行相加，然后作为新集合中该元素的 score 值。</p>
+</li>
+</ul>
+<p>sorted set 有序集合的特点是：</p>
+<ul>
+<li><p>所有元素按 score 排序，而且不重复；</p>
+</li>
+<li><p>查找、插入、删除非常高效，时间复杂度为 O(1)。</p>
+</li>
+</ul>
+<p>因此，可以用有序集合来统计排行榜，实时刷新榜单，还可以用来记录学生成绩，从而轻松获取某个成绩范围内的学生名单，还可以用来对系统统计增加权重值，从而在 dashboard 实时展示。</p>
+<h4 id="hash-哈希"><a href="#hash-哈希" class="headerlink" title="hash 哈希"></a>hash 哈希</h4><p>Redis 中的哈希实际是 field 和 value 的一个映射表。</p>
+<p>hash 数据结构的特点是在单个 key 对应的哈希结构内部，可以记录多个键值对，即 field 和 value 对，value 可以是任何字符串。而且这些键值对查询和修改很高效。</p>
+<p>所以可以用 hash 来存储具有多个元素的复杂对象，然后分别修改或获取这些元素。hash 结构中的一些重要指令，包括：hmset、hmget、hexists、hgetall、hincrby 等。</p>
+<ul>
+<li><p>hmset 指令批量插入多个 field、value 映射；</p>
+</li>
+<li><p>hmget 指令获取多个 field 对应的 value 值；</p>
+</li>
+<li><p>hexists 指令判断某个 field 是否存在；</p>
+</li>
+</ul>
+<ul>
+<li>如果 field 对应的 value 是整数，还可以用 hincrby 来对该 value 进行修改。</li>
+</ul>
+<h4 id="bitmap-位图"><a href="#bitmap-位图" class="headerlink" title="bitmap 位图"></a>bitmap 位图</h4><p>Redis 中的 bitmap 位图是一串连续的二进制数字，底层实际是基于 string 进行封装存储的，按 bit 位进行指令操作的。bitmap 中每一 bit 位所在的位置就是 offset 偏移，可以用 setbit、bitfield 对 bitmap 中每个 bit 进行置 0 或置 1 操作，也可以用 bitcount 来统计 bitmap 中的被置 1 的 bit 数，还可以用 bitop 来对多个 bitmap 进行求与、或、异或等操作。</p>
+<p><img src="http://image.leonote.cn/20210714222040.png" alt=""></p>
+<p>bitmap 位图的特点是按位设置、求与、求或等操作很高效，而且存储成本非常低，用来存对象标签属性的话，一个 bit 即可存一个标签。可以用 bitmap，存用户最近 N 天的登录情况，每天用 1 bit，登录则置 1。个性推荐在社交应用中非常重要，可以对新闻、feed 设置一系列标签，如军事、娱乐、视频、图片、文字等，用 bitmap 来存储这些标签，在对应标签 bit 位上置 1。对用户，也可以采用类似方式，记录用户的多种属性，并可以很方便的根据标签来进行多维度统计。bitmap 位图的重要指令包括：setbit、 getbit、bitcount、bitfield、 bitop、bitpos 等。</p>
+<p>在移动社交时代，LBS 应用越来越多，比如微信、陌陌中附近的人，美团、大众点评中附近的美食、电影院，滴滴、优步中附近的专车等。要实现这些功能，就得使用地理位置信息进行搜索。地球的地理位置是使用二维的经纬度进行表示的，只要确定一个点的经纬度，就可以确认它在地球的位置。</p>
+<p>Redis 在 3.2 版本之后增加了对 GEO 地理位置的处理功能。Redis 的 GEO 地理位置本质上是基于 sorted set 封装实现的。在存储分类 key 下的地理位置信息时，需要对该分类 key 构建一个 sorted set 作为内部存储结构，用于存储一系列位置点。</p>
+<p>在存储某个位置点时，首先利用 Geohash 算法，将该位置二维的经纬度，映射编码成一维的 52 位整数值，将位置名称、经纬度编码 score 作为键值对，存储到分类 key 对应的 sorted set 中。</p>
+<p>需要计算某个位置点 A 附近的人时，首先以指定位置 A 为中心点，以距离作为半径，算出 GEO 哈希 8 个方位的范围， 然后依次轮询方位范围内的所有位置点，只要这些位置点到中心位置 A 的距离在要求距离范围内，就是目标位置点。轮询完所有范围内的位置点后，重新排序即得到位置点 A 附近的所有目标。</p>
+<ul>
+<li><p>使用 geoadd，将位置名称（如人、车辆、店名）与对应的地理位置信息添加到指定的位置分类 key 中；</p>
+</li>
+<li><p>使用 geopos 方便地查询某个名称所在的位置信息；</p>
+</li>
+<li><p>使用 georadius 获取指定位置附近，不超过指定距离的所有元素；</p>
+</li>
+<li><p>使用 geodist 来获取指定的两个位置之间的距离。</p>
+</li>
+</ul>
+<p>这样，是不是就可以实现，找到附近的餐厅，算出当前位置到对应餐厅的距离，这样的功能了？</p>
+<p>Redis GEO 地理位置，利用 Geohash 将大量的二维经纬度转一维的整数值，这样可以方便的对地理位置进行查询、距离测量、范围搜索。但由于地理位置点非常多，一个地理分类 key 下可能会有大量元素，在 GEO 设计时，需要提前进行规划，避免单 key 过度膨胀。</p>
+<p>Redis 的 GEO 地理位置数据结构，应用场景很多，比如查询某个地方的具体位置，查当前位置到目的地的距离，查附近的人、餐厅、电影院等。GEO 地理位置数据结构中，重要指令包括 geoadd、geopos、geodist、georadius、georadiusbymember 等。</p>
+<h4 id="hyperLogLog-基数统计"><a href="#hyperLogLog-基数统计" class="headerlink" title="hyperLogLog 基数统计"></a>hyperLogLog 基数统计</h4><p>Redis 的 hyperLogLog 是用来做基数统计的数据类型，当输入巨大数量的元素做统计时，只需要很小的内存即可完成。HyperLogLog 不保存元数据，只记录待统计元素的估算数量，这个估算数量是一个带有 0.81% 标准差的近似值，在大多数业务场景，对海量数据，不足 1% 的误差是可以接受的。</p>
+<p>Redis 的 HyperLogLog 在统计时，如果计数数量不大，采用稀疏矩阵存储，随着计数的增加，稀疏矩阵占用的空间也会逐渐增加，当超过阀值后，则改为稠密矩阵，稠密矩阵占用的空间是固定的，约为12KB字节。</p>
+<p>通过 hyperLoglog 数据类型，你可以利用 pfadd 向基数统计中增加新的元素，可以用 pfcount 获得 hyperLogLog 结构中存储的近似基数数量，还可以用 hypermerge 将多个 hyperLogLog 合并为一个 hyperLogLog 结构，从而可以方便的获取合并后的基数数量。</p>
+<p>hyperLogLog 的特点是统计过程不记录独立元素，占用内存非常少，非常适合统计海量数据。在大中型系统中，统计每日、每月的 UV 即独立访客数，或者统计海量用户搜索的独立词条数，都可以用 hyperLogLog 数据类型来进行处理。</p>
+<h2 id="Redis协议的请求和响应有哪些“套路”可循？"><a href="#Redis协议的请求和响应有哪些“套路”可循？" class="headerlink" title="Redis协议的请求和响应有哪些“套路”可循？"></a>Redis协议的请求和响应有哪些“套路”可循？</h2><h3 id="Redis-协议"><a href="#Redis-协议" class="headerlink" title="Redis 协议"></a>Redis 协议</h3><p>Redis 支持 8 种核心数据结构，每种数据结构都有一系列的操作指令，除此之外，Redis 还有事务、集群、发布订阅、脚本等一系列相关的指令。为了方便以一种统一的风格和原则来设计和使用这些指令，Redis 设计了 RESP，即 Redis Serialization Protocol，中文意思是 Redis 序列化协议。RESP 是二进制安全协议，可以供 Redis 或其他任何 Client-Server 使用。在 Redis 内部，还会基于 RESP 进一步扩展细节。</p>
+<h4 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h4><p>Redis 序列化协议的设计原则有三个：</p>
+<ol>
+<li><p>第一是实现简单；</p>
+</li>
+<li><p>第二是可快速解析；</p>
+</li>
+<li><p>第三是便于阅读。</p>
+</li>
+</ol>
+<p>Redis 协议的请求响应模型有三种，除了 2 种特殊模式，其他基本都是 ping-pong 模式，即 client 发送一个请求，server 回复一个响应，一问一答的访问模式。</p>
+<p>2 种特殊模式：</p>
+<ul>
+<li><p>pipeline 模式，即 client 一次连续发送多个请求，然后等待 server 响应，server 处理完请求后，把响应返回给 client。</p>
+</li>
+<li><p>pub/sub 模式。即发布订阅模式，client 通过 subscribe 订阅一个 channel，然后 client 进入订阅状态，静静等待。当有消息产生时，server 会持续自动推送消息给 client，不需要 client 的额外请求。而且客户端在进入订阅状态后，只可接受订阅相关的命令如 SUBSCRIBE、PSUBSCRIBE、UNSUBSCRIBE 和 PUNSUBSCRIBE，除了这些命令，其他命令一律失效。</p>
+</li>
+</ul>
+<p>Redis 协议的请求和响应也是有固定套路的。</p>
+<p>对于请求指令，格式有 2 种类型。</p>
+<ol>
+<li><p>当你没有 redis-client，但希望可以用通用工具 telnet，直接与 Redis 交互时，Redis 协议虽然简单易于阅读，但在交互式会话中使用，并不容易拼写，此时可以用第一种格式，即 inline cmd 内联命令格式。使用 inline cmd 内联格式，只需要用空格分隔请求指令及参数，简单快速，一个简单的例子如 mget key1 key2\r\n。</p>
+</li>
+<li><p>第二种格式是 Array 数组格式类型。请求指令用的数组类型，与 Redis 响应的数组类型相同。</p>
+</li>
+</ol>
+<h4 id="响应格式"><a href="#响应格式" class="headerlink" title="响应格式"></a>响应格式</h4><p>Redis 协议的响应格式有 5 种，分别是：</p>
+<ol>
+<li><p>simple strings 简单字符串类型，以 + 开头，后面跟字符串，以 CRLF（即 \r\n）结尾。这种类型不是二进制安全类型，字符串中不能包含 \r 或者 \n。比如许多响应回复以 OK 作为操作成功的标志，协议内容就是 +OK\r\n 。</p>
+</li>
+<li><p>Redis 协议将错误作为一种专门的类型，格式同简单字符串类型，唯一不同的是以 -（减号）开头。Redis 内部实现对 Redis 协议做了进一步规范，减号后面一般先跟 ERR 或者 WRONGTYPE，然后再跟其他简单字符串，最后以 CRLF（回车换行）结束。这里给了两个示例，client 在解析响应时，一旦发现 - 开头，就知道收到 Error 响应。</p>
+</li>
+<li><p>Integer 整数类型。整数类型以 ：开头，后面跟字符串表示的数字，最后以回车换行结尾。Redis 中许多命令都返回整数，但整数的含义要由具体命令来确定。比如，对于 incr 指令，：后的整数表示变更后的数值；对于 llen 表示 list 列表的长度，对于 exists 指令，1 表示 key 存在，0 表示 key 不存在。这里给个例子，：后面跟了个 1000，然后回车换行结束。</p>
+</li>
+<li><p>bulk strings 字符串块类型。字符串块分头部和真正字符串内容两部分。字符串块类型的头部， 为 $ 开头，随后跟真正字符串内容的字节长度，然后以 CRLF 结尾。字符串块的头部之后，跟随真正的字符串内容，最后以 CRLF 结束字符串块。字符串块用于表示二进制安全的字符串，最大长度可以支持 512MB。一个常规的例子，“$6\r\nfoobar\r\n”，对于空字串，可以表示为 “$0\r\n\r\n”，NULL字串： “$-1\r\n”。</p>
+</li>
+<li><p>Arrays 数组类型，如果一个命令需要返回多条数据就需要用数组格式类型，另外，前面提到 client 的请求命令也是主要采用这种格式。</p>
+</li>
+</ol>
+<p>Arrays 数组类型，以 * 开头，随后跟一个数组长度 N，然后以回车换行结尾；然后后面跟随 N 个数组元素，每个数组元素的类型，可以是 Redis 协议中除内联格式外的任何一种类型。</p>
+<p>比如一个字符串块的数组实例，<em>2\r\n$3\r\nget\r\n$3\r\nkey\r\n。整数数组实例：”<em>3\r\n:1\r\n:2\r\n:3\r\n”，混合数组实例：”</em>3\r\n :1\r\n-Bar\r\n$6\r\n foobar\r\n”，空数组：”*0\r\n”，NULL数组：”</em>-1\r\n”。</p>
+<h4 id="协议分类"><a href="#协议分类" class="headerlink" title="协议分类"></a>协议分类</h4><p>Redis 协议主要分为 16 种，其中 8 种协议对应 8 种数据类型，选择了使用什么数据类型，就使用对应的响应操作指令即可。</p>
+<p>剩下 8 种协议如下所示：</p>
+<ol>
+<li><p>pub-sub 发布订阅协议，client 可以订阅 channel，持续等待 server 推送消息。</p>
+</li>
+<li><p>事务协议，事务协议可以用 multi 和 exec 封装一些列指令，来一次性执行。</p>
+</li>
+<li><p>脚本协议，关键指令是 eval、evalsha 和 script等。</p>
+</li>
+<li><p>连接协议，主要包括权限控制，切换 DB，关闭连接等。</p>
+</li>
+<li><p>复制协议，包括 slaveof、role、psync 等。</p>
+</li>
+<li><p>配置协议，config set/get 等，可以在线修改/获取配置。</p>
+</li>
+<li><p>调试统计协议，如 slowlog，monitor，info 等。</p>
+</li>
+<li><p>其他内部命令，如 migrate，dump，restore 等。</p>
+</li>
+</ol>
+<h4 id="Redis-client-的使用及改进"><a href="#Redis-client-的使用及改进" class="headerlink" title="Redis client 的使用及改进"></a>Redis client 的使用及改进</h4><p>由于 Redis 使用广泛，几乎所有主流语言都有对 Redis 开发了对应的 client。以 Java 语言为例，广泛使用的有 Jedis、Redisson 等。对于 Jedis client，它的优势是轻量，简洁，便于集成和改造，它支持连接池，提供指令维度的操作，几乎支持 Redis 的所有指令，但它不支持读写分离。Redisson 基于 Netty 实现，非阻塞 IO，性能较高，而且支持异步请求和连接池，还支持读写分离、读负载均衡，它内建了 tomcat Session ，支持 spring session 集成，但 redisson 实现相对复杂。</p>
+<p>在新项目启动时，如果只是简单的 Redis 访问业务场景，可以直接用 Jedis，甚至可以简单封装 Jedis，实现 master-slave 的读写分离方案。如果想直接使用读写分离，想集成 spring session 等这些高级特性，也可以采用 redisson。</p>
+<p>Redis client 在使用中，需要根据业务及运维的需要，进行相关改进。在 client 访问异常时，可以增加重试策略，在访问某个 slave 异常时，需要重试其他 slave 节点。需要增加对 Redis 主从切换、slave 扩展的支持，比如采用守护线程定期扫描 master、slave 域名，发现 IP 变更，及时切换连接。对于多个 slave 的访问，还需要增加负载均衡策略。最后，Redis client 还可以与配置中心、Redis 集群管理平台整合，从而实时感知及协调 Redis 服务的访问。</p>
+<h2 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h2><p><img src="http://image.leonote.cn/20210714222113.png" alt=""></p>
+]]></content>
+      <categories>
+        <category>缓存</category>
+      </categories>
+      <tags>
+        <tag>缓存</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>分布式缓存-Redis进阶(上)</title>
+    <url>/2021/07/02/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Redis%E8%BF%9B%E9%98%B6(%E4%B8%8A)/</url>
+    <content><![CDATA[<h1 id="Redis进阶-上"><a href="#Redis进阶-上" class="headerlink" title="Redis进阶(上)"></a>Redis进阶(上)</h1><blockquote>
+<p>Redis 系统架构中各个处理模块是干什么的？</p>
+</blockquote>
+<h2 id="Redis-系统架构"><a href="#Redis-系统架构" class="headerlink" title="Redis 系统架构"></a>Redis 系统架构</h2><p>Redis 组件的系统架构如图所示，主要包括<strong>事件处理</strong>、<strong>数据存储及管理</strong>、用于系统扩展的<strong>主从复制/集群管理</strong>，以及为插件化功能扩展的 <strong>Module System 模块</strong>。</p>
+<h3 id="事件处理"><a href="#事件处理" class="headerlink" title="事件处理"></a>事件处理</h3><p><img src="http://image.leonote.cn/20210714215407.png" alt=""></p>
+<p>Redis 中的事件处理模块，采用的是作者自己开发的 ae 事件驱动模型，可以进行高效的网络 IO 读写、命令执行，以及时间事件处理。</p>
+<p>其中，网络 IO 读写处理采用的是 IO 多路复用技术，通过对 evport、epoll、kqueue、select 等进行封装，同时监听多个 socket，并根据 socket 目前执行的任务，来为 socket 关联不同的事件处理器。</p>
+<p>当监听端口对应的 socket 收到连接请求后，就会创建一个 client 结构，通过 client 结构来对连接状态进行管理。在请求进入时，将请求命令读取缓冲并进行解析，并存入到 client 的参数列表。</p>
+<p>然后根据请求命令找到对应的 redisCommand，最后根据命令协议，对请求参数进一步的解析、校验并执行。Redis 中时间事件比较简单，目前主要是执行 serverCron，来做一些统计更新、过期 key 清理、AOF 及 RDB 持久化等辅助操作。</p>
+<h3 id="数据管理"><a href="#数据管理" class="headerlink" title="数据管理"></a>数据管理</h3><p>Redis 的内存数据都存在 redisDB 中。Redis 支持多 DB，每个 DB 都对应一个 redisDB 结构。Redis 的 8 种数据类型，每种数据类型都采用一种或多种内部数据结构进行存储。同时这些内部数据结构及数据相关的辅助信息，都以 kye/value 的格式存在 redisDB 中的各个 dict 字典中。</p>
+<p>数据在写入 redisDB 后，这些执行的写指令还会及时追加到 AOF 中，追加的方式是先实时写入AOF 缓冲，然后按策略刷缓冲数据到文件。由于 AOF 记录每个写操作，所以一个 key 的大量中间状态也会呈现在 AOF 中，导致 AOF 冗余信息过多，因此 Redis 还设计了一个 RDB 快照操作，可以通过定期将内存里所有的数据快照落地到 RDB 文件，来以最简洁的方式记录 Redis 的所有内存数据。</p>
+<p>Redis 进行数据读写的核心处理线程是单线程模型，为了保持整个系统的高性能，必须避免任何 kennel 导致阻塞的操作。为此，Redis 增加了 BIO 线程，来处理容易导致阻塞的文件 close、fsync 等操作，确保系统处理的性能和稳定性。</p>
+<p>在 server 端，存储内存永远是昂贵且短缺的，Redis 中，过期的 key 需要及时清理，不活跃的 key 在内存不足时也可能需要进行淘汰。为此，Redis 设计了 8 种淘汰策略，借助新引入的 eviction pool，进行高效的 key 淘汰和内存回收。</p>
+<h3 id="功能扩展"><a href="#功能扩展" class="headerlink" title="功能扩展"></a>功能扩展</h3><p>Redis 在 4.0 版本之后引入了 Module System 模块，可以方便使用者，在不修改核心功能的同时，进行插件化功能开发。使用者可以将新的 feature 封装成动态链接库，Redis 可以在启动时加载，也可以在运行过程中随时按需加载和启用。</p>
+<p>在扩展模块中，开发者可以通过 RedisModule_init 初始化新模块，用 RedisModule_CreateCommand 扩展各种新模块指令，以可插拔的方式为 Redis 引入新的数据结构和访问命令。</p>
+<h3 id="系统扩展"><a href="#系统扩展" class="headerlink" title="系统扩展"></a>系统扩展</h3><p>Redis 作者在架构设计中对系统的扩展也倾注了大量关注。在主从复制功能中，psyn 在不断的优化，不仅在 slave 闪断重连后可以进行增量复制，而且在 slave 通过主从切换成为 master 后，其他 slave 仍然可以与新晋升的 master 进行增量复制，另外，其他一些场景，如 slave 重启后，也可以进行增量复制，大大提升了主从复制的可用性。使用者可以更方便的使用主从复制，进行业务数据的读写分离，大幅提升 Redis 系统的稳定读写能力。</p>
+<p>通过主从复制可以较好的解决 Redis 的单机读写问题，但所有写操作都集中在 master 服务器，很容易达到 Redis 的写上限，同时 Redis 的主从节点都保存了业务的所有数据，随着业务发展，很容易出现内存不够用的问题。</p>
+<p>为此，Redis 分区无法避免。虽然业界大多采用在 client 和 proxy 端分区，但 Redis 自己也早早推出了 cluster 功能，并不断进行优化。Redis cluster 预先设定了 16384 个 slot 槽，在 Redis 集群启动时，通过手动或自动将这些 slot 分配到不同服务节点上。在进行 key 读写定位时，首先对 key 做 hash，并将 hash 值对 16383 ，做 按位与运算，确认 slot，然后确认服务节点，最后再对 对应的 Redis 节点，进行常规读写。如果 client 发送到错误的 Redis 分片，Redis 会发送重定向回复。如果业务数据大量增加，Redis 集群可以通过数据迁移，来进行在线扩容。</p>
+<blockquote>
+<p>Redis 如何处理文件事件和时间事件？</p>
+</blockquote>
+<h2 id="Redis-事件驱动模型"><a href="#Redis-事件驱动模型" class="headerlink" title="Redis 事件驱动模型"></a>Redis 事件驱动模型</h2><h3 id="事件驱动模型"><a href="#事件驱动模型" class="headerlink" title="事件驱动模型"></a>事件驱动模型</h3><p>Redis 是一个事件驱动程序，但和 Memcached 不同的是，Redis 并没有采用 libevent 或 libev 这些开源库，而是直接开发了一个新的事件循环组件。Redis 作者给出的理由是，尽量减少外部依赖，而自己开发的事件模型也足够简洁、轻便、高效，也更易控制。Redis 的事件驱动模型机制封装在 aeEventLoop 等相关的结构体中，网络连接、命令读取执行回复，数据的持久化、淘汰回收 key 等，几乎所有的核心操作都通过 ae 事件模型进行处理。</p>
+<p><img src="http://image.leonote.cn/20210714215614.png" alt=""></p>
+<p>Redis 的事件驱动模型处理 2 类事件：</p>
+<ul>
+<li><p>文件事件，如连接建立、接受请求命令、发送响应等；</p>
+</li>
+<li><p>时间事件，如 Redis 中定期要执行的统计、key 淘汰、缓冲数据写出、rehash等。</p>
+</li>
+</ul>
+<h3 id="文件事件处理"><a href="#文件事件处理" class="headerlink" title="文件事件处理"></a>文件事件处理</h3><p><img src="http://image.leonote.cn/20210714215631.png" alt=""></p>
+<p>Redis 的文件事件采用典型的 Reactor 模式进行处理。Redis 文件事件处理机制分为 4 部分：</p>
+<ul>
+<li><p>连接 socket</p>
+</li>
+<li><p>IO 多路复用程序</p>
+</li>
+<li><p>文件事件分派器</p>
+</li>
+<li><p>事件处理器</p>
+</li>
+</ul>
+<p>文件事件是对连接 socket 操作的一个抽象。当端口监听 socket 准备 accept 新连接，或者连接 socket 准备好读取请求、写入响应、关闭时，就会产生一个文件事件。IO 多路复用程序负责同时监听多个 socket，当这些 socket 产生文件事件时，就会触发事件通知，文件分派器就会感知并获取到这些事件。</p>
+<p>虽然多个文件事件可能会并发出现，但 IO 多路复用程序总会将所有产生事件的 socket 放入一个队列中，通过这个队列，有序的把这些文件事件通知给文件分派器。</p>
+<h3 id="IO-多路复用"><a href="#IO-多路复用" class="headerlink" title="IO 多路复用"></a>IO 多路复用</h3><p>Redis 封装了 4 种多路复用程序，每种封装实现都提供了相同的 API 实现。编译时，会按照性能和系统平台，选择最佳的 IO 多路复用函数作为底层实现，选择顺序是，首先尝试选择 Solaries 中的 evport，如果没有，就尝试选择 Linux 中的 epoll，否则就选择大多 UNIX 系统都支持的 kqueue，这 3 个多路复用函数都直接使用系统内核内部的结构，可以服务数十万的文件描述符。</p>
+<p>如果当前编译环境没有上述函数，就会选择 select 作为底层实现方案。select 方案的性能较差，事件发生时，会扫描全部监听的描述符，事件复杂度是 O(n)，并且只能同时服务有限个文件描述符，32 位机默认是 1024 个，64 位机默认是 2048 个，所以一般情况下，并不会选择 select 作为线上运行方案。Redis 的这 4 种实现，分别在 ae_evport、ae_epoll、ae_kqueue 和 ae_select 这 4 个代码文件中。</p>
+<h3 id="文件事件收集及派发器"><a href="#文件事件收集及派发器" class="headerlink" title="文件事件收集及派发器"></a>文件事件收集及派发器</h3><p>Redis 中的文件事件分派器是 aeProcessEvents 函数。它会首先计算最大可以等待的时间，然后利用 aeApiPoll 等待文件事件的发生。如果在等待时间内，一旦 IO 多路复用程序产生了事件通知，则会立即轮询所有已产生的文件事件，并将文件事件放入 aeEventLoop 中的 aeFiredEvents 结构数组中。每个 fired event 会记录 socket 及 Redis 读写事件类型。</p>
+<p>这里会涉及将多路复用中的事件类型，转换为 Redis 的 ae 事件驱动模型中的事件类型。以采用 Linux 中的 epoll 为例，会将 epoll 中的 EPOLLIN 转为 AE_READABLE 类型，将 epoll 中的 EPOLLOUT、EPOLLERR 和 EPOLLHUP 转为 AE_WRITABLE 事件。</p>
+<p>aeProcessEvents 在获取到触发的事件后，会根据事件类型，将文件事件 dispatch 派发给对应事件处理函数。如果同一个 socket，同时有读事件和写事件，Redis 派发器会首先派发处理读事件，然后再派发处理写事件。</p>
+<h3 id="文件事件处理函数分类"><a href="#文件事件处理函数分类" class="headerlink" title="文件事件处理函数分类"></a>文件事件处理函数分类</h3><p>Redis 中文件事件函数的注册和处理主要分为 3 种。</p>
+<ul>
+<li><p>连接处理函数 acceptTcpHandler</p>
+<p>Redis 在启动时，在 initServer 中对监听的 socket 注册读事件，事件处理器为 acceptTcpHandler，该函数在有新连接进入时，会被派发器派发读任务。在处理该读任务时，会 accept 新连接，获取调用方的 IP 及端口，并对新连接创建一个 client 结构。如果同时有大量连接同时进入，Redis 一次最多处理 1000 个连接请求。</p>
+</li>
+<li><p>readQueryFromClient 请求处理函数</p>
+<p>连接函数在创建 client 时，会对新连接 socket 注册一个读事件，该读事件的事件处理器就是 readQueryFromClient。在连接 socket 有请求命令到达时，IO 多路复用程序会获取并触发文件事件，然后这个读事件被派发器派发给本请求的处理函数。readQueryFromClient 会从连接 socket 读取数据，存入 client 的 query 缓冲，然后进行解析命令，按照 Redis 当前支持的 2 种请求格式，及 inline 内联格式和 multibulk 字符块数组格式进行尝试解析。解析完毕后，client 会根据请求命令从命令表中获取到对应的 redisCommand，如果对应 cmd 存在。则开始校验请求的参数，以及当前 server 的内存、磁盘及其他状态，完成校验后，然后真正开始执行 redisCommand 的处理函数，进行具体命令的执行，最后将执行结果作为响应写入 client 的写缓冲中。</p>
+</li>
+<li><p>命令回复处理器 sendReplyToClient</p>
+<p>当 redis需要发送响应给client时，Redis 事件循环中会对client的连接socket注册写事件，这个写事件的处理函数就是sendReplyToClient。通过注册写事件，将 client 的socket与 AE_WRITABLE 进行间接关联。当 Client fd 可进行写操作时，就会触发写事件，该函数就会将写缓冲中的数据发送给调用方。</p>
+</li>
+</ul>
+<p><img src="http://image.leonote.cn/20210714215711.png" alt=""></p>
+<p>Redis 中的时间事件是指需要在特定时间执行的事件。多个 Redis 中的时间事件构成 aeEventLoop 中的一个链表，供 Redis 在 ae 事件循环中轮询执行。</p>
+<p>Redis 当前的主要时间事件处理函数有 2 个：</p>
+<ul>
+<li><p>serverCron</p>
+</li>
+<li><p>moduleTimerHandler</p>
+</li>
+</ul>
+<p>Redis 中的时间事件分为 2 类：</p>
+<ul>
+<li><p>单次时间，即执行完毕后，该时间事件就结束了。</p>
+</li>
+<li><p>周期性事件，在事件执行完毕后，会继续设置下一次执行的事件，从而在时间到达后继续执行，并不断重复。</p>
+</li>
+</ul>
+<p>时间事件主要有 5 个属性组成。</p>
+<ul>
+<li><p>事件 ID：Redis 为时间事件创建全局唯一 ID，该 ID 按从小到大的顺序进行递增。</p>
+</li>
+<li><p>执行时间 when_sec 和 when_ms：精确到毫秒，记录该事件的到达可执行时间。</p>
+</li>
+<li><p>时间事件处理器 timeProc：在时间事件到达时，Redis 会调用相应的 timeProc 处理事件。</p>
+</li>
+<li><p>关联数据 clientData：在调用 timeProc 时，需要使用该关联数据作为参数。</p>
+</li>
+<li><p>链表指针 prev 和 next：它用来将时间事件维护为双向链表，便于插入及查找所要执行的时间事件。</p>
+</li>
+</ul>
+<p>时间事件的处理是在事件循环中的 aeProcessEvents 中进行。执行过程是：</p>
+<ol>
+<li><p>首先遍历所有的时间事件。</p>
+</li>
+<li><p>比较事件的时间和当前时间，找出可执行的时间事件。</p>
+</li>
+<li><p>然后执行时间事件的 timeProc 函数。</p>
+</li>
+<li><p>执行完毕后，对于周期性时间，设置时间新的执行时间；对于单次性时间，设置事件的 ID为 -1，后续在事件循环中，下一次执行 aeProcessEvents 的时候从链表中删除。</p>
+</li>
+</ol>
+<blockquote>
+<p>Redis读取请求数据后，如何进行协议解析和处理?</p>
+</blockquote>
+<h2 id="Redis-协议解析及处理"><a href="#Redis-协议解析及处理" class="headerlink" title="Redis 协议解析及处理"></a>Redis 协议解析及处理</h2><h3 id="协议解析"><a href="#协议解析" class="headerlink" title="协议解析"></a>协议解析</h3><p>请求命令进入，触发 IO 读事件后。client 会从连接文件描述符读取请求，并存入 client 的 query buffer 中。client 的读缓冲默认是 16KB，读取命令时，如果发现请求超过 1GB，则直接报异常，关闭连接。</p>
+<p><img src="http://image.leonote.cn/20210714215807.png" alt=""></p>
+<p>client 读取完请求命令后，则根据 query buff 进行协议解析。协议解析时，首先查看协议的首字符。如果是 *，则解析为字符块数组类型，即 MULTIBULK。否则请求解析为 INLINE 类型。</p>
+<p>INLINE 类型是以 CRLF 结尾的单行字符串，协议命令及参数以空格分隔。解析过程参考之前课程里分析的对应协议格式。协议解析完毕后，将请求参数个数存入 client 的 argc 中，将请求的具体参数存入 client 的 argv 中。</p>
+<h3 id="协议执行"><a href="#协议执行" class="headerlink" title="协议执行"></a>协议执行</h3><p>请求命令解析完毕，则进入到协议执行部分。协议执行中，对于 quit 指令，直接返回 OK，设置 flag 为回复后关闭连接。</p>
+<p><img src="http://image.leonote.cn/20210714215817.png" alt=""></p>
+<p>对于非 quit 指令，以 client 中 argv[0] 作为命令，从 server 中的命令表中找到对应的 redisCommand。如果没有找到 redisCommand，则返回未知 cmd 异常。如果找到 cmd，则开始执行 redisCommand 中的 proc 函数，进行具体命令的执行。在命令执行完毕后，将响应写入 client 的写缓冲。并按配置和部署，将写指令分发给 aof 和 slaves。同时更新相关的统计数值。</p>
+<blockquote>
+<p>怎么认识和应用Redis内部数据结构?</p>
+</blockquote>
+<h2 id="Redis-内部数据结构"><a href="#Redis-内部数据结构" class="headerlink" title="Redis 内部数据结构"></a>Redis 内部数据结构</h2><h3 id="RdeisDb"><a href="#RdeisDb" class="headerlink" title="RdeisDb"></a>RdeisDb</h3><p><img src="http://image.leonote.cn/20210714220054.png" alt=""><br>Redis 中所有数据都保存在 DB 中，一个 Redis 默认最多支持 16 个 DB。Redis 中的每个 DB 都对应一个 redisDb 结构，即每个 Redis 实例，默认有 16 个 redisDb。用户访问时，默认使用的是 0 号 DB，可以通过 select $dbID 在不同 DB 之间切换。</p>
+<p><img src="http://image.leonote.cn/20210714220141.png" alt=""></p>
+<p>redisDb 主要包括 2 个核心 dict 字典、3 个非核心 dict 字典、dbID 和其他辅助属性。2 个核心 dict 包括一个 dict 主字典和一个 expires 过期字典。主 dict 字典用来存储当前 DB 中的所有数据，它将 key 和各种数据类型的 value 关联起来，该 dict 也称 key space。过期字典用来存储过期时间 key，存的是 key 与过期时间的映射。日常的数据存储和访问基本都会访问到 redisDb 中的这两个 dict。</p>
+<p>3 个非核心 dict 包括一个字段名叫 blocking_keys 的阻塞 dict，一个字段名叫 ready_keys 的解除阻塞 dict，还有一个是字段名叫 watched_keys 的 watch 监控 dict。</p>
+<p>在执行 Redis 中 list 的阻塞命令 blpop、brpop 或者 brpoplpush 时，如果对应的 list 列表为空，Redis 就会将对应的 client 设为阻塞状态，同时将该 client 添加到 DB 中 blocking_keys 这个阻塞 dict。所以该 dict 存储的是处于阻塞状态的 key 及 client 列表。</p>
+<p>当有其他调用方在向某个 key 对应的 list 中增加元素时，Redis 会检测是否有 client 阻塞在这个 key 上，即检查 blocking_keys 中是否包含这个 key，如果有则会将这个 key 加入 read_keys 这个 dict 中。同时也会将这个 key 保存到 server 中的一个名叫 read_keys 的列表中。这样可以高效、不重复的插入及轮询。</p>
+<p>当 client 使用 watch 指令来监控 key 时，这个 key 和 client 就会被保存到 watched_keys 这个 dict 中。redisDb 中可以保存所有的数据类型，而 Redis 中所有数据类型都是存放在一个叫 redisObject 的结构中。</p>
+<h3 id="redisObject"><a href="#redisObject" class="headerlink" title="redisObject"></a>redisObject</h3><p><img src="http://image.leonote.cn/20210714220207.png" alt=""><br>redisObject 由 5 个字段组成。</p>
+<ul>
+<li>type：即 Redis 对象的数据类型，目前支持 7 种 type 类型，分别为<ul>
+<li>OBJ_STRING</li>
+<li>OBJ_LIST</li>
+<li>OBJ_SET</li>
+<li>OBJ_ZSET</li>
+<li>OBJ_HASH</li>
+<li>OBJ_MODULE</li>
+<li>OBJ_STREAM</li>
+</ul>
+</li>
+<li>encoding：Redis 对象的内部编码方式，即内部数据结构类型，目前支持 10 种编码方式包括<ul>
+<li>OBJ_ENCODING_RAW</li>
+<li>OBJ_ENCODING_INT</li>
+<li>OBJ_ENCODING_HT</li>
+<li>OBJ_ENCODING_ZIPLIST 等。</li>
+<li>LRU：存储的是淘汰数据用的 LRU 时间或 LFU 频率及时间的数据。</li>
+<li>refcount：记录 Redis 对象的引用计数，用来表示对象被共享的次数，共享使用时加 1，不再使用时减 1，当计数为 0 时表明该对象没有被使用，就会被释放，回收内存。</li>
+<li>ptr：它指向对象的内部数据结构。比如一个代表 string 的对象，它的 ptr 可能指向一个 sds 或者一个 long 型整数。</li>
+</ul>
+</li>
+</ul>
+<h3 id="dict"><a href="#dict" class="headerlink" title="dict"></a>dict</h3><p>Redis 中的数据实际是存在 DB 中的 2 个核心 dict 字典中的。实际上 dict 也是 Redis 的一种使用广泛的内部数据结构。</p>
+<p><img src="http://image.leonote.cn/20210714220247.png" alt=""><br>Redis 中的 dict，类似于 Memcached 中 hashtable。都可以用于 key 或元素的快速插入、更新和定位。dict 字典中，有一个长度为 2 的哈希表数组，日常访问用 0 号哈希表，如果 0 号哈希表元素过多，则分配一个 2 倍 0 号哈希表大小的空间给 1 号哈希表，然后进行逐步迁移，rehashidx 这个字段就是专门用来做标志迁移位置的。在哈希表操作中，采用单向链表来解决 hash 冲突问题。dict 中还有一个重要字段是 type，它用于保存 hash 函数及 key/value 赋值、比较函数。</p>
+<p>dictht 中的 table 是一个 hash 表数组，每个桶指向一个 dictEntry 结构。dictht 采用 dictEntry 的单向链表来解决 hash 冲突问题。</p>
+<p><img src="http://image.leonote.cn/20210714220320.png" alt=""></p>
+<p>dictht 是以 dictEntry 来存 key-value 映射的。其中 key 是 sds 字符串，value 为存储各种数据类型的 redisObject 结构。</p>
+<p>dict 可以被 redisDb 用来存储数据 key-value 及命令操作的辅助信息。还可以用来作为一些 Redis 数据类型的内部数据结构。dict 可以作为 set 集合的内部数据结构。在哈希的元素数超过 512 个，或者哈希中 value 大于 64 字节，dict 还被用作为哈希类型的内部数据结构。</p>
+<h3 id="sds"><a href="#sds" class="headerlink" title="sds"></a>sds</h3><p>字符串是 Redis 中最常见的数据类型，其底层实现是简单动态字符串即 sds。简单动态字符串本质是一个 char*，内部通过 sdshdr 进行管理。sdshdr 有 4 个字段。len 为字符串实际长度，alloc 当前字节数组总共分配的内存大小。flags 记录当前字节数组的属性；buf 是存储字符串真正的值及末尾一个 \0。</p>
+<p><img src="http://image.leonote.cn/20210714220351.png" alt=""></p>
+<p>sds 的存储 buf 可以动态扩展或收缩，字符串长度不用遍历，可直接获得，修改和访问都很方便。由于 sds 中字符串存在 buf 数组中，长度由 len 定义，而不像传统字符串遇 0 停止，所以 sds 是二进制安全的，可以存放任何二进制的数据。</p>
+<p><img src="http://image.leonote.cn/20210714220415.png" alt=""><br>简单动态字符串 sds 的获取字符串长度很方便，通过 len 可以直接得到，而传统字符串需要对字符串进行遍历，时间复杂度为 O(n)。</p>
+<p>sds 相比传统字符串多了一个 sdshdr，对于大量很短的字符串，这个 sdshdr 还是一个不小的开销。在 3.2 版本后，sds 会根据字符串实际的长度，选择不同的数据结构，以更好的提升内存效率。当前 sdshdr 结构分为 5 种子类型，分别为 sdshdr5、sdshdr8、sdshdr16、sdshdr32、sdshdr64。其中 sdshdr5 只有 flags 和 buf 字段，其他几种类型的 len 和 alloc 采用从 uint8_t 到 uint64_t 的不同类型，以节省内存空间。</p>
+<p>sds 可以作为字符串的内部数据结构，同时 sds 也是 hyperloglog、bitmap 类型的内部数据结构。</p>
+<h3 id="ziplist"><a href="#ziplist" class="headerlink" title="ziplist"></a>ziplist</h3><p>为了节约内存，并减少内存碎片，Redis 设计了 ziplist 压缩列表内部数据结构。压缩列表是一块连续的内存空间，可以连续存储多个元素，没有冗余空间，是一种连续内存数据块组成的顺序型内存结构。</p>
+<p><img src="http://image.leonote.cn/20210714220445.png" alt=""></p>
+<p>ziplist 的结构如图所示，主要包括 5 个部分。</p>
+<ol>
+<li><p>zlbytes 是压缩列表所占用的总内存字节数。</p>
+</li>
+<li><p>Zltail 尾节点到起始位置的字节数。</p>
+</li>
+<li><p>Zllen 总共包含的节点/内存块数。</p>
+</li>
+<li><p>Entry 是 ziplist 保存的各个数据节点，这些数据点长度随意。</p>
+</li>
+<li><p>Zlend 是一个魔数 255，用来标记压缩列表的结束。</p>
+</li>
+</ol>
+<p>如图所示，一个包含 4 个元素的 ziplist，总占用字节是 100bytes，该 ziplist 的起始元素的指针是 p，zltail 是 80，则第 4 个元素的指针是 P+80。</p>
+<p><img src="http://image.leonote.cn/20210714220505.png" alt=""></p>
+<p>压缩列表 ziplist 的存储节点 entry 的结构如图，主要有 6 个字段。</p>
+<ul>
+<li><p>prevRawLen 是前置节点的长度；</p>
+</li>
+<li><p>preRawLenSize 编码 preRawLen 需要的字节数；</p>
+</li>
+<li><p>len 当前节点的长度；</p>
+</li>
+<li><p>lensize 编码 len 所需要的字节数；</p>
+</li>
+<li><p>encoding  当前节点所用的编码类型；</p>
+</li>
+<li><p>entryData 当前节点数据。</p>
+</li>
+</ul>
+<p><img src="http://image.leonote.cn/20210714220530.png" alt=""></p>
+<p>由于 ziplist 是连续紧凑存储，没有冗余空间，所以插入新的元素需要 realloc 扩展内存，所以如果 ziplist 占用空间太大，realloc 重新分配内存和拷贝的开销就会很大，所以 ziplist 不适合存储过多元素，也不适合存储过大的字符串。</p>
+<p>因此只有在元素数和 value 数都不大的时候，ziplist 才作为 hash 和 zset 的内部数据结构。其中 hash 使用 ziplist 作为内部数据结构的限制时，元素数默认不超过 512 个，value 值默认不超过 64 字节。可以通过修改配置来调整 hash_max_ziplist_entries 、hash_max_ziplist_value 这两个阀值的大小。</p>
+<p>zset 有序集合，使用 ziplist 作为内部数据结构的限制元素数默认不超过 128 个，value 值默认不超过 64 字节。可以通过修改配置来调整 zset_max_ziplist_entries 和 zset_max_ziplist_value 这两个阀值的大小。</p>
+<h3 id="quicklist"><a href="#quicklist" class="headerlink" title="quicklist"></a>quicklist</h3><p>Redis 在 3.2 版本之后引入 quicklist，用以替换 linkedlist。因为 linkedlist 每个节点有前后指针，要占用 16 字节，而且每个节点独立分配内存，很容易加剧内存的碎片化。而 ziplist 由于紧凑型存储，增加元素需要 realloc，删除元素需要内存拷贝，天然不适合元素太多、value 太大的存储。</p>
+<p><img src="http://image.leonote.cn/20210714220546.png" alt=""></p>
+<p>而 quicklist 快速列表应运而生，它是一个基于 ziplist 的双向链表。将数据分段存储到 ziplist，然后将这些 ziplist 用双向指针连接。快速列表的结构如图所示。</p>
+<ul>
+<li><p>head、tail 是两个指向第一个和最后一个 ziplist 节点的指针。</p>
+</li>
+<li><p>count 是 quicklist 中所有的元素个数。</p>
+</li>
+<li><p>len 是 ziplist 节点的个数。</p>
+</li>
+<li><p>compress 是 LZF 算法的压缩深度。</p>
+</li>
+</ul>
+<p>快速列表中，管理 ziplist 的是 quicklistNode 结构。quicklistNode 主要包含一个 prev/next 双向指针，以及一个 ziplist 节点。单个 ziplist 节点可以存放多个元素。</p>
+<p>快速列表从头尾读写数据很快，时间复杂度为 O(1)。也支持从中间任意位置插入或读写元素，但速度较慢，时间复杂度为 O(n)。快速列表当前主要作为 list 列表的内部数据结构。</p>
+<h3 id="zskiplist"><a href="#zskiplist" class="headerlink" title="zskiplist"></a>zskiplist</h3><p>跳跃表 zskiplist 是一种有序数据结构，它通过在每个节点维持多个指向其他节点的指针，从而可以加速访问。跳跃表支持平均 O(logN) 和最差 O(n) 复杂度的节点查找。在大部分场景，跳跃表的效率和平衡树接近，但跳跃表的实现比平衡树要简单，所以不少程序都用跳跃表来替换平衡树。</p>
+<p><img src="http://image.leonote.cn/20210714220609.png" alt=""></p>
+<p>如果 sorted set 类型的元素数比较多或者元素比较大，Redis 就会选择跳跃表来作为 sorted set有序集合的内部数据结构。</p>
+<p>跳跃表主要由 zskipList 和节点 zskiplistNode 构成。zskiplist 结构如图，header 指向跳跃表的表头节点。tail 指向跳跃表的表尾节点。length 表示跳跃表的长度，它是跳跃表中不包含表头节点的节点数量。level 是目前跳跃表内，除表头节点外的所有节点中，层数最大的那个节点的层数。</p>
+<p>跳跃表的节点 zskiplistNode 的结构如图所示。ele 是节点对应的 sds 值，在 zset 有序集合中就是集合中的 field 元素。score 是节点的分数，通过 score，跳跃表中的节点自小到大依次排列。backward 是指向当前节点的前一个节点的指针。level 是节点中的层，每个节点一般有多个层。每个 level 层都带有两个属性，一个是 forwad 前进指针，它用于指向表尾方向的节点；另外一个是 span 跨度，它是指 forward 指向的节点到当前节点的距离。</p>
+<p><img src="http://image.leonote.cn/20210714220627.png" alt=""></p>
+<p>如图所示是一个跳跃表，它有 3 个节点。对应的元素值分别是 S1、S2 和 S3，分数值依次为 1.0、3.0 和 5.0。其中 S3 节点的 level 最大是 5，跳跃表的 level 是 5。header 指向表头节点，tail 指向表尾节点。在查到元素时，累加路径上的跨度即得到元素位置。在跳跃表中，元素必须是唯一的，但 score 可以相同。相同 score 的不同元素，按照字典序进行排序。</p>
+<p>在 sorted set 数据类型中，如果元素数较多或元素长度较大，则使用跳跃表作为内部数据结构。默认元素数超过 128 或者最大元素的长度超过 64，此时有序集合就采用 zskiplist 进行存储。由于 geo 也采用有序集合类型来存储地理位置名称和位置 hash 值，所以在超过相同阀值后，也采用跳跃表进行存储。</p>
+<p><img src="http://image.leonote.cn/20210714220637.png" alt=""></p>
+<blockquote>
+<p> 8 种数据类型，具体都是采用哪种内部数据结构来存储的：</p>
+<p>​    首先，对于 string 字符串，Redis 主要采用 sds 来进行存储。而对于 list 列表，Redis 采用 quicklist 进行存储。对于 set 集合类型，Redis 采用 dict 来进行存储。对于 sorted set 有序集合类型，如果元素数小于 128 且元素长度小于 64，则使用 ziplist 存储，否则使用 zskiplist 存储。对于哈希类型，如果元素数小于 512，并且元素长度小于 64，则用 ziplist 存储，否则使用 dict 字典存储。对于 hyperloglog，采用 sds 简单动态字符串存储。对于 geo，如果位置数小于 128，则使用 ziplist 存储，否则使用 zskiplist 存储。最后对于 bitmap，采用 sds 简单动态字符串存储。</p>
+<p>​    除了这些主要的内部数据结构，还有在特殊场景下也会采用一些其他内部结构存储，比如，如果操作的字符串都是整数，同时指令是 incr、decr 等，会对字符串采用 long 型整数存储</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>缓存</category>
+      </categories>
+      <tags>
+        <tag>缓存</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>分布式缓存-Redis进阶(下)</title>
+    <url>/2021/07/09/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-Redis%E8%BF%9B%E9%98%B6(%E4%B8%8B)/</url>
+    <content><![CDATA[<h1 id="Redis进阶-下"><a href="#Redis进阶-下" class="headerlink" title="Redis进阶(下)"></a>Redis进阶(下)</h1><h2 id="Redis是如何淘汰key的？"><a href="#Redis是如何淘汰key的？" class="headerlink" title="Redis是如何淘汰key的？"></a>Redis是如何淘汰key的？</h2><h3 id="淘汰原理"><a href="#淘汰原理" class="headerlink" title="淘汰原理"></a>淘汰原理</h3><p>系统线上运行中，内存总是昂贵且有限的，在数据总量远大于 Redis 可用的内存总量时，为了最大限度的提升访问性能，Redis 中只能存放最新最热的有效数据。</p>
+<p>当 key 过期后，或者 Redis 实际占用的内存超过阀值后，Redis 就会对 key 进行淘汰，删除过期的或者不活跃的 key，回收其内存，供新的 key 使用。Redis 的内存阀值是通过 maxmemory 设置的，而超过内存阀值后的淘汰策略，是通过 maxmemory-policy 设置的。Redis 会在 2 种场景下对 key 进行淘汰，第一种是在<strong>定期执行 serverCron 时</strong>，检查淘汰 key；第二种是在<strong>执行命令时</strong>，检查淘汰 key。</p>
+<p>第一种场景，Redis 定期执行 serverCron 时，会对 DB 进行检测，清理过期 key。清理流程如下。首先轮询每个 DB，检查其 expire dict，即带过期时间的过期 key 字典，从所有带过期时间的 key 中，随机选取 20 个样本 key，检查这些 key 是否过期，如果过期则清理删除。如果 20 个样本中，超过 5 个 key 都过期，即过期比例大于 25%，就继续从该 DB 的 expire dict 过期字典中，再随机取样 20 个 key 进行过期清理，持续循环，直到选择的 20 个样本 key 中，过期的 key 数小于等于 5，当前这个 DB 则清理完毕，然后继续轮询下一个 DB。</p>
+<p>在执行 serverCron 时，如果在某个 DB 中，过期 dict 的填充率低于 1%，则放弃对该 DB 的取样检查，因为效率太低。如果 DB 的过期 dict 中，过期 key 太多，一直持续循环回收，会占用大量主线程时间，所以 Redis 还设置了一个过期时间。这个过期时间根据 serverCron 的执行频率来计算，5.0 版本及之前采用慢循环过期策略，默认是 25ms，如果回收超过 25ms 则停止，6.0 非稳定版本采用快循环过期策略，过期时间为 1ms。</p>
+<p>第二种场景，Redis 在执行命令请求时。会检查当前内存占用是否超过 maxmemory 的数值，如果超过，则按照设置的淘汰策略，进行删除淘汰 key 操作。</p>
+<h3 id="淘汰方式"><a href="#淘汰方式" class="headerlink" title="淘汰方式"></a>淘汰方式</h3><p>Redis 中 key 的淘汰方式有两种，分别是<strong>同步删除淘汰</strong>和<strong>异步删除淘汰</strong>。在 serverCron 定期清理过期 key 时，如果设置了延迟过期配置 lazyfree-lazy-expire，会检查 key 对应的 value 是否为多元素的复合类型，即是否是 list 列表、set 集合、zset 有序集合和 hash 中的一种，并且 value 的元素数大于 64，则在将 key 从 DB 中 expire dict 过期字典和主 dict 中删除后，value 存放到 BIO 任务队列，由 BIO 延迟删除线程异步回收；否则，直接从 DB 的 expire dict 和主 dict 中删除，并回收 key、value 所占用的空间。在执行命令时，如果设置了 lazyfree-lazy-eviction，在淘汰 key 时，也采用前面类似的检测方法，对于元素数大于 64 的 4 种复合类型，使用 BIO 线程异步删除，否则采用同步直接删除。</p>
+<h3 id="淘汰策略"><a href="#淘汰策略" class="headerlink" title="淘汰策略"></a>淘汰策略</h3><p><img src="http://image.leonote.cn/20210714220858.png" alt=""></p>
+<p>Redis 提供了 8 种淘汰策略对 key 进行管理，而且还引入基于样本的 eviction pool，来提升剔除的准确性，确保在保持最大性能的前提下，剔除最不活跃的 key。eviction pool 主要对 LRU、LFU，以及过期 dict ttl  内存管理策略生效。处理流程为，当 Redis 内存占用超过阀值后，按策略从主 dict 或者带过期时间的 expire dict 中随机选择 N 个 key，N 默认是 5，计算每个 key 的 idle 值，按 idle 值从小到大的顺序插入 evictionPool 中，然后选择 idle 最大的那个 key，进行淘汰。</p>
+<p><img src="http://image.leonote.cn/20210714220907.png" alt=""></p>
+<p>选择淘汰策略时，可以通过配置 Redis 的 maxmemory 设置最大内存，并通 maxmemory_policy 设置超过最大内存后的处理策略。如果 maxmemory 设为 0，则表明对内存使用没有任何限制，可以持续存放数据，适合作为存储，来存放数据量较小的业务。如果数据量较大，就需要估算热数据容量，设置一个适当的值，将 Redis 作为一个缓存而非存储来使用。</p>
+<p>Redis 提供了 8 种 maxmemory_policy 淘汰策略来应对内存超过阀值的情况。</p>
+<ol>
+<li><p>第一种淘汰策略是 noeviction，它是 Redis 的默认策略。在内存超过阀值后，Redis 不做任何清理工作，然后对所有写操作返回错误，但对读请求正常处理。noeviction 适合数据量不大的业务场景，将关键数据存入 Redis 中，将 Redis 当作 DB 来使用。</p>
+</li>
+<li><p>第二种淘汰策略是 volatile-lru，它对带过期时间的 key 采用最近最少访问算法来淘汰。使用这种策略，Redis 会从 redisDb 的 expire dict 过期字典中，首先随机选择 N 个 key，计算 key 的空闲时间，然后插入 evictionPool 中，最后选择空闲时间最久的 key 进行淘汰。这种策略适合的业务场景是，需要淘汰的key带有过期时间，且有冷热区分，从而可以淘汰最久没有访问的key。</p>
+</li>
+<li><p>第三种策略是 volatile-lfu，它对带过期时间的 key 采用最近最不经常使用的算法来淘汰。使用这种策略时，Redis 会从 redisDb 中的 expire dict 过期字典中，首先随机选择 N 个 key，然后根据其 value 的 lru 值，计算 key 在一段时间内的使用频率相对值。对于 lfu，要选择使用频率最小的 key，为了沿用 evictionPool 的 idle 概念，Redis 在计算 lfu 的 Idle 时，采用 255 减去使用频率相对值，从而确保 Idle 最大的 key 是使用次数最小的 key，计算 N 个 key 的 Idle 值后，插入 evictionPool，最后选择 Idle 最大，即使用频率最小的 key，进行淘汰。这种策略也适合大多数 key 带过期时间且有冷热区分的业务场景。</p>
+</li>
+<li><p>第四种策略是 volatile-ttl，它是对带过期时间的 key 中选择最早要过期的 key 进行淘汰。使用这种策略时，Redis 也会从 redisDb 的 expire dict 过期字典中，首先随机选择 N 个 key，然后用最大无符号 long 值减去 key 的过期时间来作为 Idle 值，计算 N 个 key 的 Idle 值后，插入evictionPool，最后选择 Idle 最大，即最快就要过期的 key，进行淘汰。这种策略适合，需要淘汰的key带过期时间，且有按时间冷热区分的业务场景。   </p>
+</li>
+<li><p>第五种策略是 volatile-random，它是对带过期时间的 key 中随机选择 key 进行淘汰。使用这种策略时，Redis 从 redisDb 的 expire dict 过期字典中，随机选择一个 key，然后进行淘汰。如果需要淘汰的key有过期时间，没有明显热点，主要被随机访问，那就适合选择这种淘汰策略。</p>
+</li>
+<li><p>第六种策略是 allkey-lru，它是对所有 key，而非仅仅带过期时间的 key，采用最近最久没有使用的算法来淘汰。这种策略与 volatile-lru 类似，都是从随机选择的 key 中，选择最长时间没有被访问的 key 进行淘汰。区别在于，volatile-lru 是从 redisDb 中的 expire dict 过期字典中选择 key，而 allkey-lru 是从所有的 key 中选择 key。这种策略适合，需要对所有 key 进行淘汰，且数据有冷热读写区分的业务场景。</p>
+<p><img src="http://image.leonote.cn/20210714220936.png" alt=""></p>
+</li>
+<li><p>第七种策略是 allkeys-lfu，它也是针对所有 key 采用最近最不经常使用的算法来淘汰。这种策略与 volatile-lfu 类似，都是在随机选择的 key 中，选择访问频率最小的 key 进行淘汰。区别在于，volatile-flu从expire dict 过期字典中选择 key，而 allkeys-lfu 是从主 dict 中选择 key。这种策略适合的场景是，需要从所有的 key 中进行淘汰，但数据有冷热区分，且越热的数据访问频率越高。</p>
+</li>
+<li><p>最后一种策略是 allkeys-random，它是针对所有 key 进行随机算法进行淘汰。它也是从主 dict 中随机选择 key，然后进行删除回收。如果需要从所有的 key 中进行淘汰，并且 key 的访问没有明显热点，被随机访问，即可采用这种策略。</p>
+</li>
+</ol>
+<h2 id="Redis崩溃后，如何进行数据恢复的？"><a href="#Redis崩溃后，如何进行数据恢复的？" class="headerlink" title="Redis崩溃后，如何进行数据恢复的？"></a>Redis崩溃后，如何进行数据恢复的？</h2><p><img src="http://image.leonote.cn/20210714220958.png" alt=""><br>Redis 持久化是一个将内存数据转储到磁盘的过程。Redis 目前支持 RDB、AOF，以及混合存储三种模式。</p>
+<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p>Redis 的 RDB 持久化是以快照的方式将内存数据存储到磁盘。在需要进行 RDB 持久化时，Redis 会将内存中的所有数据以二进制的格式落地，每条数据存储的内容包括过期时间、数据类型、key，以及 value。当 Redis 重启时，如果 appendonly 关闭，则会读取 RDB 持久化生成的二进制文件进行数据恢复。</p>
+<p>触发构建 RDB 的场景主要有以下四种。</p>
+<ol>
+<li><p>第一种场景是通过 save 或 bgsave 命令进行主动 RDB 快照构建。它是由调用方调用 save 或 bgsave 指令进行触发的。</p>
+</li>
+<li><p>第二种场景是利用配置 save m n 来进行自动快照生成。它是指在 m 秒中，如果插入或变更 n 个 key，则自动触发 bgsave。这个配置可以设置多个配置行，以便组合使用。由于峰值期间，Redis 的压力大，变更的 key 也比较多，如果再进行构建 RDB 的操作，会进一步增加机器负担，对调用方请求会有一定的影响，所以线上使用时需要谨慎。</p>
+</li>
+<li><p>第三种场景是主从复制，如果从库需要进行全量复制，此时主库也会进行 bgsave 生成一个 RDB 快照。</p>
+</li>
+<li><p>第四种场景是在运维执行 flushall 清空所有数据，或执行 shutdown 关闭服务时，也会触发 Redis 自动构建 RDB 快照。</p>
+<p><img src="http://image.leonote.cn/20210714221041.png" alt=""></p>
+</li>
+</ol>
+<p>save 是在主进程中进行 RDB 持久化的，持久化期间 Redis 处于阻塞状态，不处理任何客户请求，所以一般使用较少。而 bgsave 是 fork 一个子进程，然后在子进程中构建 RDB 快照，构建快照的过程不直接影响用户的访问，但仍然会增加机器负载。线上 Redis 快照备份，一般会选择凌晨低峰时段，通过 bgsave 主动触发进行备份。</p>
+<p>RDB 快照文件主要由 3 部分组成。</p>
+<ol>
+<li><p>第一部分是 RDB 头部，主要包括 RDB 的版本，以及 Redis 版本、创建日期、占用内存等辅助信息。</p>
+</li>
+<li><p>第二部分是各个 RedisDB 的数据。存储每个 RedisDB 时，会首先记录当前 RedisDB 的DBID，然后记录主 dict 和 expire dict 的记录数量，最后再轮询存储每条数据记录。存储数据记录时，如果数据有过期时间，首先记录过期时间。如果 Redis 的 maxmemory_policy 过期策略采用 LRU 或者 LFU，还会将 key 对应的 LRU、LFU 值进行落地，最后记录数据的类型、key，以及 value。</p>
+</li>
+<li><p>第三部部分是 RDB 的尾部。RDB 尾部，首先存储 Redis 中的 Lua 脚本等辅助信息。然后存储 EOF 标记，即值为 255 的字符。最后存 RDB 的 cksum。</p>
+</li>
+</ol>
+<p>至此，RDB 就落地完毕。</p>
+<p>RDB 采用二进制方式存储内存数据，文件小，且启动时恢复速度快。但构建 RDB 时，一个快照文件只能存储，构建时刻的内存数据，无法记录之后的数据变更。构建 RDB 的过程，即便在子进程中进行，但仍然属于 CPU 密集型的操作，而且每次落地全量数据，耗时也比较长，不能随时进行，特别是不能在高峰期进行。由于 RDB 采用二进制存储，可读性差，而且由于格式固定，不同版本之间可能存在兼容性问题。</p>
+<h3 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h3><p><img src="http://image.leonote.cn/20210714221054.png" alt=""></p>
+<p>Redis 的 AOF 持久化是以命令追加的方式进行数据落地的。通过打开 appendonly 配置，Redis 将每一个写指令追加到磁盘 AOF 文件，从而及时记录内存数据的最新状态。这样即便 Redis 被 crash 或异常关闭后，再次启动，也可以通过加载 AOF，来恢复最新的全量数据，基本不会丢失数据。</p>
+<p>AOF 文件中存储的协议是写指令的 multibulk 格式，这是 Redis 的标准协议格式，所以不同的 Redis 版本均可解析并处理，兼容性很好。</p>
+<p>但是，由于 Redis 会记录所有写指令操作到 AOF，大量的中间状态数据，甚至被删除的过期数据，都会存在 AOF 中，冗余度很大，而且每条指令还需通过加载和执行来进行数据恢复，耗时会比较大。</p>
+<p>AOF 数据的落地流程如下。Redis 在处理完写指令后，首先将写指令写入 AOF 缓冲，然后通过 server_cron 定期将 AOF 缓冲写入文件缓冲。最后按照配置策略进行 fsync，将文件缓冲的数据真正同步写入磁盘。</p>
+<p><img src="http://image.leonote.cn/20210714221116.png" alt=""></p>
+<p>Redis 通过 appendfsync 来设置三种不同的同步文件缓冲策略。</p>
+<ol>
+<li><p>第一种配置策略是 no，即 Redis 不主动使用 fsync 进行文件数据同步落地，而是由操作系统的 write 函数去确认同步时间，在 Linux 系统中大概每 30 秒会进行一次同步，如果 Redis 发生 crash，就会造成大量的数据丢失。</p>
+</li>
+<li><p>第二种配置策略是 always，即每次将 AOF 缓冲写入文件，都会调用 fsync 强制将内核数据写入文件，安全性最高，但性能上会比较低效，而且由于频繁的 IO 读写，磁盘的寿命会大大降低。</p>
+</li>
+<li><p>第三种配置策略是 everysec。即每秒通过 BIO 线程进行一次 fsync。这种策略在安全性、性能，以及磁盘寿命之间做较好的权衡，可以较好的满足线上业务需要。</p>
+<p><img src="http://image.leonote.cn/20210714221142.png" alt=""></p>
+</li>
+</ol>
+<p>随着时间的推移，AOF 持续记录所有的写指令，AOF 会越来越大，而且会充斥大量的中间数据、过期数据，为了减少无效数据，提升恢复时间，可以定期对 AOF 进行 rewrite 操作。</p>
+<p>AOF 的 rewrite 操作可以通过运维执行 bgrewiretaof 命令来进行，也可以通过配置重写策略进行，由 Redis 自动触发进行。当对 AOF 进行 rewrite 时，首先会 fork 一个子进程。子进程轮询所有 RedisDB 快照，将所有内存数据转为 cmd，并写入临时文件。在子进程 rewriteaof 时，主进程可以继续执行用户请求，执行完毕后将写指令写入旧的 AOF 文件和 rewrite 缓冲。子进程将 RedisDB 中数据落地完毕后，通知主进程。主进程从而将 AOF rewite 缓冲数据写入 AOF 临时文件，然后用新的 AOF 文件替换旧的 AOF 文件，最后通过 BIO 线程异步关闭旧的 AOF 文件。至此，AOF 的 rewrite 过程就全部完成了。</p>
+<p><img src="http://image.leonote.cn/20210714221154.png" alt=""></p>
+<p>AOF 重写的过程，是一个轮询全部 RedisDB 快照，逐一落地的过程。每个 DB，首先通过 select  $db 来记录待落的 DBID。然后通过命令记录每个 key/value。对于数据类型为 SDS 的value，可以直接落地。但如果 value 是聚合类型，则会将所有元素设为批量添加指令，进行落地。</p>
+<p>对于 list 列表类型，通过 RPUSH 指令落地所有列表元素。对于 set 集合，会用 SADD 落地所有集合元素。对于 Zset 有序集合，会用 Zadd 落地所有元素，而对于 Hash 会用 Hmset 落地所有哈希元素。如果数据带过期时间，还会通过 pexpireat 来记录数据的过期时间。</p>
+<p>AOF 持久化的优势是可以记录全部的最新内存数据，最多也就是 1-2 秒的数据丢失。同时 AOF 通过 Redis 协议来追加记录数据，兼容性高，而且可以持续轻量级的保存最新数据。最后因为是直接通过 Redis 协议存储，可读性也比较好。</p>
+<p>AOF 持久化的不足是随着时间的增加，冗余数据增多，文件会持续变大，而且数据恢复需要读取所有命令并执行，恢复速度相对较慢。</p>
+<h3 id="混合持久化"><a href="#混合持久化" class="headerlink" title="混合持久化"></a>混合持久化</h3><p><img src="http://image.leonote.cn/20210714221221.png" alt=""></p>
+<p>Redis 在 4.0 版本之后，引入了混合持久化方式，而且在 5.0 版本后默认开启。前面讲到 RDB 加载速度快，但构建慢，缺少最新数据。AOF 持续追加最新写记录，可以包含所有数据，但冗余大，加载速度慢。混合模式一体化使用 RDB 和 AOF，综合 RDB 和 AOF 的好处。即可包含全量数据，加载速度也比较快。可以使用 aof-use-rdb-preamble 配置来明确打开混合持久化模式。</p>
+<p>混合持久化也是通过 bgrewriteaof 来实现的。当启用混合存储后，进行 bgrewriteaof 时，主进程首先依然是 fork 一个子进程，子进程首先将内存数据以 RDB 的二进制格式写入 AOF 临时文件中。然后，再将落地期间缓冲的新增写指令，以命令的方式追加到临时文件。然后再通知主进程落地完毕。主进程将临时文件修改为 AOF 文件，并关闭旧的  AOF 文件。这样主体数据以 RDB 格式存储，新增指令以命令方式追加的混合存储方式进行持久化。后续执行的任务，以正常的命令方式追加到新的 AOF 文件即可。</p>
+<p>混合持久化综合了 RDB 和 AOF 的优缺点，优势是包含全量数据，加载速度快。不足是头部的 RDB 格式兼容性和可读性较差。</p>
+<h2 id="Redis是如何处理容易超时的系统调用的？"><a href="#Redis是如何处理容易超时的系统调用的？" class="headerlink" title="Redis是如何处理容易超时的系统调用的？"></a>Redis是如何处理容易超时的系统调用的？</h2><h3 id="BIO-线程简介"><a href="#BIO-线程简介" class="headerlink" title="BIO 线程简介"></a>BIO 线程简介</h3><p>Redis 在运行过程中，不可避免的会产生一些运行慢的、容易引发阻塞的任务，如将内核中的文件缓冲同步到磁盘中、关闭文件，都会引发短时阻塞，还有一些大 key，如一些元素数高达万级或更多的聚合类元素，在删除时，由于所有元素需要逐一释放回收，整个过程耗时也会比较长。而 Redis 的核心处理线程是单进程单线程模型，所有命令的接受与处理、数据淘汰等都在主线程中进行，这些任务处理速度非常快。如果核心单线程还要处理那些慢任务，在处理期间，势必会阻塞用户的正常请求，导致服务卡顿。为此，Redis 引入了 BIO 后台线程，专门处理那些慢任务，从而保证和提升主线程的处理能力。</p>
+<p><img src="http://image.leonote.cn/20210714221248.png" alt=""></p>
+<p>Redis 的 BIO 线程采用生产者-消费者模型。主线程是生产者，生产各种慢任务，然后存放到任务队列中。BIO 线程是消费者，从队列获取任务并进行处理。如果生产者生产任务过快，队列可用于缓冲这些任务，避免负荷过载或数据丢失。如果消费者处理速度很快，处理完毕后就可以安静的等待，不增加额外的性能开销。再次，有新任务时，主线程通过条件变量来通知 BIO 线程，这样 BIO 线程就可以再次执行任务。</p>
+<h3 id="BIO-处理任务"><a href="#BIO-处理任务" class="headerlink" title="BIO 处理任务"></a>BIO 处理任务</h3><p>Redis 启动时，会创建三个任务队列，并对应构建 3 个 BIO 线程，三个 BIO 线程与 3 个任务队列之间一一对应。BIO 线程分别处理如下 3 种任务。</p>
+<p>close 关闭文件任务。rewriteaof 完成后，主线程需要关闭旧的 AOF 文件，就向 close 队列插入一个旧 AOF 文件的关闭任务。由 close 线程来处理。</p>
+<p>fysnc 任务。Redis 将 AOF 数据缓冲写入文件内核缓冲后，需要定期将系统内核缓冲数据写入磁盘，此时可以向 fsync 队列写入一个同步文件缓冲的任务，由 fsync 线程来处理。</p>
+<p>lazyfree 任务。Redis 在需要淘汰元素数大于 64 的聚合类数据类型时，如列表、集合、哈希等，就往延迟清理队列中写入待回收的对象，由 lazyfree 线程后续进行异步回收。</p>
+<h3 id="BIO-处理流程"><a href="#BIO-处理流程" class="headerlink" title="BIO 处理流程"></a>BIO 处理流程</h3><p>BIO 线程的整个处理流程如图所示。当主线程有慢任务需要异步处理时。就会向对应的任务队列提交任务。提交任务时，首先申请内存空间，构建 BIO 任务。然后对队列锁进行加锁，在队列尾部追加新的 BIO 任务，最后尝试唤醒正在等待任务的 BIO 线程。</p>
+<p><img src="http://image.leonote.cn/20210714221308.png" alt=""></p>
+<p>BIO 线程启动时或持续处理完所有任务，发现任务队列为空后，就会阻塞，并等待新任务的到来。当主线程有新任务后，主线程会提交任务，并唤醒 BIO 线程。BIO 线程随后开始轮询获取新任务，并进行处理。当处理完所有 BIO 任务后，则再次进入阻塞，等待下一轮唤醒。</p>
+<h2 id="如何大幅成倍提升Redis处理性能？"><a href="#如何大幅成倍提升Redis处理性能？" class="headerlink" title="如何大幅成倍提升Redis处理性能？"></a>如何大幅成倍提升Redis处理性能？</h2><h3 id="主线程"><a href="#主线程" class="headerlink" title="主线程"></a>主线程</h3><p>Redis 自问世以来，广受好评，应用广泛。但相比， Memcached 单实例压测 TPS 可以高达百万，线上可以稳定跑 20<del>40 万而言，Redis 的单实例压测 TPS 不过 10</del>12 万，线上一般最高也就 2~4 万，仍相差一个数量级。</p>
+<p>Redis 慢的主要原因是单进程单线程模型。虽然一些重量级操作也进行了分拆，如 RDB 的构建在子进程中进行，文件关闭、文件缓冲同步，以及大 key 清理都放在 BIO 线程异步处理，但还远远不够。线上 Redis 处理用户请求时，十万级的 client 挂在一个 Redis 实例上，所有的事件处理、读请求、命令解析、命令执行，以及最后的响应回复，都由主线程完成，纵然是 Redis 各种极端优化，巧妇难为无米之炊，一个线程的处理能力始终是有上限的。当前服务器 CPU 大多是 16 核到 32 核以上，Redis 日常运行主要只使用 1 个核心，其他 CPU 核就没有被很好的利用起来，Redis 的处理性能也就无法有效地提升。而 Memcached 则可以按照服务器的 CPU 核心数，配置数十个线程，这些线程并发进行 IO 读写、任务处理，处理性能可以提高一个数量级以上。</p>
+<h3 id="IO-线程"><a href="#IO-线程" class="headerlink" title="IO 线程"></a>IO 线程</h3><p>面对性能提升困境，虽然 Redis 作者不以为然，认为可以通过多部署几个 Redis 实例来达到类似多线程的效果。但多实例部署则带来了运维复杂的问题，而且单机多实例部署，会相互影响，进一步增大运维的复杂度。为此，社区一直有种声音，希望 Redis 能开发多线程版本。</p>
+<p>因此，Redis 在 6.0 版本引入多线程模型。Redis 的多线程模型，分为主线程和 IO 线程。</p>
+<p>因为处理命令请求的几个耗时点，分别是请求读取、协议解析、协议执行，以及响应回复等。所以 Redis 引入 IO 多线程，并发地进行请求命令的读取、解析，以及响应的回复。而其他的所有任务，如事件触发、命令执行、IO 任务分发，以及其他各种核心操作，仍然在主线程中进行，也就说这些任务仍然由单线程处理。这样可以在最大程度不改变原处理流程的情况下，引入多线程。</p>
+<h3 id="命令处理流程"><a href="#命令处理流程" class="headerlink" title="命令处理流程"></a>命令处理流程</h3><p>Redis 6.0 的多线程处理流程如图所示。主线程负责监听端口，注册连接读事件。当有新连接进入时，主线程 accept 新连接，创建 client，并为新连接注册请求读事件。</p>
+<p><img src="http://image.leonote.cn/20210714221342.png" alt=""></p>
+<p>当请求命令进入时，在主线程触发读事件，主线程此时并不进行网络 IO 的读取，而将该连接所在的 client 加入待读取队列中。Redis 的 Ae 事件模型在循环中，发现待读取队列不为空，则将所有待读取请求的 client 依次分派给 IO 线程，并自旋检查等待，等待 IO 线程读取所有的网络数据。所谓自旋检查等待，也就是指主线程持续死循环，并在循环中检查 IO 线程是否读完，不做其他任何任务。只有发现 IO 线程读完所有网络数据，才停止循环，继续后续的任务处理。</p>
+<p>一般可以配置多个 IO 线程，比如配置 4~8 个，这些 IO 线程发现待读取队列中有任务时，则开始并发处理。每个 IO 线程从对应列表获取一个任务，从里面的 client 连接中读取请求数据，并进行命令解析。当 IO 线程完成所有的请求读取，并完成解析后，待读取任务数变为 0。主线程就停止循环检测，开始依次执行 IO 线程已经解析的所有命令，每执行完毕一个命令，就将响应写入 client 写缓冲，这些 client 就变为待回复 client，这些待回复 client 被加入待回复列表。然后主线程将这些待回复 client，轮询分配给多个 IO 线程。然后再次自旋检测等待。</p>
+<p>然后 IO 线程再次开始并发执行，将不同 client 的响应缓冲写给 client。当所有响应全部处理完后，待回复的任务数变为 0，主线程结束自旋检测，继续处理后续的任务，以及新的读请求。</p>
+<p>Redis 6.0 版本中新引入的多线程模型，主要是指可配置多个 IO 线程，这些线程专门负责请求读取、解析，以及响应的回复。通过 IO 多线程，Redis 的性能可以提升 1 倍以上。</p>
+<h3 id="多线程方案优劣"><a href="#多线程方案优劣" class="headerlink" title="多线程方案优劣"></a>多线程方案优劣</h3><p>虽然多线程方案能提升1倍以上的性能，但整个方案仍然比较粗糙。首先所有命令的执行仍然在主线程中进行，存在性能瓶颈。然后所有的事件触发也是在主线程中进行，也依然无法有效使用多核心。而且，IO 读写为批处理读写，即所有 IO 线程先一起读完所有请求，待主线程解析处理完毕后，所有 IO 线程再一起回复所有响应，不同请求需要相互等待，效率不高。最后在 IO 批处理读写时，主线程自旋检测等待，效率更是低下，即便任务很少，也很容易把 CPU 打满。整个多线程方案比较粗糙，所以性能提升也很有限，也就 1~2 倍多一点而已。要想更大幅提升处理性能，命令的执行、事件的触发等都需要分拆到不同线程中进行，而且多线程处理模型也需要优化，各个线程自行进行 IO 读写和执行，互不干扰、等待与竞争，才能真正高效地利用服务器多核心，达到性能数量级的提升。</p>
+]]></content>
+      <categories>
+        <category>缓存</category>
+      </categories>
+      <tags>
+        <tag>缓存</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>分布式缓存-分布式Memcached实战</title>
+    <url>/2021/06/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-%E5%88%86%E5%B8%83%E5%BC%8FMemcached%E5%AE%9E%E6%88%98/</url>
+    <content><![CDATA[<h1 id="分布式Memcached实战"><a href="#分布式Memcached实战" class="headerlink" title="分布式Memcached实战"></a>分布式Memcached实战</h1><h2 id="大数据时代，MC如何应对新的常见问题"><a href="#大数据时代，MC如何应对新的常见问题" class="headerlink" title="大数据时代，MC如何应对新的常见问题"></a>大数据时代，MC如何应对新的常见问题</h2><h3 id="大数据时代-Memcached-经典问题"><a href="#大数据时代-Memcached-经典问题" class="headerlink" title="大数据时代 Memcached 经典问题"></a>大数据时代 Memcached 经典问题</h3><p>随着互联网的快速发展和普及，人类进入了大数据时代。在大数据时代，移动设备全面融入了人们的工作和生活，各种数据以前所未有的速度被生产、挖掘和消费。移动互联网系统也不断演进和发展，存储、计算和分析这些海量数据，以满足用户的需要。在大数据时代，大中型互联网系统具有如下特点。</p>
+<ol>
+<li><p>首先，系统存储的数据量巨大，比如微博系统，每日有数亿条记录，历史数据达百亿甚至千亿条记录。</p>
+</li>
+<li><p>其次，用户多，访问量巨大，每日峰值流量高达百万级QPS。</p>
+</li>
+<li><p>要存储百千亿级的海量数据，同时满足大量用户的高并发访问，互联网系统需要部署较多的服务实例，不少大中型互联网系统需要部署万级，甚至十万级的服务实例。</p>
+</li>
+<li><p>再次，由于大数据时代，社会信息获取扁平化，热点事件、突发事件很容易瞬间引爆，引来大量场外用户集中关注，从而形成流量洪峰。</p>
+</li>
+<li><p>最后，任何硬件资源都有发生故障的概率，而且存在 4 年故障效应，即服务资源在使用 4 年后，出现故障的概率会陡增；由于大中型互联网系统的部署，需要使用大量的服务器、路由器和交换机，同时部署在多个地区的不同 IDC，很多服务资源的使用时间远超 4 年，局部出现硬件故障、网络访问异常就比较常见了。 </p>
+</li>
+</ol>
+<p>由于互联网系统会大量使用 Memcached 作为缓存，而在使用 Memcached 的过程中，同样也会受到前面所说的系统特点的影响，从而产生特有的经典问题。</p>
+<h4 id="容量问题"><a href="#容量问题" class="headerlink" title="容量问题"></a>容量问题</h4><p>第一个问题是容量问题。Memcached 在使用中，除了存储数据占用内存外，连接的读写缓冲、哈希表分配、辅助线程处理、进程运行等都会占用内存空间，而且操作系统本身也会占用不少内存，为了确保 Mc 的稳定运行，Mc 的内存设置，一般设为物理内存的 80%。另外，设置的内存，也不完全是存储有效数据，因为每个 Item 数据存储在 chunk 时，会有部分字节浪费，另外 key 在过期、失效后，不是立即删除，而是采用延迟淘汰、异步 LRU 队尾扫描的方式清理，这些暂时没有淘汰的、过期失效的 key ，也会占用不少的存储空间。当前大数据时代，互联网系统中的很多核心业务，需要缓存的热数据在 300~500GB 以上，远远超过单机物理内存的容量。</p>
+<h4 id="性能瓶颈"><a href="#性能瓶颈" class="headerlink" title="性能瓶颈"></a>性能瓶颈</h4><p>第二个问题是性能瓶颈问题。出于系统稳定性考虑，线上 Mc 的访问，最大 QPS 要在 10~20w 以下，超过则可能会出现慢查的问题。而对中大型互联网系统，核心业务的缓存请求高达百万级 QPS，仅仅靠简单部署单个物理机、单个资源池很难达到线上的业务要求。</p>
+<h4 id="连接瓶颈"><a href="#连接瓶颈" class="headerlink" title="连接瓶颈"></a>连接瓶颈</h4><p>第三个问题是连接瓶颈的问题。出于稳定性考虑，线上 Mc 的连接数要控制在 10w 以下。以避免连接数过多，导致连接占用大量内存，从而出现命中率下降、甚至慢查超时的问题。对于大中型系统，线上实例高达万级、甚至十万级，单个实例的最小、最大连接数，一般设置在 5~60 个之间。业务实例的连接数远超过单个机器的稳定支撑范围。</p>
+<h4 id="硬件资源局部故障"><a href="#硬件资源局部故障" class="headerlink" title="硬件资源局部故障"></a>硬件资源局部故障</h4><p>第四个问题是硬件资源局部故障，导致的缓存体系的可用性问题。由于任何硬件资源，都有一定故障概率，而且在使用 4 年后，故障率陡增。对于数以万计的硬件设备，随时都有可能出现机器故障，从而导致 Mc 节点访问性能下降、宕机，海量访问穿透到 DB，引发 DB 过载，最终导致整个系统无法访问，引发雪崩现象。</p>
+<h4 id="流量洪峰下快速扩展"><a href="#流量洪峰下快速扩展" class="headerlink" title="流量洪峰下快速扩展"></a>流量洪峰下快速扩展</h4><p>第五个问题是在流量洪峰的场景下，如何快速扩展的问题。大数据时代，由于信息扩散的扁平化，突发事件、重大活动发生时，海量用户同时蜂拥而至，短时间引发巨大流量。整个系统的访问量相比日常峰值增大 70% 以上，同时出现大量的极热 key 的访问，这些极热 key 所在的 Mc 节点，访问量相比日常高峰，增大 2~3 倍以上，很容易出现 CPU 飙升、带宽打满、机器负荷严重过载的现象。</p>
+<h3 id="Memchcaed-经典问题及应对方案"><a href="#Memchcaed-经典问题及应对方案" class="headerlink" title="Memchcaed 经典问题及应对方案"></a>Memchcaed 经典问题及应对方案</h3><p>为了解决大中型互联网系统在使用 Mc 时的这些问题。可以使用下面的解决方案。</p>
+<h4 id="Memcached-分拆缓存池"><a href="#Memcached-分拆缓存池" class="headerlink" title="Memcached 分拆缓存池"></a>Memcached 分拆缓存池</h4><p>首先对系统内的核心业务数据进行分拆，让访问量大的数据，使用独立的缓存池。同时每个缓存池 4~8 个节点，这样就可以支撑足够大的容量，还避免单个缓存节点压力过大。对于缓存池的分布策略，可以采用<strong>一致性哈希分布</strong>和<strong>哈希取模分布</strong>。</p>
+<p>一致性哈希分布算法中，首先计算 Mc 服务节点的哈希值，然后将其持续分散配置在圆中，这样每个缓存节点，实际包括大量大小各异的 N 个 hash 点。如下图所示，在数据存储或请求时，对 key 采用相同的 hash 算法，并映射到前面的那个圆中，从映射位置顺时针查找，找到的第一个 Mc 节点，就是目标存取节点。</p>
+<p><img src="http://image.leonote.cn/20210617195100.png" alt=""></p>
+<p>而哈希取模分布算法，则比较简单，对 key 做 hash 后，对 Mc 节点数取模，即可找到待存取的目标 Mc 节点。</p>
+<p>系统运行过程中，Mc 节点故障不可避免，有时候甚至短期内出现多次故障。在 Mc 节点故障下线后，如果采用一致性 hash 分布，可以方便得通过 rehash 策略，将该 Mc 节点的 hash 点、访问量，均匀分散到其他 Mc 节点。如果采用取模分布，则会直接导致 1/N 的访问 miss，N 是 Mc 资源池的节点数。</p>
+<p>因此，对于单层 Mc 缓存架构，一致性 hash 分布配合 rehash 策略，是一个更佳的方案。通过将业务数据分拆到独立 Mc 资源池，同时在每个资源池采用合适的分布算法，可以很好的解决 Mc 使用中容量问题、性能瓶颈问题，以及连接瓶颈问题。</p>
+<h4 id="Master-Slave-两级架构"><a href="#Master-Slave-两级架构" class="headerlink" title="Master-Slave 两级架构"></a>Master-Slave 两级架构</h4><p>在系统的访问量比较大，比如峰值 QPS 达到 20w 以上时，如果缓存节点故障，即便采用一致性 hash，也会在一段时间内给 DB 造成足够大的压力，导致大量慢查询和访问超时的问题。另外，如果某些缓存服务器短期多次故障，反复上下线，多次 rehash 还会产生脏数据。对此，可以采用 Master-Slave 的两级架构方案。</p>
+<p>在这种架构方案下，将业务正常访问的 Memcached 缓存池作为 master，然后在 master 之后，再加一个slave 资源池作 master 的热备份。slave 资源池也用 6<del>8 个节点，内存设置只用 master 的 1/2</del>1/3 即可。因为 slave 的应用，主要是考虑在 master 访问 miss 或异常时，Mc 缓存池整体的命中率不会过度下降，所以并不需要设置太大内存。</p>
+<p>日常访问，对于读操作，直接访问 master，如果访问 miss，再访问 slave。如果 slave 命中，就将读取到的 key 回写到 master。对于写操作，set、touch 等覆盖类指令，直接更新master 和 slave；而 cas、append 等，以 master 为准，master 在 cas、add 成功后，再将 key 直接 set 到 slave，以保持 master、slave 的数据一致性。</p>
+<p>如下图，在 master 部分节点异常后，由 slave 层来承接。任何一层，部分节点的异常，不会影响整体缓存的命中率、请求耗时等 SLA 指标。同时分布方式采用哈希取模方案，mc 节点异常不rehash，直接穿透，方案简洁，还可以避免一致性 hash 在 rehash 后产生的脏数据问题。</p>
+<p><img src="http://image.leonote.cn/20210617195139.png" alt=""></p>
+<p>Master-Slave 架构，在访问量比较大的场景下，可以很好得解决局部设备故障的问题。在部分节点异常或访问 miss 时，多消耗 1ms 左右的时间，访问 slave 资源，实现以时间换系统整体可用性的目的。</p>
+<h4 id="M-S-L1-架构"><a href="#M-S-L1-架构" class="headerlink" title="M-S-L1 架构"></a>M-S-L1 架构</h4><p>20世纪初，意大利统计学家帕累托提出来一个观点：在任何特定群体中，重要的因子通常只占少数，而不重要的因子则占多数，因此只要能控制具有重要性的少数因子，即能控制全局。这个理论经过多年演化，就成为当前大家所熟悉的 80/20 定律。80/20 定律在互联网系统中也广泛存在，如 80% 的用户访问会集中在系统 20% 的功能上，80% 的请求会集中在 20% 的数据上。因此，互联网系统的数据，有明显的冷热区分，而且这个冷热程度往往比 80/20 更大，比如微博、微信最近一天的数据，被访问的特别频繁，而一周前的数据就很少被访问了。而且最近几天的热数据中，部分 feed 信息会被大量传播和交互，比其他 大部分数据的访问量要高很多倍，形成明显的头部请求。</p>
+<p><strong>头部请求</strong>，会导致日常大量访问，被集中在其中一小部分 key 上。同时，在突发新闻、重大事件发生时，请求量短期增加 50~70% 以上，而这些请求，又集中在突发事件的关联 key 上，造就大量的热 key 的出现。热 key 具有随机性，如果集中在某少数几个节点，就会导致这些节点的压力陡增数倍，负荷严重过载，进而引发大量查询变慢超时的问题。</p>
+<p>为了应对日常峰值的热数据访问，特别是在应对突发事件时，洪峰流量带来的极热数据访问，可以通过增加 L1 层来解决。如下图所示，L1 层包含 2<del>6 组 L1 资源池，每个 L1 资源池，用 4</del>6 个节点，但内存容量只要 Master 的 1/10 左右即可。</p>
+<p><img src="http://image.leonote.cn/20210617195214.png" alt=""></p>
+<p>如图，读请求时，首先随机选择一个 L1 进行读取，如果 miss 则访问 master，如果 master 也 miss，最后访问 slave。中途，只要任何一层命中，则对上一层资源池进行回写。</p>
+<p>写请求时，同 Master-Slave 架构类似，对于 set 覆盖类指令，直接 set 三层所有的资源池。对于 add/cas/append 等操作，以 master 为准，master 操作成功后，将最后的 key/value set 到 L1 和 slave 层所有资源池。</p>
+<p>由于 L1 的内存只有 master 的 1/10，且 L1 优先被读取，所以 L1 中 Memcached 只会保留最热的 key，因为 key 一旦稍微变冷，就会排到 COLD LRU 队尾，并最终被剔除。虽然 L1 的内存小，但由于 L1 里，永远只保存了系统访问量最大最热的数据，根据统计L1 可以满足整个系统的 60~80% 以上的请求数据。这也与 80/20 原则相符合。</p>
+<p>master 存放全量的热数据，用于满足 L1 读取 miss 或异常后的访问流量。slave 用来存放绝大部分的热数据，而且与 master 存在一定的差异，用来满足 L1、master 读取 miss 或异常的访问流量。</p>
+<p>这里面有个可以进一步优化的地方，即为确保 master、slave 的热度，让 master、slave 也尽可能只保留最热的那部分数据，可以在读取 L1 时，保留适当的概率，直接读取 master 或slave，让最热的 key 被访问到，从而不会被 master、slave 剔除。此时，访问路径需要稍做调整，即如果首先访问了 master，如果 miss，接下来只访问 slave。而如果首先访问了 slave，如果 miss，接下来只访问 master。</p>
+<p>通过 Master-Slave-L1 架构，在流量洪峰到来之际，可以用很少的资源，快速部署多组L1资源池，然后加入 L1 层中，从而让整个系统的抗峰能力达到 N 倍的提升。从而以最简洁的办法，快速应对流量洪峰，把极热 key 分散到 N 组 L1 中，每个 L1 资源池只用负责 1/N 的请求。除了抗峰，另外，还可以轻松应对局部故障，避免雪崩的发生。</p>
+<h3 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h3><p><img src="http://image.leonote.cn/20210617195300.png" alt=""></p>
+<h2 id="如何深入理解、应用及扩展-Twemproxy"><a href="#如何深入理解、应用及扩展-Twemproxy" class="headerlink" title="如何深入理解、应用及扩展 Twemproxy"></a>如何深入理解、应用及扩展 Twemproxy</h2><h3 id="Twemproxy-架构及应用"><a href="#Twemproxy-架构及应用" class="headerlink" title="Twemproxy 架构及应用"></a>Twemproxy 架构及应用</h3><p>Twemproxy 是 Twitter 的一个开源架构，它是一个分片资源访问的代理组件。如下图所示，它可以封装资源池的分布及 hash 规则，解决后端部分节点异常后的探测和重连问题，让 client 访问尽可能简单，同时资源变更时，只要在 Twemproxy 变更即可，不用更新数以万计的 client，让资源变更更轻量。最后，Twemproxy 跟后端通过单个长连接访问，可以大大减少后端资源的连接压力。</p>
+<h4 id="系统架构"><a href="#系统架构" class="headerlink" title="系统架构"></a>系统架构</h4><p>接下来分析基于 Twemproxy 的应用系统架构，以及 Twemproxy 组件的内部架构。</p>
+<p>如下图所示， 在应用系统中，Twemproxy 是一个介于 client 端和资源端的中间层。它的后端，支持Memcached 资源池和 Redis 资源池的分片访问。Twemproxy 支持取模分布和一致性 hash 分布，还支持随机分布，不过使用场景较少。 </p>
+<p><img src="http://image.leonote.cn/20210617200127.png" alt=""></p>
+<p>应用前端在请求缓存数据时，直接访问 Twemproxy 的对应端口，然后 Twemproxy 解析命令得到 key，通过 hash 计算后，按照分布策略，将 key 路由到后端资源的分片。在后端资源响应后，再将响应结果返回给对应的 client。</p>
+<p>在系统运行中，Twemproxy 会自动维护后端资源服务的状态。如果后端资源服务异常，会自动进行剔除，并定期探测，在后端资源恢复后，再对缓存节点恢复正常使用。</p>
+<h4 id="组件架构"><a href="#组件架构" class="headerlink" title="组件架构"></a>组件架构</h4><p>Twemproxy 是基于 epoll 事件驱动模型开发的，架构如下图所示。它是一个单进程、单线程组件。核心进程处理所有的事件，包括网络 IO，协议解析，消息路由等。Twemproxy 可以监听多个端口，每个端口接受并处理一个业务的缓存请求。Twemproxy 支持 Redis、Memcached 协议，支持一致性 hash 分布、取模分布、随机分布三种分布方案。Twemproxy 通过 YAML 文件进行配置，简单清晰，且便于人肉读写。</p>
+<p><img src="http://image.leonote.cn/20210617200328.png" alt=""></p>
+<p>Twemproxy 与后端资源通过单个长连接访问，在收到业务大量并发请求后，会通过 pipeline 的方式，将多个请求批量发到后端。在后端资源持续访问异常时，Twemproxy 会将其从正常列表中剔除，并不断探测，待其恢复后再进行请求的路由分发。</p>
+<p>Twemproxy 运行中，会持续产生海量请求及响应的消息流，于是开发者精心设计了内存管理机制，尽可能的减少内存分配和复制，最大限度的提升系统性能。Twemproxy 内部，请求和响应都是一个消息，而这个消息结构体，以及消息存放数据的缓冲都是重复使用的，避免反复分配和回收的开销，提升消息处理的性能。为了解决短连接的问题，Twemproxy 的连接也是复用的，这样在面对 PHP client 等短连接访问时，也可以反复使用之前分配的 connection，提升连接性能。</p>
+<p>另外，Twemproxy 对消息还采用了 zero copy（即零拷贝）方案。对于请求消息，只在client 接受时读取一次，后续的解析、处理、转发都不进行拷贝，全部共享最初的那个消息缓冲。对于后端的响应也采用类似方案，只在接受后端响应时，读取到消息缓冲，后续的解析、处理及回复 client 都不进行拷贝。通过共享消息体及消息缓冲，虽然 Twemproxy 是单进程/单线程处理，仍然可以达到 6~8w 以上的 QPS。</p>
+<h3 id="Twemproxy-请求及响应"><a href="#Twemproxy-请求及响应" class="headerlink" title="Twemproxy 请求及响应"></a>Twemproxy 请求及响应</h3><p>接下来看一下 Twemproxy 是如何进行请求路由及响应的。</p>
+<p>Twemproxy 监听端口，当有 client 连接进来时，则 accept 新连接，并构建初始化一个 client_conn。当建连完毕，client 发送数据到来时，client_conn 收到网络读事件，则从网卡读取数据，并记入请求消息的缓冲中。读取完毕，则开始按照配置的协议进行解析，解析成功后，就将请求 msg 放入到 client_conn 的 out 队列中。接下来，就对解析的命令 key 进行 hash 计算，并根据分布算法，找到对应 server 分片的连接，即一个 server_conn 结构体，如下图。</p>
+<p><img src="http://image.leonote.cn/20210617200745.png" alt=""></p>
+<p>如果 server_conn的 in 队列为空，首先对 server_conn 触发一个写事件。然后将 req msg 存入到 server_conn 的 in 队列。Server_conn 在处理写事件时，会对 in 队列中的 req msg 进行聚合，按照 pipeline 的方式批量发送到后端资源。待发送完毕后，将该条请求 msg 从 server_conn 的 in 队列删除，并插入到 out 队列中。</p>
+<p>后端资源服务完成请求后，会将响应发送给 Twemproxy。当响应到 Twemproxy 后，对应的 server_conn 会收到 epoll 读事件，则开始读取响应 msg。响应读取并解析后，会首先将server_conn 中，out 队列的第一个 req msg 删除，并将这个 req msg 和最新收到的 rsp msg 进行配对。在 req 和 rsp 匹配后，触发 client_conn 的写事件，如下图。</p>
+<p><img src="http://image.leonote.cn/20210617200824.png" alt=""></p>
+<p>然后 client_conn 在处理 epoll 写事件时，则按照请求顺序，批量将响应发送给 client 端。发送完毕后，将 req msg 从 client 的 out 队列删除。最后，再回收消息缓冲，以及消息结构体，供后续请求处理的时候复用。至此一个请求的处理彻底完成。</p>
+<h3 id="Twemproxy-安装和使用"><a href="#Twemproxy-安装和使用" class="headerlink" title="Twemproxy 安装和使用"></a>Twemproxy 安装和使用</h3><p>Twemproxy 的安装和使用比较简单。首先通过 Git，将 Twemproxy 从 GitHub clone 到目标服务器，然后进入 Twemproxy 路径，首先执行 $ autoreconf -fvi，然后执行 ./configure ，最后执行 make（当然，也可以再执行 make install），这样就完成了 Temproxy 的编译和安装。然后就可以通过 src/nutcracker -c /xxx/conf/nutcracker.yml 来启动 Twemproxy 了。</p>
+<p>Twemproxy 代理后端资源访问，这些后端资源的部署信息及访问策略都是在 YAML 文件中配置。所以接下来，我们简单看一下 Twemproxy 的配置。如图所示，这个配置中代理了 2 个业务数据的缓存访问。一个是 alpha，另一个是 beta。在每个业务的配置详情里。首先是 listen 配置项，用于设置监听该业务的端口。然后是 hash 算法和分布算法。Auto_eject_hosts 用于设置在后端 server 异常时，是否将这个异常 server 剔除，然后进行 rehash，默认不剔除。Redis配置项用于指示后端资源类型，是 Redis 还是 Memcached。最后一个配置项 servers，用于设置资源池列表。</p>
+<p>以 Memcached 访问为例，将业务的 Memcached 资源部署好之后，然后将 Mc 资源列表、访问方式等设到 YAML 文件的配置项，然后启动 Twemproxy，业务端就可以通过访问 Twemproxy ，来获取后端资源的数据了。后续，Mc 资源有任何变更，业务都不用做任何改变，运维直接修改 Twemproxy 的配置即可。</p>
+<p>Twemproxy 在实际线的使用中，还是存在不少问题的。首先，它是单进程/单线程模型，一个 event_base 要处理所有的事件，这些事件包括 client 请求的读入，转发请求给后端 server，从 server 接受响应，以及将响应发送给 client。单个 Twemproxy 实例，压测最大可以到 8w 左右的 QPS，出于线上稳定性考虑，QPS 最多支撑到 3<del>4w。而 Memcached 的线上 QPS，一般可以达到 10</del>20w，一个 Mc 实例前面要挂 3~5 个 Twemproxy 实例。实例数太多，就会引发诸如管理复杂、成本过高等一系列问题。</p>
+<p>其次，基于性能及预防单点故障的考虑，Twemproxy 需要进行多实例部署，而且还需要根据业务访问量的变化，进行新实例的加入或冗余实例的下线。多个 Twemproxy 实例同时被访问，如果 client 访问策略不当，就会出现有些 Twemproxy 压力过大，而有些却很空闲，造成访问不均的问题。</p>
+<p>再次，后端资源在 Twemproxy 的 YAML 文件集中配置，资源变更的维护，比直接在所有业务 client 端维护，有了很大的简化。但在多个 Twemproxy 修改配置，让这些配置同时生效，也是一个复杂的工作。</p>
+<p>最后，Twemproxy 也无法支持 Mc 多副本、多层次架构的访问策略，无法支持 Redis 的Master-Slave 架构的读写分离访问。</p>
+<p>为此，你可以对 Twemproxy 进行扩展，以更好得满足业务及运维的需要。</p>
+<h3 id="Twemproxy-扩展"><a href="#Twemproxy-扩展" class="headerlink" title="Twemproxy 扩展"></a>Twemproxy 扩展</h3><h4 id="多进程改造"><a href="#多进程改造" class="headerlink" title="多进程改造"></a>多进程改造</h4><p>性能首当其冲。首先可以对 Twemproxy 的单进程/单线程动刀，改为并行处理模型。并行方案可以用多线程方案，也可以采用多进程方案。由于 Twemproxy 只是一个消息路由中间件，不需要额外共享数据，采用多进程方案会更简洁，更适合。</p>
+<p>多进程改造中，可以分别构建一个 master 进程和多个 worker 进程来进行任务处理，如下图所示。每个进程维护自己独立的 epoll 事件驱动。其中 master 进程，主要用于监听端口，accept 新连接，并将连接调度给 worker 进程。</p>
+<p><img src="http://image.leonote.cn/20210617200958.png" alt=""><br>而 worker 进程，基于自己独立的 event_base，管理从 master 调度给自己的所有 client 连接。在 client 发送网络请求到达时，进行命令读取、解析，并在进程内的 IO 队列流转，最后将请求打包，pipeline 给后端的 server。</p>
+<p>在 server 处理完毕请求，发回响应时。对应 worker 进程，会读取并解析响应，然后批量回复给 client。</p>
+<p>通过多进程改造，Twemproxy 的 QPS 可以从 8w 提升到 40w+。业务访问时，需要部署的Twemproxy 的实例数会大幅减少，运维会更加简洁。</p>
+<h4 id="增加负载均衡"><a href="#增加负载均衡" class="headerlink" title="增加负载均衡"></a>增加负载均衡</h4><p>对于多个 Twemproxy 访问，如何进行负载均衡的问题。一般有三种方案。</p>
+<p>第一种方案，是在 Twemproxy 和业务访问端之间，再增加一组 LVS，作为负载均衡层，通过 LVS 负载均衡层，你可以方便得增加或减少 Twemproxy 实例，由 LVS 负责负载均衡和请求分发，如下图。</p>
+<p><img src="http://image.leonote.cn/20210617201100.png" alt=""><br>第二种方案，是将 Twemproxy 的 IP 列表加入 DNS。业务 client 通过域名来访问 Twemproxy，每次建连时，DNS 随机返回一个 IP，让连接尽可能均衡。</p>
+<p>第三种方案，是业务 client 自定义均衡策略。业务 client 从配置中心或 DNS 获取所有的Twemproxy 的 IP 列表，然后对这些 Twemproxy 进行均衡访问，从而达到负载均衡。</p>
+<p>方案一，可以通过成熟的 LVS 方案，高效稳定的支持负载均衡策略，但多了一层，成本和运维的复杂度会有所增加。方案二，只能做到连接均衡，访问请求是否均衡，无法保障。方案三，成本最低，性能也比前面 2 个方案更高效。推荐使用方案三，微博内部也是采用第三种方案。</p>
+<h4 id="增加配置中心"><a href="#增加配置中心" class="headerlink" title="增加配置中心"></a>增加配置中心</h4><p>对于 Twemproxy 配置的维护，可以通过增加一个配置中心服务来解决。将 YAML 配置文件中的所有配置信息，包括后端资源的部署信息、访问信息，以配置的方式存储到配置中心，如下图。</p>
+<p><img src="http://image.leonote.cn/20210617201128.png" alt=""></p>
+<p>Twemproxy 启动时，首先到配置中心订阅并拉取配置，然后解析并正常启动。Twemproxy 将自己的 IP 和监听端口信息，也注册到配置中心。业务 client 从配置中心，获取Twemproxy 的部署信息，然后进行均衡访问。</p>
+<p>在后端资源变更时，直接更新配置中心的配置。配置中心会通知所有 Twemproxy 实例，收到事件通知，Twemproxy 即可拉取最新配置，并调整后端资源的访问，实现在线变更。整个过程自动完成，更加高效和可靠。</p>
+<h4 id="支持-M-S-L1-多层访问"><a href="#支持-M-S-L1-多层访问" class="headerlink" title="支持 M-S-L1 多层访问"></a>支持 M-S-L1 多层访问</h4><p>前面提到，为了应对突发洪水流量，避免硬件局部故障的影响，对 Mc 访问采用了Master-Slave-L1 架构。可以将该缓存架构体系的访问策略，封装到 Twemproxy 内部。实现方案也比较简单。首先在 servers 配置中，增加 Master、Slave、L1 三层，如下图。</p>
+<p><img src="http://image.leonote.cn/20210617201225.png" alt=""></p>
+<p>Twemproxy 启动时，每个 worker 进程预连所有的 Mc 后端，当收到 client 请求时，根据解析出来的指令，分别采用不同访问策略即可。</p>
+<ul>
+<li><p>对于 get 请求，首先随机选择一个 L1 来访问，如果 miss，继续访问 Master 和 Slave。中间在任何一层命中，则回写。</p>
+</li>
+<li><p>对于 gets 请求，需要以 master 为准，从 master 读取。如果 master 获取失败，则从 slave获取，获取后回种到 master，然后再次从 master 获取，确保得到 cas unique id 来自 master。</p>
+</li>
+<li><p>对于 add/cas 等请求，首先请求 master，成功后，再将 key/value 通过 set 指令，写到 slave 和所有 L1。</p>
+</li>
+<li><p>对于 set 请求，最简单，直接 set 所有资源池即可。</p>
+</li>
+<li><p>对于 stats 指令的响应，由 Twemproxy 自己统计，或者到后端 Mc 获取后聚合获得。</p>
+</li>
+</ul>
+<h4 id="Redis-主从访问"><a href="#Redis-主从访问" class="headerlink" title="Redis 主从访问"></a>Redis 主从访问</h4><p>Redis 支持主从复制，为了支持更大并发访问量，同时减少主库的压力，一般会部署多个从库，写操作直接请求 Redis 主库，读操作随机选择一个 Redis 从库。这个逻辑同样可以封装在Twemproxy 中。如下图所示，Redis 的主从配置信息，可以用域名的方式，也可以用 IP 端口的方式记录在配置中心，由 Twemproxy 订阅并实时更新，从而在 Redis 增减 slave、主从切换时，及时对后端进行访问变更。</p>
+<p><img src="http://image.leonote.cn/20210617201322.png" alt=""></p>
+<h3 id="思维导图-1"><a href="#思维导图-1" class="headerlink" title="思维导图"></a>思维导图</h3><p><img src="http://image.leonote.cn/20210617201351.png" alt=""></p>
 ]]></content>
       <categories>
         <category>缓存</category>
