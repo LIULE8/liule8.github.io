@@ -1,0 +1,250 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MySQL实战宝典之索引调优-索引组织表 | Leo's notes</title><meta name="keywords" content="MySQL"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="索引组织表：万物皆索引为了让你进一步深入了解 MySQL 的 B+ 树索引的具体使用，聊一聊 MySQL InnoDB 存储引擎的索引结构。 InnoDB 存储引擎是 MySQL 数据库中使用最为广泛的引擎，在海量大并发的 OLTP 业务中，InnoDB 必选。它在数据存储方面有一个非常大的特点：索引组织表（Index Organized Table）。 接下来就带你了解最为核心的概念：索引组织表">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL实战宝典之索引调优-索引组织表">
+<meta property="og:url" content="https://liule8.github.io/2021/08/30/MySQL%E5%AE%9E%E6%88%98%E5%AE%9D%E5%85%B8%E4%B9%8B%E7%B4%A2%E5%BC%95%E8%B0%83%E4%BC%98-%E7%B4%A2%E5%BC%95%E7%BB%84%E7%BB%87%E8%A1%A8/index.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="索引组织表：万物皆索引为了让你进一步深入了解 MySQL 的 B+ 树索引的具体使用，聊一聊 MySQL InnoDB 存储引擎的索引结构。 InnoDB 存储引擎是 MySQL 数据库中使用最为广泛的引擎，在海量大并发的 OLTP 业务中，InnoDB 必选。它在数据存储方面有一个非常大的特点：索引组织表（Index Organized Table）。 接下来就带你了解最为核心的概念：索引组织表">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-08-30T15:22:43.000Z">
+<meta property="article:modified_time" content="2021-09-23T08:11:10.596Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/2021/08/30/MySQL%E5%AE%9E%E6%88%98%E5%AE%9D%E5%85%B8%E4%B9%8B%E7%B4%A2%E5%BC%95%E8%B0%83%E4%BC%98-%E7%B4%A2%E5%BC%95%E7%BB%84%E7%BB%87%E8%A1%A8/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-09-23 08:11:10'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">227</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">74</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">51</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">MySQL实战宝典之索引调优-索引组织表</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-08-30T15:22:43.000Z" title="发表于 2021-08-30 15:22:43">2021-08-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-09-23T08:11:10.596Z" title="更新于 2021-09-23 08:11:10">2021-09-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/MySQL/">MySQL</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="MySQL实战宝典之索引调优-索引组织表"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="索引组织表：万物皆索引"><a href="#索引组织表：万物皆索引" class="headerlink" title="索引组织表：万物皆索引"></a>索引组织表：万物皆索引</h1><p>为了让你进一步深入了解 MySQL 的 B+ 树索引的具体使用，聊一聊 MySQL InnoDB 存储引擎的索引结构。</p>
+<p>InnoDB 存储引擎是 MySQL 数据库中使用最为广泛的引擎，在海量大并发的 OLTP 业务中，InnoDB 必选。它在数据存储方面有一个非常大的特点：索引组织表（Index Organized Table）。</p>
+<p>接下来就带你了解最为核心的概念：索引组织表。</p>
+<h2 id="索引组织表"><a href="#索引组织表" class="headerlink" title="索引组织表"></a>索引组织表</h2><p>数据存储有<strong>堆表和索引组织表</strong>两种方式。</p>
+<p><strong>堆表中的数据无序存放</strong>， 数据的排序完全依赖于索引（Oracle、Microsoft SQL Server、PostgreSQL 早期默认支持的数据存储都是堆表结构）。</p>
+<p><img src="http://image.leonote.cn/20210923161026.png" alt="image-20210923161026230"></p>
+<p>从图中你能看到，堆表的组织结构中，数据和索引分开存储。索引是排序后的数据，而堆表中的数据是无序的，索引的叶子节点存放了数据在堆表中的地址，当堆表的数据发生改变，且位置发生了变更，所有索引中的地址都要更新，这非常影响性能，特别是对于 OLTP 业务。</p>
+<p><strong>而索引组织表，数据根据主键排序存放在索引中</strong>，主键索引也叫聚集索引（Clustered Index）。在索引组织表中，数据即索引，索引即数据。</p>
+<p>MySQL InnoDB 存储引擎就是这样的数据组织方式；Oracle、Microsoft SQL Server 后期也推出了支持索引组织表的存储方式。</p>
+<p>但是，PostgreSQL 数据库因为只支持堆表存储，不适合 OLTP 的访问特性，虽然它后期对堆表有一定的优化，但本质是通过空间换时间，对海量并发的 OLTP 业务支持依然存在局限性。</p>
+<p>User 表，其就是索引组织表的方式：</p>
+<p><img src="http://image.leonote.cn/20210923161047.png" alt="image-20210923161047425"></p>
+<p>表 User 的主键是 id，所以表中的数据根据 id 排序存储，叶子节点存放了表中完整的记录，可以看到表中的数据存放在索引中，即表就是索引，索引就是表。</p>
+<p>在了解完 MySQL InnoDB 的主键索引存储方式之后，接下来继续了解二级索引。</p>
+<h2 id="二级索引"><a href="#二级索引" class="headerlink" title="二级索引"></a>二级索引</h2><p>InnoDB 存储引擎的数据是根据主键索引排序存储的，除了主键索引外，其他的索引都称之为二级索引（Secondeary Index）， 或非聚集索引（None Clustered Index）。</p>
+<p>二级索引也是一颗 B+ 树索引，但它和主键索引不同的是叶子节点存放的是索引键值、主键值。对于表 User，假设在列 name 上还创建了索引 idx_name，该索引就是二级索引：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE User (</span><br><span class="line">    id BIGINT AUTO_INCREMENT,</span><br><span class="line">    name VARCHAR(128) NOT NULL,</span><br><span class="line">    sex CHAR(6) NOT NULL,</span><br><span class="line">    registerDate DATETIME NOT NULL,</span><br><span class="line">    ...</span><br><span class="line">    PRIMARY KEY(id), -- 主键索引</span><br><span class="line">    KEY idx_name(name) -- 二级索引</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>如果用户通过列 name 进行查询，比如下面的 SQL：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM User WHERE name &#x3D; &#39;David&#39;</span><br></pre></td></tr></table></figure>
+
+<p>通过二级索引 idx_name 只能定位主键值，需要额外再通过主键索引进行查询，才能得到最终的结果。<strong>这种“二级索引通过主键索引进行再一次查询”的操作叫作“回表”</strong>，你可以通过下图理解二级索引的查询：</p>
+<p><img src="http://image.leonote.cn/20210923161110.png" alt="image-20210923161109819"></p>
+<p>索引组织表这样的二级索引设计有一个非常大的好处：若记录发生了修改，则其他索引无须进行维护，除非记录的主键发生了修改。</p>
+<p>与堆表的索引实现对比着看，你会发现索引组织表在存在大量变更的场景下，性能优势会非常明显，因为大部分情况下都不需要维护其他二级索引。</p>
+<p>前面我强调“索引组织表，数据即索引，索引即数据”。那么为了便于理解二级索引，你可以将二级索引按照一张表来进行理解，比如索引 idx_name 可以理解成一张表，如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE idx_name (</span><br><span class="line">    name VARCHAR(128) NOT NULL,</span><br><span class="line">    id BIGINT NOT NULL,</span><br><span class="line">    PRIAMRY KEY(name,id)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>根据 name 进行查询的 SQL 可以理解为拆分成了两个步骤：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT id FROM idx_name WHERE name &#x3D; ?</span><br><span class="line">SELECT * FROM User WHERE id &#x3D; _id; -- 回表</span><br></pre></td></tr></table></figure>
+
+<p>当插入数据时，你可以理解为对主键索引表、二级索引表进行了一个事务操作，要么都成功，要么都不成功：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">START TRANSATION;</span><br><span class="line">INSERT INTO User VALUES (...) -- 主键索引</span><br><span class="line">INSERT INTO idx_name VALUES (...) -- 二级索引</span><br><span class="line">COMMIT;</span><br></pre></td></tr></table></figure>
+
+<p>当然，对于索引，还可以加入唯一的约束，具有唯一约束的索引称之为唯一索引，也是二级索引。</p>
+<p>对于表 User，列 name 应该具有唯一约束，因为通常用户注册通常要求昵称唯一，所以表User 定义更新为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE User (</span><br><span class="line">    id BIGINT AUTO_INCREMENT,</span><br><span class="line">    name VARCHAR(128) NOT NULL,</span><br><span class="line">    sex CHAR(6) NOT NULL,</span><br><span class="line">    registerDate DATETIME NOT NULL,</span><br><span class="line">    ...</span><br><span class="line">    PRIMARY KEY(id), -- 主键索引</span><br><span class="line">    UNIQUE KEY idx_name(name) -- 二级索引</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><strong>那么对于唯一索引又该如何理解为表呢？</strong> 其实我们可以将约束理解成一张表或一个索引，故唯一索引 idx_name 应该理解为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE idx_name (</span><br><span class="line">    name VARCHAR(128) NOT NULL,</span><br><span class="line">    id BIGINT NOT NULL,</span><br><span class="line">    PRIAMRY KEY(name,id)</span><br><span class="line">) -- 二级索引</span><br><span class="line"></span><br><span class="line">CREATE TABLE check_idx_name (</span><br><span class="line">    name VARCHAR(128),</span><br><span class="line">    PRIMARY KEY(name)，</span><br><span class="line">) -- 唯一约束</span><br></pre></td></tr></table></figure>
+
+<p>在索引组织表中，<strong>万物皆索引，索引就是数据，数据就是索引</strong>。</p>
+<p><strong>最后，为了加深对于索引组织表的理解</strong>，回顾一下堆表的实现。</p>
+<p>堆表中的索引都是二级索引，哪怕是主键索引也是二级索引，也就是说它没有聚集索引，每次索引查询都要回表。同时，堆表中的记录全部存放在数据文件中，并且无序存放，这对互联网海量并发的 OLTP 业务来说，堆表的实现的确“过时”了。</p>
+<p>以上就是二级索引的内容。</p>
+<p>有的同学会提问：感觉二级索引与主键索引并没有太大的差别，所以为了进一步理解二级索引的开销，接下来一起学习二级索引的性能评估。</p>
+<p>就能明白，<strong>为什么通常二级索引会比主键索引慢一些</strong>。</p>
+<h3 id="二级索引的性能评估"><a href="#二级索引的性能评估" class="headerlink" title="二级索引的性能评估"></a>二级索引的性能评估</h3><p>主键在设计时可以选择比较顺序的方式，比如自增整型，自增的 UUID 等，所以主键索引的排序效率和插入性能相对较高。二级索引就不一样了，它可能是比较顺序插入，也可能是完全随机的插入，具体如何呢？来看一下比较接近业务的表 User：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE User (</span><br><span class="line">    id  BINARY(16) NOT NULL,</span><br><span class="line">    name VARCHAR(255) NOT NULL,</span><br><span class="line">    sex CHAR(1) NOT NULL,</span><br><span class="line">    password VARCHAR(1024) NOT NULL,</span><br><span class="line">    money BIGINT NOT NULL DEFAULT 0,</span><br><span class="line">    register_date DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),</span><br><span class="line">    last_modify_date DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),</span><br><span class="line">    uuid CHAR(36) AS (BIN_TO_UUID(id)),</span><br><span class="line">    CHECK (sex &#x3D; &#39;M&#39; OR sex &#x3D; &#39;F&#39;),</span><br><span class="line">    CHECK (IS_UUID(UUID)),</span><br><span class="line">    PRIMARY KEY(id),</span><br><span class="line">    UNIQUE KEY idx_name(name),</span><br><span class="line">    KEY idx_register_date(register_date),</span><br><span class="line">    KEY idx_last_modify_date(last_modify_date)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，表 User 有三个二级索引 idx_name、idx_register_date、idx_last_modify_date。</p>
+<p><strong>通常业务是无法要求用户注册的昵称是顺序的，所以索引 idx_name 的插入是随机的， 性能开销相对较大；</strong>另外用户昵称通常可更新，但业务为了性能考虑，可以限制单个用户每天、甚至是每年昵称更新的次数，比如每天更新一次，每年更新三次。</p>
+<p><strong>而用户注册时间是比较顺序的，所以索引 idx_register_date 的性能开销相对较小</strong>， 另外用户注册时间一旦插入后也不会更新，只是用于标识一个注册时间。</p>
+<p><strong>而关于 idx_last_modify_date</strong> ， 之前强调过，在真实业务的表结构设计中，你必须对每个核心业务表创建一个列 last_modify_date，标识每条记录的修改时间。</p>
+<p>这时索引 idx_last_modify_date 的插入和 idx_register_date 类似，是比较顺序的，但不同的是，索引 idx_last_modify_date 会存在比较频繁的更新操作，比如用户消费导致余额修改、money 字段更新，这会导致二级索引的更新。</p>
+<p>由于每个二级索引都包含了主键值，查询通过主键值进行回表，所以在设计表结构时让主键值尽可能的紧凑，为的就是能提升二级索引的性能，<strong>之前推荐过 16 字节顺序 UUID 的列设计，这是性能和存储的最佳实践</strong>。</p>
+<p>除此之外，在实际核心业务中，开发同学还有很大可能会设计带有业务属性的主键，但请牢记以下两点设计原则：</p>
+<ul>
+<li><p>要比较顺序，对聚集索引性能友好；</p>
+</li>
+<li><p>尽可能紧凑，对二级索引的性能和存储友好；</p>
+</li>
+</ul>
+<h2 id="函数索引"><a href="#函数索引" class="headerlink" title="函数索引"></a>函数索引</h2><p>到目前为止，我们的索引都是创建在列上，从 MySQL 5.7 版本开始，MySQL 就开始支持创建函数索引 （即索引键是一个函数表达式）。 函数索引有两大用处：</p>
+<ul>
+<li><p>优化业务 SQL 性能；</p>
+</li>
+<li><p>配合虚拟列（Generated Column）。</p>
+</li>
+</ul>
+<p>先来看第一个好处，优化业务 SQL 性能。</p>
+<p>我们知道，不是每个开发人员都能比较深入地了解索引的原理，有时他们的表结构设计和编写 SQL 语句会存在“错误”，比如对于上面的表 User，要查询 2021 年1 月注册的用户，有些开发同学会错误地写成如下所示的 SQL：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM User </span><br><span class="line">WHERE DATE_FORMAT(register_date,&#39;%Y-%m&#39;) &#x3D; &#39;2021-01&#39;</span><br></pre></td></tr></table></figure>
+
+<p>或许开发同学认为在 register_date 创建了索引，所以所有的 SQL 都可以使用该索引。但索引的本质是排序， 索引 idx_register_date 只对 register_date 的数据排序，又没有对DATE_FORMAT(register_date) 排序，因此上述 SQL 无法使用二级索引idx_register_date。</p>
+<p><strong>数据库规范要求查询条件中函数写在等式右边，而不能写在左边</strong>，就是这个原因。</p>
+<p>我们通过命令 EXPLAIN 查看上述 SQL 的执行计划，会更为直观地发现索引 idx_register_date没有被使用到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM User</span><br><span class="line">WHERE DATE_FORMAT(register_date,&#39;%Y-%m&#39;) &#x3D; &#39;2021-01&#39;</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">           id: 1</span><br><span class="line">  select_type: SIMPLE</span><br><span class="line">        table: User</span><br><span class="line">   partitions: NULL</span><br><span class="line">         type: ALL</span><br><span class="line">possible_keys: NULL</span><br><span class="line">          key: NULL</span><br><span class="line">      key_len: NULL</span><br><span class="line">          ref: NULL</span><br><span class="line">         rows: 1</span><br><span class="line">     filtered: 100.00</span><br><span class="line">        Extra: Using where</span><br></pre></td></tr></table></figure>
+
+<p>上述需求正确的 SQL 写法应该是，其中变化在第 2 行，主要将函数 DATE_FORMAT 插接为了一个范围查询：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM User</span><br><span class="line">WHERE register_date &gt; &#39;2021-01-01&#39; </span><br><span class="line">AND register_date &lt; &#39;2021-02-01&#39;</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">           id: 1</span><br><span class="line">  select_type: SIMPLE</span><br><span class="line">        table: User</span><br><span class="line">   partitions: NULL</span><br><span class="line">         type: range</span><br><span class="line">possible_keys: idx_register_date</span><br><span class="line">          key: idx_register_date</span><br><span class="line">      key_len: 8</span><br><span class="line">          ref: NULL</span><br><span class="line">         rows: 1</span><br><span class="line">     filtered: 100.00</span><br><span class="line">        Extra: Using index condition</span><br></pre></td></tr></table></figure>
+
+<p>如果线上业务真的没有按正确的 SQL 编写，那么可能造成数据库存在很多慢查询 SQL，导致业务缓慢甚至发生雪崩的场景。<strong>要尽快解决这个问题，可以使用函数索引</strong>， 创建一个DATE_FORMAT(register_date) 的索引，这样就能利用排序数据快速定位了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE User </span><br><span class="line">ADD INDEX </span><br><span class="line">idx_func_register_date((DATE_FORMAT(register_date,&#39;%Y-%m&#39;)));</span><br></pre></td></tr></table></figure>
+
+<p>接着用命令 EXPLAIN 查看执行计划，就会发现 SQL 可以使用到新建的索引idx_func_register_date：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM User </span><br><span class="line">WHERE DATE_FORMAT(register_date,&#39;%Y-%m&#39;) &#x3D; &#39;2021-01&#39;</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">           id: 1</span><br><span class="line">  select_type: SIMPLE</span><br><span class="line">        table: User</span><br><span class="line">   partitions: NULL</span><br><span class="line">         type: ref</span><br><span class="line">possible_keys: idx_func_register_date</span><br><span class="line">          key: idx_func_register_date</span><br><span class="line">      key_len: 31</span><br><span class="line">          ref: const</span><br><span class="line">         rows: 1</span><br><span class="line">     filtered: 100.00</span><br><span class="line">        Extra: NULL</span><br></pre></td></tr></table></figure>
+
+<p>上述创建的函数索引可以解决业务线上的燃眉之急，但强烈建议业务开发同学在下一个版本中优化 SQL，否则这会导致对同一份数据做了两份索引，索引需要排序，排序多了就会影响性能。</p>
+<p><strong>函数索引第二大用处是结合虚拟列使用。</strong></p>
+<p>例如表 UserLogin：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE UserLogin (</span><br><span class="line">    userId BIGINT,</span><br><span class="line">    loginInfo JSON,</span><br><span class="line">    cellphone VARCHAR(255) AS (loginInfo-&gt;&gt;&quot;$.cellphone&quot;),</span><br><span class="line">    PRIMARY KEY(userId),</span><br><span class="line">    UNIQUE KEY idx_cellphone(cellphone)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>其中的列 cellphone 就是一个虚拟列，它是由后面的函数表达式计算而成，本身这个列不占用任何的存储空间，而索引 idx_cellphone 实质是一个函数索引。这样做得好处是在写 SQL 时可以直接使用这个虚拟列，而不用写冗长的函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">-- 不用虚拟列</span><br><span class="line">SELECT  *  FROM UserLogin</span><br><span class="line">WHERE loginInfo-&gt;&gt;&quot;$.cellphone&quot; &#x3D; &#39;13918888888&#39;</span><br><span class="line"></span><br><span class="line">-- 使用虚拟列</span><br><span class="line">SELECT  *  FROM UserLogin </span><br><span class="line">WHERE cellphone &#x3D; &#39;13918888888&#39;</span><br></pre></td></tr></table></figure>
+
+<p>对于爬虫类的业务，我们会从网上先爬取很多数据，其中有些是我们关心的数据，有些是不关心的数据。通过虚拟列技术，可以展示我们想要的那部分数据，再通过虚拟列上创建索引，就是对爬取的数据进行快速的访问和搜索。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>你应该了解到<strong>MySQL InnoDB 存储引擎是索引组织表，以及索引组织表和堆表之间的区别。</strong> 总结来看：</p>
+<ul>
+<li>索引组织表主键是聚集索引，索引的叶子节点存放表中一整行完整记录；</li>
+<li>除主键索引外的索引都是二级索引，索引的叶子节点存放的是（索引键值，主键值）；</li>
+<li>由于二级索引不存放完整记录，因此需要通过主键值再进行一次回表才能定位到完整数据；</li>
+<li>索引组织表对比堆表，在海量并发的OLTP业务中能有更好的性能表现；</li>
+<li>每种不同数据，对二级索引的性能开销影响是不一样的；</li>
+<li>有时通过函数索引可以快速解决线上SQL的性能问题；</li>
+<li>虚拟列不占用实际存储空间，在虚拟列上创建索引本质就是函数索引。</li>
+</ul>
+<h2 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h2><p>因为二级索引无需维护，索引组织表在更新的场景下性能明显优于堆表。请问堆表在设计上如何优化，能降低更新操作导致性能的大幅下降？</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/2021/08/30/MySQL%E5%AE%9E%E6%88%98%E5%AE%9D%E5%85%B8%E4%B9%8B%E7%B4%A2%E5%BC%95%E8%B0%83%E4%BC%98-%E7%B4%A2%E5%BC%95%E7%BB%84%E7%BB%87%E8%A1%A8/">https://liule8.github.io/2021/08/30/MySQL%E5%AE%9E%E6%88%98%E5%AE%9D%E5%85%B8%E4%B9%8B%E7%B4%A2%E5%BC%95%E8%B0%83%E4%BC%98-%E7%B4%A2%E5%BC%95%E7%BB%84%E7%BB%87%E8%A1%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/MySQL/">MySQL</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/09/01/MySQL%E5%AE%9E%E6%88%98%E5%AE%9D%E5%85%B8%E4%B9%8B%E7%B4%A2%E5%BC%95%E8%B0%83%E4%BC%98-%E7%B4%A2%E5%BC%95%E5%87%BA%E9%94%99/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">MySQL实战宝典之索引调优-索引出错</div></div></a></div><div class="next-post pull-right"><a href="/2021/08/30/MySQL%E5%AE%9E%E6%88%98%E5%AE%9D%E5%85%B8%E4%B9%8B%E7%B4%A2%E5%BC%95%E8%B0%83%E4%BC%98-%E7%BB%84%E5%90%88%E7%B4%A2%E5%BC%95/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">MySQL实战宝典之索引调优-组合索引</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/09/09/MySQL实战宝典之分布式架构-分布式事务/" title="MySQL实战宝典之分布式架构-分布式事务"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-09</div><div class="title">MySQL实战宝典之分布式架构-分布式事务</div></div></a></div><div><a href="/2021/09/07/MySQL实战宝典之分布式架构-分布式数据库架构/" title="MySQL实战宝典之分布式架构-分布式数据库架构"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-07</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库架构</div></div></a></div><div><a href="/2021/09/08/MySQL实战宝典之分布式架构-分布式数据库架构选型/" title="MySQL实战宝典之分布式架构-分布式数据库架构选型"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-08</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库架构选型</div></div></a></div><div><a href="/2021/09/08/MySQL实战宝典之分布式架构-分布式数据库索引设计/" title="MySQL实战宝典之分布式架构-分布式数据库索引设计"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-08</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库索引设计</div></div></a></div><div><a href="/2021/09/08/MySQL实战宝典之分布式架构-分布式数据库表结构设计/" title="MySQL实战宝典之分布式架构-分布式数据库表结构设计"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-08</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库表结构设计</div></div></a></div><div><a href="/2021/09/09/MySQL实战宝典之分布式架构-分布式设计之禅/" title="MySQL实战宝典之分布式架构-分布式设计之禅"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-09</div><div class="title">MySQL实战宝典之分布式架构-分布式设计之禅</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">227</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">74</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">51</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E7%BB%84%E7%BB%87%E8%A1%A8%EF%BC%9A%E4%B8%87%E7%89%A9%E7%9A%86%E7%B4%A2%E5%BC%95"><span class="toc-number">1.</span> <span class="toc-text">索引组织表：万物皆索引</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E7%BB%84%E7%BB%87%E8%A1%A8"><span class="toc-number">1.1.</span> <span class="toc-text">索引组织表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95"><span class="toc-number">1.2.</span> <span class="toc-text">二级索引</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95%E7%9A%84%E6%80%A7%E8%83%BD%E8%AF%84%E4%BC%B0"><span class="toc-number">1.2.1.</span> <span class="toc-text">二级索引的性能评估</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E7%B4%A2%E5%BC%95"><span class="toc-number">1.3.</span> <span class="toc-text">函数索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-number">1.5.</span> <span class="toc-text">思考题</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/01/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" title="Java并发编程之知识图谱">Java并发编程之知识图谱</a><time datetime="2021-09-30T20:05:29.000Z" title="发表于 2021-09-30 20:05:29">2021-09-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/01/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BAQS%E6%A1%86%E6%9E%B6-AQS%20%E5%9C%A8%20CountDownLatch%20%E7%AD%89%E7%B1%BB%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88/" title="Java并发编程之AQS框架-AQS 在 CountDownLatch 等类中的应用原理是什么？">Java并发编程之AQS框架-AQS 在 CountDownLatch 等类中的应用原理是什么？</a><time datetime="2021-09-30T19:41:50.000Z" title="发表于 2021-09-30 19:41:50">2021-09-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/01/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BAQS%E6%A1%86%E6%9E%B6-AQS%20%E7%9A%84%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%E6%A0%B7%E7%9A%84/" title="Java并发编程之AQS框架-AQS 的内部原理是什么样的？">Java并发编程之AQS框架-AQS 的内部原理是什么样的？</a><time datetime="2021-09-30T18:44:06.000Z" title="发表于 2021-09-30 18:44:06">2021-09-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/01/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BAQS%E6%A1%86%E6%9E%B6-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%20AQS/" title="Java并发编程之AQS框架-为什么需要 AQS？AQS 的作用和重要性是什么？">Java并发编程之AQS框架-为什么需要 AQS？AQS 的作用和重要性是什么？</a><time datetime="2021-09-30T18:44:06.000Z" title="发表于 2021-09-30 18:44:06">2021-09-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/09/30/Spring%20Boot%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5-%E8%83%8C%E5%8E%8B%E6%9C%BA%E5%88%B6/" title="Spring Boot响应式编程之基本概念-背压机制">Spring Boot响应式编程之基本概念-背压机制</a><time datetime="2021-09-30T13:31:12.000Z" title="发表于 2021-09-30 13:31:12">2021-09-30</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

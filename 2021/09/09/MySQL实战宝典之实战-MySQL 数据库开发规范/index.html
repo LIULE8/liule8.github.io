@@ -1,0 +1,230 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MySQL实战宝典之实战-MySQL 数据库开发规范 | Leo's notes</title><meta name="keywords" content="MySQL"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="MySQL 数据库开发规范表结构设计的 10 个规范 INT 类型不使用 unsigned 无符号属性，容易引入额外的计算问题。  自增用 8 字节 BIG INT，不要使用 4 字节 INT，且自增在 MySQL 8.0 版本前有回溯问题，请考虑是否业务有影响。  字符集使用 UTF8MB4 字符编码，不推荐 GBK、UTF-8 等其他字符集。  日期类型用 DATETIME 类型，需要精确到毫">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL实战宝典之实战-MySQL 数据库开发规范">
+<meta property="og:url" content="https://liule8.github.io/2021/09/09/MySQL%E5%AE%9E%E6%88%98%E5%AE%9D%E5%85%B8%E4%B9%8B%E5%AE%9E%E6%88%98-MySQL%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/index.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="MySQL 数据库开发规范表结构设计的 10 个规范 INT 类型不使用 unsigned 无符号属性，容易引入额外的计算问题。  自增用 8 字节 BIG INT，不要使用 4 字节 INT，且自增在 MySQL 8.0 版本前有回溯问题，请考虑是否业务有影响。  字符集使用 UTF8MB4 字符编码，不推荐 GBK、UTF-8 等其他字符集。  日期类型用 DATETIME 类型，需要精确到毫">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-09-09T13:03:43.000Z">
+<meta property="article:modified_time" content="2021-09-11T05:21:22.181Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/2021/09/09/MySQL%E5%AE%9E%E6%88%98%E5%AE%9D%E5%85%B8%E4%B9%8B%E5%AE%9E%E6%88%98-MySQL%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-09-11 05:21:22'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">227</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">74</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">51</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">MySQL实战宝典之实战-MySQL 数据库开发规范</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-09-09T13:03:43.000Z" title="发表于 2021-09-09 13:03:43">2021-09-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-09-11T05:21:22.181Z" title="更新于 2021-09-11 05:21:22">2021-09-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/MySQL/">MySQL</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="MySQL实战宝典之实战-MySQL 数据库开发规范"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="MySQL-数据库开发规范"><a href="#MySQL-数据库开发规范" class="headerlink" title="MySQL 数据库开发规范"></a>MySQL 数据库开发规范</h1><h2 id="表结构设计的-10-个规范"><a href="#表结构设计的-10-个规范" class="headerlink" title="表结构设计的 10 个规范"></a>表结构设计的 10 个规范</h2><ol>
+<li><p>INT 类型不使用 unsigned 无符号属性，容易引入额外的计算问题。</p>
+</li>
+<li><p>自增用 8 字节 BIG INT，不要使用 4 字节 INT，且自增在 MySQL 8.0 版本前有回溯问题，请考虑是否业务有影响。</p>
+</li>
+<li><p>字符集使用 UTF8MB4 字符编码，不推荐 GBK、UTF-8 等其他字符集。</p>
+</li>
+<li><p>日期类型用 DATETIME 类型，需要精确到毫秒用 DATETIME(6)，不要使用 INT、TIMESTAMP。</p>
+</li>
+<li><p>类型 JSON 可用于存储非结构化数据，典型场景为用户标签，不要将 JSON 用于频繁更新的字段场景。</p>
+</li>
+<li><p>每张表一定要有一个主键，这样至少满足一范式的要求，核心业务表用全局唯一字段（雪花算法、有序UUID）做主键，不要使用自增做主键。</p>
+</li>
+<li><p>对于日志类的流水表、报警表、日志表，可以使用压缩设计，提升存储效率。MySQL 5.7 版本开始推荐使用透明页压缩，不要使用传统的 KEY_BLOCK_SIZE 的页压缩。</p>
+</li>
+<li><p>类别设计，用 ENUM+CHECK 约束，不要使用 INT 类型的设计。</p>
+</li>
+<li><p>敏感字段需加密，如账户密码、信用卡号等存储使用：动态盐 + 非固定加密算法（MD5/AES256等） + 多轮加密，不要简单使用 MD5 算法加密，容易被暴力破解。</p>
+</li>
+<li><p>MySQL 可以通过 KV 的方式访问表中的数据，若业务只是简单的 SET、GET 请求，可考虑将其转化为 Memcached 的 KV 访问方式，减少 SQL 解析的开销，性能可以有至少 50% 的提升。</p>
+</li>
+</ol>
+<h2 id="索引设计的-10-个规范"><a href="#索引设计的-10-个规范" class="headerlink" title="索引设计的 10 个规范"></a>索引设计的 10 个规范</h2><ol>
+<li><p>不要陷入设置单表行数、列数限制的固有印象，其他关系型数据库没有行数、列数限制，MySQL 也没有，大表的缺点不是性能，而是后续的 DDL 管理问题，随着 MySQL 8.0 快速加列功能的上线，大表 DDL 问题基本已解决。</p>
+</li>
+<li><p>MySQL 是索引组织表，表中的数据以 B+ 树索引结构，根据主键逻辑排序，由于 B+ 树索引的特点是树的高度为 3~4 层，所以从数十亿的记录中，通过主键查询一条记录只需要 3、4 次 I/O，当前到 SSD 存储设备设置每秒至少能完成 10000 次的 I/O 查询，不要担心通过索引查询一条或几条记录的性能，每秒百万次查询并不难。</p>
+</li>
+<li><p>MySQL 是索引组织表，二级索引只存储（键值、主键值），因此需要再通过一次主键索引查询得到记录，这种方式成为回表。在核心业务中，使用索引覆盖技术，提升索引查询性能，对于回表记录数比较大的场景，甚至可以有 10 倍的性能提升；</p>
+</li>
+<li><p>对类似 WHERE a = ? ORDER BY b 这样的查询，一定要创建（a、b）组合索引，这样可以避免一次额外排序，提升查询性能。</p>
+</li>
+<li><p>MySQL 优化器是 CBO（Cost-based Optimizer），所有查询基于成本而不是规则，若发现 SQL 执行计划发生变化，不要怀疑 MySQL 出错，请先分析数据特点、索引创建是否合理，是否可以通过直方图校准数据。</p>
+</li>
+<li><p>MySQL JOIN 支持 NLJ（Nested Loop Join）和 NHJ（Nested Hash Join）两种方式。对于 OLTP 业务，放心大胆使用 JOIN，但一定要做好索引的设计和索引覆盖的考虑（不考虑分布式数据库场景）；对于 OLAP 业务，MySQL 8.0 版本开始，支持 Hash Join，对于大数据量的关联，性能提升非常多，可以在不超过 10T 的数仓场景中考虑使用，超过 10T数据量，请一定使用大数据产品，如 Hive、Spark、麒麟等产品。</p>
+</li>
+<li><p>MySQL 5.7 版本开始子查询优化已经做得不错，但是编写的子查询不能是关联子查询，上线前一定需要确认，若发现关联子查询，请改写子查询为 JOIN 或其他方式。</p>
+</li>
+<li><p>不要因为数据量大，使用分区表，MySQL 是索引组织表，数据量再大，定位记录也只需要3、4 次 I/O。可以考虑分区表唯一的应用场景是：需要定期清理历史流水类数据，但如果业务可以按月、按天做分表，那么当前 MySQL 8.0 版本，分区表也不推荐使用。</p>
+</li>
+<li><p>业务上线或新版本发布前，DBA 一定要进行所有 SQL Review，确保 SQL 走索引，否则不予上线，或由业务以邮件等正式方式，通知 DBA 该 SQL 不会引起线上事故，业务方承担后续责任。</p>
+</li>
+<li><p>DBA 每天要对数据库进行巡检，及早发现慢查询或潜在数据库风险，将任何潜在问题尽早抛出，否则后续自己承担相关责任。</p>
+</li>
+</ol>
+<h2 id="高可用架构设计的-10-个规范"><a href="#高可用架构设计的-10-个规范" class="headerlink" title="高可用架构设计的 10 个规范"></a>高可用架构设计的 10 个规范</h2><ol>
+<li><p>MySQL 高可用的基石是利用二进制日志的复制技术，核心业务一定要使用无损半同步方式，但凡不适用无损半同步的高可用架构，请业务方业务以邮件等正式方式回复，数据丢失等后续问题自己承担相关责任。</p>
+</li>
+<li><p>MySQL 5.7 版本开始，一定要使用基于 WRITESET 的从机回放，避免主从延迟。</p>
+</li>
+<li><p>当前 MySQL 发生主从延迟的可能性主要是存在大事务，比如定期计算收益等操作，这类大事务，一定要通知业务方将大事务拆成小事务，否则不予上线；若要上线，请业务方以邮件等方式回复，自己承担后续主从延迟带来的后续一系列问题。</p>
+</li>
+<li><p>MySQL 8.0 版本开始推荐金融业务使用 MGR(MySQL Group Replication），通过 Paxos 协议保证数据一致性，并自己完成选主的逻辑，也可以使用多主模式，数据不冲突的情况下，可以大幅提升写入性能。</p>
+</li>
+<li><p>对于核心业务，必须遵循互不信任原则，数据一致性不单单依赖 MySQL 复制本身，DBA 这里需要通过逻辑的方式，对主从数据进行核对，业务这里也需要一套业务层的逻辑进行“对账”。</p>
+</li>
+<li><p>核心业务，务必使用一地三中心，两地三中心的跨机房复制架构，这样发生机房级故障，可以切换到另一个机房，保证业务可用性。</p>
+</li>
+<li><p>同城容灾架构一定要评估切换到另一个机房后业务访问的性能，多次跨机房访问 DB，虽然每次只多了 2~3ms，但也存在业务雪崩问题，推荐 DB 切换机房，上层业务跟着一起联动切换。</p>
+</li>
+<li><p>对于有跨城容灾需求的业务，可以考虑使用三地五中心架构，但是由于 30ms 延迟，业务需要进行评估，对于核心业务，务必使用业务层的跨城机制，将数据层的多次网络耗时合并为一次，这样能大大提升业务的性能。</p>
+</li>
+<li><p>业界的 MHA、Ochestrator 等高可用套件都是基于 ssh 访问 MySQL，稳定性、安全性不高，不推荐大厂使用；自己开发一个数据库管理平台，通过 agent 的模式管理高可用和 MySQL 数据库的日常操作更为安全、有效。</p>
+</li>
+<li><p>一定做好数据备份架构的设计，全备 + 增量备份 + 延迟备机（可选），做到可以基于任何一点恢复和回滚，同时，遵循互不信任原则，备份文件一定要进行检查，确保需要时一定能够进行恢复。</p>
+</li>
+</ol>
+<h2 id="分布式架构设计的-10-个规范"><a href="#分布式架构设计的-10-个规范" class="headerlink" title="分布式架构设计的 10 个规范"></a>分布式架构设计的 10 个规范</h2><ul>
+<li><p>分布式数据库的本质就是根据某几个列的规则，将数据水平打散，存在不同的实例中。数据拆分的列就成为分区键，分区键一定是业务大部分访问（超过 80%）的表都会使用的列。若选不出合适的分区键，那就一定不要进行分布式数据库架构的设计；互联网业务绝大部分分区键的选择是用户维度。</p>
+</li>
+<li><p>分区算法绝大部分场景使用 Hash算法，这样数据的存储和访问可以平均到下面多个实例，真正的做到可扩展性，Range 算法通常无法解决热点问题，会是灾难，但 Range 算法可以但实例中使用，作为二级拆分数据的规则。</p>
+</li>
+<li><p>分布式数据库分片时，一开始就设计为不少于 1000 个分片的规则，不用担心分片过多的问题，管理 1 个分片和 1000 个分片的成本是一样的，但为后续的扩展做好了充足的准备。</p>
+</li>
+<li><p>分布式数据库扩缩容就是通过部分过滤的复制技术，按库或按表进行数据同步，分库分表设计推荐库名、表都不同，做到全局唯一，方便后续拆分。</p>
+</li>
+<li><p>分布式数据库索引设计中，非分区键的唯一索引一定带入分区键信息，这样业务查询时可以直接定位到数据所在分片，提升查询效率。</p>
+</li>
+<li><p>分布式数据库索引设计中，数据库层的唯一约束只在单个实例中保证，若要保证全局唯一，一定要使用全局唯一的索引设计。</p>
+</li>
+<li><p>直接使用 JOIN 请确认一定可以单元化在一个分片中完成，如果涉及跨分片的 JOIN，请通知业务修改成多条 SQL 的访问方式，只访问指定分片而不是所有分片。</p>
+</li>
+<li><p>分布式数据库可以进行业务层的分库分表访问，和通过数据库中间件的访问，对于业务耗时敏感的业务，推荐业务层直接根据路由规则访问数据，否则使用数据库中间件，简单易用。</p>
+</li>
+<li><p>对于耗时敏感的核心业务，推荐使用最终一致的业务层柔性事务，数据库层的 2PC 分布式事务耗时较大，性能较为一般，但是 2PC 使用简单，能满足大部分业务的使用。</p>
+</li>
+<li><p>一定要利用好分布式数据库架构的特点，设计多活架构，每个机房都可以有写入流量，提升资源使用率和业务连续性，请 DBA 和业务方一起做好全链路的架构设计。</p>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/2021/09/09/MySQL%E5%AE%9E%E6%88%98%E5%AE%9D%E5%85%B8%E4%B9%8B%E5%AE%9E%E6%88%98-MySQL%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/">https://liule8.github.io/2021/09/09/MySQL%E5%AE%9E%E6%88%98%E5%AE%9D%E5%85%B8%E4%B9%8B%E5%AE%9E%E6%88%98-MySQL%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/MySQL/">MySQL</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/09/09/MySQL%E5%AE%9E%E6%88%98%E5%AE%9D%E5%85%B8%E4%B9%8B%E5%AE%9E%E6%88%98-%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E5%9C%B0%E5%88%A0%E9%99%A4%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%B8%AD%E7%9A%84%E5%A4%A7%E8%A1%A8/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">MySQL实战宝典之实战-如何优雅地删除生产环境中的大表</div></div></a></div><div class="next-post pull-right"><a href="/2021/09/09/MySQL%E5%AE%9E%E6%88%98%E5%AE%9D%E5%85%B8%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E6%9E%B6%E6%9E%84-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">MySQL实战宝典之分布式架构-分布式事务</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/09/09/MySQL实战宝典之分布式架构-分布式事务/" title="MySQL实战宝典之分布式架构-分布式事务"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-09</div><div class="title">MySQL实战宝典之分布式架构-分布式事务</div></div></a></div><div><a href="/2021/09/07/MySQL实战宝典之分布式架构-分布式数据库架构/" title="MySQL实战宝典之分布式架构-分布式数据库架构"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-07</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库架构</div></div></a></div><div><a href="/2021/09/08/MySQL实战宝典之分布式架构-分布式数据库架构选型/" title="MySQL实战宝典之分布式架构-分布式数据库架构选型"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-08</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库架构选型</div></div></a></div><div><a href="/2021/09/08/MySQL实战宝典之分布式架构-分布式数据库索引设计/" title="MySQL实战宝典之分布式架构-分布式数据库索引设计"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-08</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库索引设计</div></div></a></div><div><a href="/2021/09/08/MySQL实战宝典之分布式架构-分布式数据库表结构设计/" title="MySQL实战宝典之分布式架构-分布式数据库表结构设计"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-08</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库表结构设计</div></div></a></div><div><a href="/2021/09/09/MySQL实战宝典之分布式架构-分布式设计之禅/" title="MySQL实战宝典之分布式架构-分布式设计之禅"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-09</div><div class="title">MySQL实战宝典之分布式架构-分布式设计之禅</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">227</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">74</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">51</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83"><span class="toc-number">1.</span> <span class="toc-text">MySQL 数据库开发规范</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%84-10-%E4%B8%AA%E8%A7%84%E8%8C%83"><span class="toc-number">1.1.</span> <span class="toc-text">表结构设计的 10 个规范</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E7%9A%84-10-%E4%B8%AA%E8%A7%84%E8%8C%83"><span class="toc-number">1.2.</span> <span class="toc-text">索引设计的 10 个规范</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%84-10-%E4%B8%AA%E8%A7%84%E8%8C%83"><span class="toc-number">1.3.</span> <span class="toc-text">高可用架构设计的 10 个规范</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%84-10-%E4%B8%AA%E8%A7%84%E8%8C%83"><span class="toc-number">1.4.</span> <span class="toc-text">分布式架构设计的 10 个规范</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/01/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" title="Java并发编程之知识图谱">Java并发编程之知识图谱</a><time datetime="2021-09-30T20:05:29.000Z" title="发表于 2021-09-30 20:05:29">2021-09-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/01/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BAQS%E6%A1%86%E6%9E%B6-AQS%20%E5%9C%A8%20CountDownLatch%20%E7%AD%89%E7%B1%BB%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88/" title="Java并发编程之AQS框架-AQS 在 CountDownLatch 等类中的应用原理是什么？">Java并发编程之AQS框架-AQS 在 CountDownLatch 等类中的应用原理是什么？</a><time datetime="2021-09-30T19:41:50.000Z" title="发表于 2021-09-30 19:41:50">2021-09-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/01/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BAQS%E6%A1%86%E6%9E%B6-AQS%20%E7%9A%84%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%E6%A0%B7%E7%9A%84/" title="Java并发编程之AQS框架-AQS 的内部原理是什么样的？">Java并发编程之AQS框架-AQS 的内部原理是什么样的？</a><time datetime="2021-09-30T18:44:06.000Z" title="发表于 2021-09-30 18:44:06">2021-09-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/01/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BAQS%E6%A1%86%E6%9E%B6-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%20AQS/" title="Java并发编程之AQS框架-为什么需要 AQS？AQS 的作用和重要性是什么？">Java并发编程之AQS框架-为什么需要 AQS？AQS 的作用和重要性是什么？</a><time datetime="2021-09-30T18:44:06.000Z" title="发表于 2021-09-30 18:44:06">2021-09-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/09/30/Spring%20Boot%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5-%E8%83%8C%E5%8E%8B%E6%9C%BA%E5%88%B6/" title="Spring Boot响应式编程之基本概念-背压机制">Spring Boot响应式编程之基本概念-背压机制</a><time datetime="2021-09-30T13:31:12.000Z" title="发表于 2021-09-30 13:31:12">2021-09-30</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>
