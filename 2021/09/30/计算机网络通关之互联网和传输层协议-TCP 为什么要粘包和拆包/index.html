@@ -1,0 +1,246 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>计算机网络通关之互联网和传输层协议-TCP 为什么要粘包和拆包? | Leo's notes</title><meta name="keywords" content="计算机网络"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="TCP 的封包格式：TCP 为什么要粘包和拆包？今天我们将从稳定性角度深挖 TCP 协议的运作机制。如今，大半个互联网都建立在 TCP 协议之上，我们使用的 HTTP 协议、消息队列、存储、缓存，都需要用到 TCP 协议——这是因为 TCP 协议提供了可靠性。简单来说，可靠性就是让数据无损送达。但若是考虑到成本，就会变得非常复杂——因为还需要尽可能地提升吞吐量、降低延迟、减少丢包率。 TCP 协议">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络通关之互联网和传输层协议-TCP 为什么要粘包和拆包?">
+<meta property="og:url" content="https://liule8.github.io/2021/09/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%80%9A%E5%85%B3%E4%B9%8B%E4%BA%92%E8%81%94%E7%BD%91%E5%92%8C%E4%BC%A0%E8%BE%93%E5%B1%82%E5%8D%8F%E8%AE%AE-TCP%20%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%B2%98%E5%8C%85%E5%92%8C%E6%8B%86%E5%8C%85/index.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="TCP 的封包格式：TCP 为什么要粘包和拆包？今天我们将从稳定性角度深挖 TCP 协议的运作机制。如今，大半个互联网都建立在 TCP 协议之上，我们使用的 HTTP 协议、消息队列、存储、缓存，都需要用到 TCP 协议——这是因为 TCP 协议提供了可靠性。简单来说，可靠性就是让数据无损送达。但若是考虑到成本，就会变得非常复杂——因为还需要尽可能地提升吞吐量、降低延迟、减少丢包率。 TCP 协议">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-09-30T08:14:38.000Z">
+<meta property="article:modified_time" content="2021-10-01T12:14:27.626Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/2021/09/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%80%9A%E5%85%B3%E4%B9%8B%E4%BA%92%E8%81%94%E7%BD%91%E5%92%8C%E4%BC%A0%E8%BE%93%E5%B1%82%E5%8D%8F%E8%AE%AE-TCP%20%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%B2%98%E5%8C%85%E5%92%8C%E6%8B%86%E5%8C%85/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-01 12:14:27'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">236</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">75</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">52</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">计算机网络通关之互联网和传输层协议-TCP 为什么要粘包和拆包?</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-09-30T08:14:38.000Z" title="发表于 2021-09-30 08:14:38">2021-09-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-01T12:14:27.626Z" title="更新于 2021-10-01 12:14:27">2021-10-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="计算机网络通关之互联网和传输层协议-TCP 为什么要粘包和拆包?"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="TCP-的封包格式：TCP-为什么要粘包和拆包？"><a href="#TCP-的封包格式：TCP-为什么要粘包和拆包？" class="headerlink" title="TCP 的封包格式：TCP 为什么要粘包和拆包？"></a>TCP 的封包格式：TCP 为什么要粘包和拆包？</h1><p>今天我们将从<strong>稳定性</strong>角度深挖 <strong>TCP 协议的运作机制</strong>。如今，大半个互联网都建立在 TCP 协议之上，我们使用的 HTTP 协议、消息队列、存储、缓存，都需要用到 TCP 协议——这是因为 <strong>TCP 协议提供了可靠性</strong>。简单来说，可靠性就是让数据无损送达。但若是考虑到成本，就会变得非常复杂——因为还需要尽可能地提升吞吐量、降低延迟、减少丢包率。</p>
+<p>TCP 协议具有很强的实用性，而可靠性又是 TCP 最核心的能力，所以理所当然成为面试官们津津乐道的问题。具体来说，从一个终端有序地发出多个数据包，经过一个复杂的网络环境，到达目的地的时候会变得无序，而可靠性要求数据恢复到原始的顺序。这里我先给你提出两个问题：</p>
+<ul>
+<li><p>TCP 协议是如何恢复数据的顺序的？</p>
+</li>
+<li><p>拆包和粘包的作用是什么？</p>
+</li>
+</ul>
+<p>下面请你带着这两个问题开始今天的学习。</p>
+<h2 id="TCP-的拆包和粘包"><a href="#TCP-的拆包和粘包" class="headerlink" title="TCP 的拆包和粘包"></a>TCP 的拆包和粘包</h2><p><strong>TCP 是一个传输层协议</strong>。TCP 发送数据的时候，往往不会将数据一次性发送，像下图这样：</p>
+<p><img src="http://image.leonote.cn/20211001102753.png" alt="image-20211001102753776"></p>
+<p>而是将数据拆分成很多个部分，然后再逐个发送。像下图这样：</p>
+<p><img src="http://image.leonote.cn/20211001102811.png" alt="image-20211001102811446"></p>
+<p>同样的，在目的地，TCP 协议又需要逐个接收数据。<strong>请你思考，TCP 为什么不一次发送完所有的数据？</strong>比如我们要传一个大小为 10M 的文件，对于应用层而言，就是一次传送完成的。而传输层的协议为什么不选择将这个文件一次发送完呢？</p>
+<p>这里有很多原因，比如为了<strong>稳定性，一次发送的数据越多，出错的概率越大</strong>。再比如说为了<strong>效率，网络中有时候存在着并行的路径，拆分数据包就能更好地利用这些并行的路径</strong>。再有，比如发送和接收数据的时候，都存在着缓冲区。如下图所示：</p>
+<p><img src="http://image.leonote.cn/20211001102935.png" alt="image-20211001102935837"></p>
+<p>缓冲区是在内存中开辟的一块区域，目的是缓冲。因为大量的应用频繁地通过网卡收发数据，这个时候，网卡只能一个一个处理应用的请求。当网卡忙不过来的时候，数据就需要排队，也就是将数据放入缓冲区。如果每个应用都随意发送很大的数据，可能导致其他应用实时性遭到破坏。</p>
+<p>还有一些原因，比如内存的最小分配单位是页表，如果数据的大小超过一个页表，可能会存在页面置换问题，造成性能的损失。</p>
+<p>总之，方方面面的原因：<strong>在传输层封包不能太大</strong>。这种限制，往往是以缓冲区大小为单位的。也就是 TCP 协议，会将数据拆分成不超过缓冲区大小的一个个部分。每个部分有一个独特的名词，叫作 <strong>TCP 段（TCP Segment）</strong>。</p>
+<p>在接收数据的时候，一个个 TCP 段又被重组成原来的数据。</p>
+<p>像这样，数据经过拆分，然后传输，然后在目的地重组，俗称拆包。所以<strong>拆包是将数据拆分成多个 TCP 段传输</strong>。那么粘包是什么呢？有时候，如果发往一个目的地的多个数据太小了，为了防止多次发送占用资源，TCP 协议有可能将它们合并成一个 TCP 段发送，在目的地再还原成多个数据，这个过程俗称粘包。所以<strong>粘包是将多个数据合并成一个 TCP 段发送</strong>。</p>
+<h2 id="TCP-Segment"><a href="#TCP-Segment" class="headerlink" title="TCP Segment"></a>TCP Segment</h2><p>那么一个 TCP 段长什么样子呢？下图是一个 TCP 段的格式：</p>
+<p><img src="http://image.leonote.cn/20211001103511.png" alt="image-20211001103511373"></p>
+<p>我们可以看到，TCP 的很多配置选项和数据粘在了一起，作为一个 TCP 段。</p>
+<p>显然，让你把每一部分都记住似乎不太现实，但是我会带你把其中最主要的部分理解。<strong>TCP 协议就是依靠每一个 TCP 段工作的，所以你每认识一个 TCP 的能力，几乎都会找到在 TCP Segment 中与之对应的字段</strong>。接下来我先带你认识下它们。</p>
+<ol>
+<li><p>Source Port/Destination Port 描述的是发送端口号和目标端口号，代表发送数据的应用程序和接收数据的应用程序。比如 80 往往代表 HTTP 服务，22 往往是 SSH 服务……</p>
+</li>
+<li><p>Sequence Number 和 Achnowledgment Number 是保证可靠性的两个关键。具体见下文的讨论。</p>
+</li>
+<li><p>Data Offset 是一个偏移量。这个量存在的原因是 TCP Header 部分的长度是可变的，因此需要一个数值来描述数据从哪个字节开始。</p>
+</li>
+<li><p>Reserved 是很多协议设计会保留的一个区域，用于日后扩展能力。</p>
+</li>
+<li><p>URG/ACK/PSH/RST/SYN/FIN 是几个标志位，用于描述 TCP 段的行为。也就是一个 TCP 封包到底是做什么用的？</p>
+<ol>
+<li><p>URG 代表这是一个紧急数据，比如远程操作的时候，用户按下了 Ctrl+C，要求终止程序，这种请求需要紧急处理。</p>
+</li>
+<li><p>ACK 代表响应，所有的消息都必须有 ACK，这是 TCP 协议确保稳定性的一环</p>
+</li>
+<li><p>PSH 代表数据推送，也就是在传输数据的意思</p>
+</li>
+<li><p>SYN 同步请求，也就是申请握手</p>
+</li>
+<li><p>FIN 终止请求，也就是挥手</p>
+<blockquote>
+<p><strong>特别说明一下：以上这 5 个标志位，每个占了一个比特，可以混合使用。比如 ACK 和 SYN 同时为 1，代表同步请求和响应被合并了。这也是 TCP 协议，为什么是三次握手的原因之一。</strong></p>
+</blockquote>
+</li>
+<li><p>Window 也是 TCP 保证稳定性并进行流量控制的工具</p>
+</li>
+<li><p>Checksum 是校验和，用于校验 TCP 段有没有损坏</p>
+</li>
+<li><p>Urgent Pointer 指向最后一个紧急数据的序号（Sequence Number）。它存在的原因是：有时候紧急数据是连续的很多个段，所以需要提前告诉接收方进行准备</p>
+</li>
+<li><p>Options 中存储了一些可选字段，比如接下来我们要讨论的 MSS（Maximun Segment Size）</p>
+</li>
+<li><p>Padding 存在的意义是因为 Options 的长度不固定，需要 Pading 进行对齐。</p>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="Sequence-Number-和-Acknowledgement-Number"><a href="#Sequence-Number-和-Acknowledgement-Number" class="headerlink" title="Sequence Number 和 Acknowledgement Number"></a>Sequence Number 和 Acknowledgement Number</h2><p>在 TCP 协议的设计当中，<strong>数据被拆分成很多个部分，部分增加了协议头。合并成为一个 TCP 段，进行传输。这个过程，我们俗称拆包</strong>。这些 TCP 段经过复杂的网络结构，由底层的 IP 协议，负责传输到目的地，然后再进行重组。</p>
+<p>这里请你思考一个问题：稳定性要求数据无损地传输，也就是说拆包获得数据，又需要恢复到原来的样子。而在复杂的网络环境当中，即便所有的段是顺序发出的，也不能保证它们顺序到达，因此，发出的每一个 TCP 段都需要有序号。这个序号，就是 Sequence Number（Seq）。</p>
+<p><img src="http://image.leonote.cn/20211001104452.png" alt="image-20211001104452902"></p>
+<p>如上图所示。发送数据的时候，为每一个 TCP 段分配一个自增的 Sequence Number。接收数据的时候，虽然得到的是乱序的 TCP 段，但是可以通过 Seq 进行排序。</p>
+<p>但是这样又会产生一个新的问题——接收方如果要回复发送方，也需要这个 Seq。而网络的两个终端，去同步一个自增的序号是非常困难的。因为任何两个网络主体间，时间都不能做到完全同步，又没有公共的存储空间，无法共享数据，更别说实现一个分布式的自增序号了。</p>
+<p>其实这个问题的本质就好像两个人在说话一样，我们要确保他们说出去的话，和回答之间的顺序。因为 TCP 是一个全双工的协议，两边可能会同时说话。所以聪明的科学家想到了确定一句话的顺序，需要两个值去描述——也就是<strong>发送的字节数和接收的字节数</strong>。</p>
+<p><img src="http://image.leonote.cn/20211001104559.png" alt="image-20211001104559537"></p>
+<p>我们重新定义一下 Seq（如上图所示），对于任何一个接收方，如果知道了发送者发送某个 TCP 段时，已经发送了多少字节的数据，那么就可以确定发送者发送数据的顺序。</p>
+<p>但是这里有一个问题。如果接收方也向发送者发送了数据请求（或者说双方在对话），接收方就不知道发送者发送的数据到底对应哪一条自己发送的数据了。</p>
+<p>举个例子：下面 A 和 B 的对话中，我们可以确定他们彼此之间接收数据的顺序。但是无法确定数据之间的关联关系，所以只有 Sequence Number 是不够的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">A：今天天气好吗？</span><br><span class="line">A：今天你开心吗？</span><br><span class="line">B：开心</span><br><span class="line">B：天气不好</span><br></pre></td></tr></table></figure>
+
+<p>人类很容易理解这几句话的顺序，但是对于机器来说就需要特别的标注。因此我们还需要另一个数据，就是每个 TCP 段发送时，发送方已经接收了多少数据。用 Acknowledgement Number 表示，下面简写为 ACK。</p>
+<p>下图中，终端发送了三条数据，并且接收到四条数据，通过观察，根据接收到的数据中的 Seq 和 ACK，将发送和接收的数据进行排序。</p>
+<p><img src="http://image.leonote.cn/20211001104758.png" alt="image-20211001104758714"></p>
+<p>例如上图中，发送方发送了 100 字节的数据，而接收到的（Seq = 0 和 Seq =100）的两个封包，都是针对发送方（Seq = 0）这个封包的。发送 100 个字节，所以接收到的 ACK 刚好是 100。说明（Seq= 0 和 Seq= 100）这两个封包是针对接收到第 100 个字节数据后，发送回来的。这样就确定了整体的顺序。</p>
+<p><strong>注意，无论 Seq 还是 ACK，都是针对“对方”而言的。是对方发送的数据和对方接收到的数据。</strong>我们在实际的工作当中，可以通过 Whireshark 调试工具观察两个 TCP 连接的 Seq 和 ACK。</p>
+<p><img src="http://image.leonote.cn/20211001110742.png" alt="image-20211001110742284"></p>
+<h2 id="MSS（Maximun-Segment-Size）"><a href="#MSS（Maximun-Segment-Size）" class="headerlink" title="MSS（Maximun Segment Size）"></a>MSS（Maximun Segment Size）</h2><p>接下来，我们讨论下 MSS，它也是面试经常会问到的一个 TCP Header 中的可选项（Options），这个可选项控制了 TCP 段的大小，它是一个协商字段（Negotiate）。协议是双方都要遵循的标准，因此配置往往不能由单方决定，需要双方协商。</p>
+<p>TCP 段的大小（MSS）涉及发送、接收缓冲区的大小设置，双方实际发送接收封包的大小，对拆包和粘包的过程有指导作用，因此需要双方去协商。</p>
+<p>如果这个字段设置得非常大，就会带来一些影响。</p>
+<p>首先对方可能会拒绝，作为服务的提供方，你可能不会愿意接收太大的 TCP 段。<strong>因为大的 TCP 段，会降低性能，比如内存使用的性能</strong>。</p>
+<p>还有就是<strong>资源的占用</strong>。一个用户占用服务器太多的资源，意味着其他的用户就需要等待或者降低他们的服务质量。</p>
+<p><strong>其次，支持 TCP 协议工作的 IP 协议，工作效率会下降</strong>。TCP 协议不肯拆包，IP 协议就需要拆出大量的包。那么 IP 协议为什么需要拆包呢？这是因为在网络中，每次能够传输的数据不可能太大，这受限于具体的网络传输设备，也就是物理特性。但是 IP 协议，拆分太多的封包并没有意义。因为可能会导致属于同个 TCP 段的封包被不同的网络路线传输，这会加大延迟。同时，拆包，还需要消耗硬件和计算资源。</p>
+<p>那是不是 MSS 越小越好呢？MSS 太小的情况下，会浪费传输资源（降低吞吐量）。因为数据被拆分之后，每一份数据都要增加一个头部。如果 MSS 太小，那头部的数据占比会上升，这让吞吐量成为一个灾难。<strong>所以在使用的过程当中，MSS 的配置，往往都是一个折中的方案</strong>。而根据 Unix 的哲学，不要去猜想什么样的方案是最合理的，而是要尝试去用实验证明它，一切都要用实验依据说话。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>TCP 协议的设计像一台巨大而严密的机器，每次我重新温习 TCP 协议，都会感叹“它庞大，而且很琐碎”。每一个细节的设计，都有很深的思考。比如 Sequence Number 和 Acknowledge Number 的设计，就非常巧妙地利用发送字节数和接收字节数解决了顺序的问题。</p>
+<p><strong>尝试来回答面试题目：TCP 协议是如何恢复数据的顺序的，TCP 拆包和粘包的作用是什么？</strong></p>
+<p>【解析】TCP 拆包的作用是将任务拆分处理，<strong>降低整体任务出错的概率，以及减小底层网络处理的压力</strong>。拆包过程需要保证数据经过网络的传输，又能恢复到原始的顺序。这中间，需要数学提供保证顺序的理论依据。TCP 利用（发送字节数、接收字节数）的唯一性来确定封包之间的顺序关系。粘包是<strong>为了防止数据量过小，导致大量的传输</strong>，而将多个 TCP 段合并成一个发送。</p>
+<h2 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h2><p>有哪些好用的压测工具？</p>
+<blockquote>
+<p>压测工具：LoadRunner、Jmeter、NeoLoad、WebLOAD、Loadster</p>
+</blockquote>
+<h3 id="其他解答"><a href="#其他解答" class="headerlink" title="其他解答"></a>其他解答</h3><p>压力测试最常见的工具是 Apache Benchmark（简称 AB），在 Linux 下面可以通过包管理器安装 ab：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install httpd-tools</span><br><span class="line">// 或</span><br><span class="line">apt-get install apache2-utils</span><br></pre></td></tr></table></figure>
+
+<p>ab 安装好后，可以利用下面这条指令向某个网站发送并发 1000 的 10000 次请求：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ab -n 10000 -p 1000 https://example.com/</span><br></pre></td></tr></table></figure>
+
+<p>ab 是用 C 语言写的，作为一个随手就可以用的工具，它的设计非常简单，是一个单线程的工作模型，因此如果遇到阻塞情况，可能直接导致 ab 工具自己积压崩溃。</p>
+<p>所以。这里我给你推荐一个 Java 生态好用的工具“JMeter”，拥有可视化的界面，如下图所示：</p>
+<p><img src="http://image.leonote.cn/20211001201412.png" alt="image-20211001201412132"></p>
+<p>这个工具在各个平台上都可以用，比 ab 稳定，有图形化界面，可以配置任意线程数量，还有可视化的图表支持。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/2021/09/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%80%9A%E5%85%B3%E4%B9%8B%E4%BA%92%E8%81%94%E7%BD%91%E5%92%8C%E4%BC%A0%E8%BE%93%E5%B1%82%E5%8D%8F%E8%AE%AE-TCP%20%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%B2%98%E5%8C%85%E5%92%8C%E6%8B%86%E5%8C%85/">https://liule8.github.io/2021/09/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%80%9A%E5%85%B3%E4%B9%8B%E4%BA%92%E8%81%94%E7%BD%91%E5%92%8C%E4%BC%A0%E8%BE%93%E5%B1%82%E5%8D%8F%E8%AE%AE-TCP%20%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%B2%98%E5%8C%85%E5%92%8C%E6%8B%86%E5%8C%85/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/09/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%80%9A%E5%85%B3%E4%B9%8B%E4%BA%92%E8%81%94%E7%BD%91%E5%92%8C%E4%BC%A0%E8%BE%93%E5%B1%82%E5%8D%8F%E8%AE%AE-TCP%20%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8F%A1%E6%89%8B%E6%98%AF%203%20%E6%AC%A1%E3%80%81%E6%8C%A5%E6%89%8B%E6%98%AF%204%20%E6%AC%A1/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">计算机网络通关之互联网和传输层协议-TCP 为什么握手是 3 次、挥手是 4 次?</div></div></a></div><div class="next-post pull-right"><a href="/2021/09/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%80%9A%E5%85%B3%E4%B9%8B%E4%BA%92%E8%81%94%E7%BD%91%E5%92%8C%E4%BC%A0%E8%BE%93%E5%B1%82%E5%8D%8F%E8%AE%AE-%E4%BB%80%E4%B9%88%E6%98%AF%E8%9C%82%E7%AA%9D%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">计算机网络通关之互联网和传输层协议-什么是蜂窝移动网络</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/09/30/计算机网络通关之互联网和传输层协议-TCP 为什么握手是 3 次、挥手是 4 次/" title="计算机网络通关之互联网和传输层协议-TCP 为什么握手是 3 次、挥手是 4 次?"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-30</div><div class="title">计算机网络通关之互联网和传输层协议-TCP 为什么握手是 3 次、挥手是 4 次?</div></div></a></div><div><a href="/2021/10/02/计算机网络通关之互联网和传输层协议-TCP 协议和 UDP 协议的优势和劣势/" title="计算机网络通关之互联网和传输层协议-TCP 协议和 UDP 协议的优势和劣势?"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-01</div><div class="title">计算机网络通关之互联网和传输层协议-TCP 协议和 UDP 协议的优势和劣势?</div></div></a></div><div><a href="/2021/09/30/计算机网络通关之互联网和传输层协议-什么是蜂窝移动网络/" title="计算机网络通关之互联网和传输层协议-什么是蜂窝移动网络"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-30</div><div class="title">计算机网络通关之互联网和传输层协议-什么是蜂窝移动网络</div></div></a></div><div><a href="/2021/09/30/计算机网络通关之互联网和传输层协议-滑动窗口和流速控制是怎么回事/" title="计算机网络通关之互联网和传输层协议-滑动窗口和流速控制是怎么回事?"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-30</div><div class="title">计算机网络通关之互联网和传输层协议-滑动窗口和流速控制是怎么回事?</div></div></a></div><div><a href="/2021/10/02/计算机网络通关之网络层协议-NAT 是如何工作的/" title="计算机网络通关之网络层协议-NAT 是如何工作的?"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-01</div><div class="title">计算机网络通关之网络层协议-NAT 是如何工作的?</div></div></a></div><div><a href="/2021/10/02/计算机网络通关之网络层协议-Tunnel 技术是什么/" title="计算机网络通关之网络层协议-Tunnel 技术是什么?"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-01</div><div class="title">计算机网络通关之网络层协议-Tunnel 技术是什么?</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">236</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">75</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">52</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#TCP-%E7%9A%84%E5%B0%81%E5%8C%85%E6%A0%BC%E5%BC%8F%EF%BC%9ATCP-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%B2%98%E5%8C%85%E5%92%8C%E6%8B%86%E5%8C%85%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">TCP 的封包格式：TCP 为什么要粘包和拆包？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP-%E7%9A%84%E6%8B%86%E5%8C%85%E5%92%8C%E7%B2%98%E5%8C%85"><span class="toc-number">1.1.</span> <span class="toc-text">TCP 的拆包和粘包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP-Segment"><span class="toc-number">1.2.</span> <span class="toc-text">TCP Segment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sequence-Number-%E5%92%8C-Acknowledgement-Number"><span class="toc-number">1.3.</span> <span class="toc-text">Sequence Number 和 Acknowledgement Number</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MSS%EF%BC%88Maximun-Segment-Size%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">MSS（Maximun Segment Size）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-number">1.6.</span> <span class="toc-text">思考题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E8%A7%A3%E7%AD%94"><span class="toc-number">1.6.1.</span> <span class="toc-text">其他解答</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/02/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%80%9A%E5%85%B3%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E5%8D%8F%E8%AE%AE-%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%20TCP%20%E6%8A%93%E5%8C%85%E8%B0%83%E8%AF%95/" title="计算机网络通关之网络层协议-如何进行 TCP 抓包调试?">计算机网络通关之网络层协议-如何进行 TCP 抓包调试?</a><time datetime="2021-10-02T08:12:52.000Z" title="发表于 2021-10-02 08:12:52">2021-10-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/02/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%80%9A%E5%85%B3%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E5%8D%8F%E8%AE%AE-NAT%20%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84/" title="计算机网络通关之网络层协议-NAT 是如何工作的?">计算机网络通关之网络层协议-NAT 是如何工作的?</a><time datetime="2021-10-01T21:26:12.000Z" title="发表于 2021-10-01 21:26:12">2021-10-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/02/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%80%9A%E5%85%B3%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E5%8D%8F%E8%AE%AE-Tunnel%20%E6%8A%80%E6%9C%AF%E6%98%AF%E4%BB%80%E4%B9%88/" title="计算机网络通关之网络层协议-Tunnel 技术是什么?">计算机网络通关之网络层协议-Tunnel 技术是什么?</a><time datetime="2021-10-01T20:57:09.000Z" title="发表于 2021-10-01 20:57:09">2021-10-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/02/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%80%9A%E5%85%B3%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82%E5%8D%8F%E8%AE%AE-%E8%B7%AF%E7%94%B1%E5%92%8C%E5%AF%BB%E5%9D%80%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88/" title="计算机网络通关之网络层协议-路由和寻址的区别是什么?">计算机网络通关之网络层协议-路由和寻址的区别是什么?</a><time datetime="2021-10-01T20:25:37.000Z" title="发表于 2021-10-01 20:25:37">2021-10-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/10/02/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%80%9A%E5%85%B3%E4%B9%8B%E4%BA%92%E8%81%94%E7%BD%91%E5%92%8C%E4%BC%A0%E8%BE%93%E5%B1%82%E5%8D%8F%E8%AE%AE-TCP%20%E5%8D%8F%E8%AE%AE%E5%92%8C%20UDP%20%E5%8D%8F%E8%AE%AE%E7%9A%84%E4%BC%98%E5%8A%BF%E5%92%8C%E5%8A%A3%E5%8A%BF/" title="计算机网络通关之互联网和传输层协议-TCP 协议和 UDP 协议的优势和劣势?">计算机网络通关之互联网和传输层协议-TCP 协议和 UDP 协议的优势和劣势?</a><time datetime="2021-10-01T19:44:59.000Z" title="发表于 2021-10-01 19:44:59">2021-10-01</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>
