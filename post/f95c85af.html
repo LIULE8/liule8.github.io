@@ -1,0 +1,206 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Spring Boot响应式编程之响应式 Web 服务-框架升级 | Leo's notes</title><meta name="keywords" content="Java,String"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="框架升级：WebFlux 比 Web MVC 到底好在哪里？围绕一个典型的多层架构，从每一层出发构建响应式应用程序。 首先关注的是 Web 服务层。在构建响应式 Web 服务上，Spring 5 中引入了全新的编程框架，那就是 Spring WebFlux。作为一款新型的 Web 服务开发框架，它与传统的 WebMVC 相比具体有哪些优势呢？ Spring WebFlux 的应用场景WebFlux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot响应式编程之响应式 Web 服务-框架升级">
+<meta property="og:url" content="https://liule8.github.io/post/f95c85af.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="框架升级：WebFlux 比 Web MVC 到底好在哪里？围绕一个典型的多层架构，从每一层出发构建响应式应用程序。 首先关注的是 Web 服务层。在构建响应式 Web 服务上，Spring 5 中引入了全新的编程框架，那就是 Spring WebFlux。作为一款新型的 Web 服务开发框架，它与传统的 WebMVC 相比具体有哪些优势呢？ Spring WebFlux 的应用场景WebFlux">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-10-05T14:58:24.000Z">
+<meta property="article:modified_time" content="2021-10-16T05:06:47.024Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="String">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/f95c85af"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-16 05:06:47'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Spring Boot响应式编程之响应式 Web 服务-框架升级</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-10-05T14:58:24.000Z" title="发表于 2021-10-05 14:58:24">2021-10-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-16T05:06:47.024Z" title="更新于 2021-10-16 05:06:47">2021-10-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Spring-Boot/">Spring Boot</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Spring-Boot/%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B/">响应式编程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Spring Boot响应式编程之响应式 Web 服务-框架升级"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="框架升级：WebFlux-比-Web-MVC-到底好在哪里？"><a href="#框架升级：WebFlux-比-Web-MVC-到底好在哪里？" class="headerlink" title="框架升级：WebFlux 比 Web MVC 到底好在哪里？"></a>框架升级：WebFlux 比 Web MVC 到底好在哪里？</h1><p>围绕一个典型的多层架构，从每一层出发构建响应式应用程序。</p>
+<p>首先关注的是 Web 服务层。在构建响应式 Web 服务上，Spring 5 中引入了全新的编程框架，那就是 Spring WebFlux。作为一款新型的 Web 服务开发框架，它与传统的 WebMVC 相比具体有哪些优势呢？</p>
+<h2 id="Spring-WebFlux-的应用场景"><a href="#Spring-WebFlux-的应用场景" class="headerlink" title="Spring WebFlux 的应用场景"></a>Spring WebFlux 的应用场景</h2><p>WebFlux 用于构建响应式 Web 服务。在详细介绍 WebFlux 之前，我们先梳理一下这个新框架的应用场景，了解应用场景才能帮助我们对所要采用的技术体系做出正确的选择。</p>
+<p>像 Reactor 这样的响应式库可以帮助我们构建一个异步的非阻塞流，并且为开发人员屏蔽了底层的技术复杂度。而基于 Reactor 框架的 WebFlux 进一步降低了开发响应式 Web 服务的难度。</p>
+<p>微服务架构的兴起为 WebFlux 的应用提供了一个很好的场景。我们知道在一个微服务系统中，存在数十乃至数百个独立的微服务，它们相互通信以完成复杂的业务流程。这个过程势必会涉及大量的 I/O 操作，尤其是<strong>阻塞式 I/O 操作会整体增加系统的延迟并降低吞吐量。如果能够在复杂的流程中集成非阻塞、异步通信机制，我们就可以高效处理跨服务之间的网络请求</strong>。针对这种场景，WebFlux 是一种非常有效的解决方案。</p>
+<h2 id="从-WebMVC-到-WebFlux"><a href="#从-WebMVC-到-WebFlux" class="headerlink" title="从 WebMVC 到 WebFlux"></a>从 WebMVC 到 WebFlux</h2><p>接下来，我们将讨论 WebMVC 与 WebFlux 之间的差别，而这些差别实际上正是体现在从 WebMVC 到 WebFlux 的演进过程中。让我们先从传统的 Spring WebMVC 技术栈开始说起。</p>
+<h3 id="Spring-WebMVC-技术栈"><a href="#Spring-WebMVC-技术栈" class="headerlink" title="Spring WebMVC 技术栈"></a>Spring WebMVC 技术栈</h3><p>一般而言，Web 请求处理机制都会使用“<strong>管道-过滤器（Pipe-Filter）</strong>”架构模式，而 Spring WebMVC 作为一种处理 Web 请求的典型实现方案，同样使用了 Servlet 中的过滤器链（FilterChain）来对请求进行拦截，如下图所示。</p>
+<p><img src="http://image.leonote.cn/20211005153336.png" alt="image-20211005153336147"></p>
+<p>我们知道 WebMVC 运行在 Servlet 容器上，这些容器常用的包括 Tomcat、JBoss 等。当 HTTP 请求通过 Servlet 容器时就会被转换为一个 ServletRequest 对象，而最终返回一个 ServletResponse 对象，FilterChain 的定义如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FilterChain</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(ServletRequest request, ServletResponse response)</span></span></span><br><span class="line"><span class="function">      <span class="keyword">throws</span> IOException, ServletException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当 ServletRequest 通过过滤器链中所包含的一系列过滤器之后，最终就会到达作为前端控制器的 <code>DispatcherServlet</code>。DispatcherServlet 是 WebMVC 的核心组件，扩展了 Servlet 对象，并持有一组 <code>HandlerMapping</code> 和 <code>HandlerAdapter</code>。</p>
+<p>当 ServletRequest 请求到达时，DispatcherServlet 负责搜索 HandlerMapping 实例并使用合适的 HandlerAdapter 对其进行适配。其中，HandlerMapping 的作用是<strong>根据当前请求找到对应的处理器 Handler</strong>，它只定义了一个方法，如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HandlerMapping</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 找到与请求对应的 Handler，封装为一个 HandlerExecutionChain 返回</span></span><br><span class="line">  <span class="function">HandlerExecutionChain <span class="title">getHandler</span><span class="params">(HttpServletRequest request)</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而 HandlerAdapter 根据给定的 <code>HttpServletRequest</code> 和 <code>HttpServletResponse</code> 对象真正调用给定的 Handler，核心方法如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HandlerAdapter</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 针对给定的请求/响应对象调用目标 Handler</span></span><br><span class="line">  <span class="function">ModelAndView <span class="title">handle</span><span class="params">(HttpServletRequest request, HttpServletResponse response, Object handler)</span></span></span><br><span class="line"><span class="function">      <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在执行过程中，DispatcherServlet 会在应用上下文中搜索所有 HandlerMapping。日常开发过程中，最常用的 HandlerMapping 包含 <code>BeanNameUrlHandlerMapping</code> 和 <code>RequestMappingHandlerMapping</code>，前者负责检测所有 Controller 并根据请求 URL 的匹配规则映射到具体的 Controller 实例上，而后者基于 <code>@RequestMapping</code> 注解来找到目标 Controller。</p>
+<p>如果我们使用了 RequestMappingHandlerMapping，那么对应的 HandlerAdapter 就是 <code>RequestMappingHandlerAdapter</code>，它负责将传入的 ServletRequest 绑定到添加了 @RequestMapping 注解的控制器方法上，从而实现对请求的正确响应。同时， HandlerAdapter 还提供请求验证和响应转换等辅助性功能，使得 Spring WebMVC 框架在日常 Web 开发中非常实用。</p>
+<p>作为总结，我梳理了 Spring WebMVC 的整体架构，如下图所示。</p>
+<p><img src="http://image.leonote.cn/20211005153908.png" alt="image-20211005153908235"></p>
+<p>一直以来，Spring WebMVC 是我们开发 Web 服务的主流框架。但要注意的是，尽管 Servlet 本身在新版本中提供了异步非阻塞的通信机制，但 <strong>Spring WebMVC 在实现上并不允许在整个请求生命周期中都采用非阻塞式的操作方式</strong>。因此，Spring 在尽量沿用原有的开发模式以及 API 设计上提供了支持异步非阻塞的 Spring WebFlux 框架。</p>
+<h3 id="Spring-WebFlux-技术栈"><a href="#Spring-WebFlux-技术栈" class="headerlink" title="Spring WebFlux 技术栈"></a>Spring WebFlux 技术栈</h3><p>介绍完 Spring WebMVC，我们来说说 Spring WebFlux。事实上，前面介绍的 HandlerMapping、HandlerAdapter 等组件在 WebFlux 里都有同名的响应式版本，这是 WebFlux 的一种设计理念，即在既有设计的基础上，提供新的实现版本，只对部分需要增强和弱化的地方做了调整。</p>
+<p>我们先来看第一个需要调整的地方，显然，我们应该替换掉原有的 Servlet API 以便融入响应式流。因此，在 WebFlux 中，代表请求和响应的是全新的 <code>ServerHttpRequest</code> 和 <code>ServerHttpResponse</code> 对象。</p>
+<p>同样，WebFlux 中同样提供了一个过滤器链 WebFilterChain，定义如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">WebFilterChain</span> </span>&#123;</span><br><span class="line">    <span class="function">Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>ServerWebExchange</code> 相当于一个上下文容器，保存了 ServerHttpRequest、ServerHttpResponse 以及一些框架运行时状态信息。</p>
+<p>在 WebFlux 中，和 WebMVC 中的 DispatcherServlet 相对应的组件是 <code>DispatcherHandler</code>。与 DispatcherServlet 类似，DispatcherHandler 同样使用了一套响应式版本的 HandlerMapping 和 HandlerAdapter 完成对请求的处理。请注意，这两个接口是定义在 org.springframework.web.reactive 包中，而不是在原有的 org.springframework.web 包中。响应式版本的 HandlerMapping 接口定义如下，可以看到这里返回的是一个 Mono 对象，从而启用了响应式行为模式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HandlerMapping</span> </span>&#123;</span><br><span class="line">	<span class="function">Mono&lt;Object&gt; <span class="title">getHandler</span><span class="params">(ServerWebExchange exchange)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同样，我们找到响应式版本的 HandlerAdapter，如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HandlerAdapter</span> </span>&#123;</span><br><span class="line">    <span class="function">Mono&lt;HandlerResult&gt; <span class="title">handle</span><span class="params">(ServerWebExchange exchange, Object handler)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对比非响应式版本的 HandlerAdapter，这里的 ServerWebExchange 中同时包含了 ServerHttpRequest 和 ServerHttpResponse 对象，而 HandlerResult 则代表了处理结果。相比 WebMVC 中 ModelAndView 这种比较模糊的返回结果，HandlerResult 更加直接和明确。</p>
+<p>在 WebFlux 中，同样实现了响应式版本的 <code>RequestMappingHandlerMapping</code> 和 <code>RequestMappingHandlerAdapter</code>，因此我们仍然可以采用注解的方法来构建 Controller。另一方面，WebFlux 中还提供了 <code>RouterFunctionMapping</code> 和 <code>HandlerFunctionAdapter</code> 组合，专门用来提供基于函数式编程的开发模式。这样 Spring WebFlux 的整体架构图就演变成这样。</p>
+<p><img src="http://image.leonote.cn/20211005154419.png" alt="image-20211005154419036"></p>
+<p>请注意，在处理 HTTP 请求上，我们需要使用支持异步非阻塞的响应式服务器引擎，常见的包括 Netty、Undertow 以及支持 Servlet 3.1 及以上版本的 Servlet 容器。</p>
+<p>对比 WebFlux 和 WebMVC 的处理模型<br>现在我们已经明确了 WebMVC 到 WebFlux 的演进过程，但你可能会问，新的 WebFlux 要比传统 WebMVC 好在哪里呢？从两者的处理模型上入手可以帮助你很好地理解这个问题，我们一起来看一下。</p>
+<h2 id="WebFlux-和-Web-MVC-中的处理模型"><a href="#WebFlux-和-Web-MVC-中的处理模型" class="headerlink" title="WebFlux 和 Web MVC 中的处理模型"></a>WebFlux 和 Web MVC 中的处理模型</h2><p>通过前面的讨论你已经知道 Servlet 是阻塞式的，所以 WebMVC 建立在阻塞 I/O 之上，我们来分析这种模型下线程处理请求的过程。假设有一个工作线程会处理来自客户端的请求，所有请求构成一个请求队列，并由一个线程按顺序进行处理。针对一个请求，线程需要执行两部分工作，首先是接受请求，然后再对其进行处理，如下图所示。</p>
+<p><img src="http://image.leonote.cn/20211005154542.png" alt="image-20211005154542394"></p>
+<p>在前面的示例中，正如你可能注意到的，工作线程的实际处理时间远小于花费在阻塞操作上的时间。这意味着工作线程会被 I/O 读取或写入数据这一操作所阻塞。从这个简单的图中，我们可以得出结论，线程效率低下。同时，因为所有请求是排队的，相当于一个请求队列，所以<strong>接受请求和处理请求这两部分操作实际上是可以共享等待时间的</strong>。</p>
+<p>相比之下，WebFlux 构建在非阻塞 API 之上，这意味着没有操作需要与 I/O 阻塞线程进行交互。接受和处理请求的效率很高，如下图所示。</p>
+<p><img src="http://image.leonote.cn/20211005154733.png" alt="image-20211005154733465"></p>
+<p>将上图中所展示的异步非阻塞请求处理与前面的阻塞过程进行比较，我们会注意到，现在<strong>没有在读取请求数据时发生等待</strong>，工作线程高效接受新连接。然后，提供了非阻塞 I/O 机制的底层操作系统会告诉我们请求数据是否已经接收完成，并且处理器可以在不阻塞的情况下进行处理。</p>
+<p>类似的，<strong>写入响应结果时同样不需要阻塞</strong>，操作系统会在准备好将一部分数据非阻塞地写入 I/O 时通知我们。这样，我们就拥有了最佳的 CPU 利用率。</p>
+<p>前面的示例展示了 WebFlux 比 WebMVC 更有效地利用一个工作线程，因此可以在相同的时间内处理更多的请求。那么，如果是在多线程的场景下会发生什么呢？我们来看下面这张图。</p>
+<p><img src="http://image.leonote.cn/20211005154918.png" alt="image-20211005154917964"></p>
+<p>从上图中可以看出，<strong>多线程模型允许更快地处理排队请求，能够同时接受、处理和响应几乎相同数量的请求</strong>。当然，我们明白多线程技术有利有弊。当处理用户请求涉及太多的线程实例时，相互之间就需要协调资源，这是由于它们之间的不一致性会导致性能下降。</p>
+<h3 id="处理模型对性能的影响"><a href="#处理模型对性能的影响" class="headerlink" title="处理模型对性能的影响"></a>处理模型对性能的影响</h3><p>讲到这里，你可能会问，不同的处理模型对性能会有多大程度的影响呢？这里我们就引用维护Spring 框架的 Pivotal 公司软件开发主管 Biju Kunjummen 的测试结果来对这一问题进行解答。</p>
+<p>在 Biju Kunjummen 的测试用例中，他分别基于 WebMVC 所提供的阻塞式 RestTemplate 以及 WebFlux 所提供的非阻塞式 WebClient 工具类对远程 Web 服务发起请求。对于不同组的并发用户（300、1000、1500、3000、5000），他分别发送了一个 delay 属性设置为 300 ms 的请求，每个用户重复该场景 30 次，请求之间的延迟为 1 到 2 秒。测试用例中使用了 Gatling 这款工具来执行压测。</p>
+<p>这里我们截取 300 和 3000 并发用户场景下的结果进行对比，如下面两张图所示。</p>
+<p><img src="http://image.leonote.cn/20211005155359.png" alt="image-20211005155359047"></p>
+<p><img src="http://image.leonote.cn/20211005155721.png" alt="image-20211005155721197"></p>
+<p>可以看到，在 300 并发用户的测试用例下，WebMVC 和 WebFlux 的表现比较接近，意味着在并发量不高的情况下，非阻塞式的请求处理过程并没有太多优势；而在 3000 并发用户下，情况就完全不一样了。无论是吞吐量还是响应时间，WebFlux 都具有压倒性的性能优势。（完整版的测试结果和数据，你可以<a target="_blank" rel="noopener" href="https://dzone.com/articles/raw-performance-numbers-spring-boot-2-webflux-vs-s">参考 Biju Kunjummen 的这篇文章</a>进行获取）</p>
+<h2 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h2><p>Spring WebFlux 和 Spring WebMVC 的整体架构有什么区别和联系？</p>
+<blockquote>
+<p>整体架构相近</p>
+<p>都是基于管道-过滤器模式</p>
+<p>核心类也一一对应</p>
+<p>springWebFlux 多了实现函数式编程的流程</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/f95c85af.html">https://liule8.github.io/post/f95c85af.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/String/">String</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/91e85e6d.html"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spring Boot响应式编程之响应式 Web 服务-WebFlux注解开发</div></div></a></div><div class="next-post pull-right"><a href="/post/c9b76cd.html"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Spring Boot响应式编程之编程框架-Reactor 操作符(下)</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/775b3361.html" title="Spring Boot响应式编程之响应式 Web 服务-RSocket"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-07</div><div class="title">Spring Boot响应式编程之响应式 Web 服务-RSocket</div></div></a></div><div><a href="/post/670830f.html" title="Spring Boot响应式编程之响应式 Web 服务-WebFlux函数式开发"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-06</div><div class="title">Spring Boot响应式编程之响应式 Web 服务-WebFlux函数式开发</div></div></a></div><div><a href="/post/91e85e6d.html" title="Spring Boot响应式编程之响应式 Web 服务-WebFlux注解开发"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-06</div><div class="title">Spring Boot响应式编程之响应式 Web 服务-WebFlux注解开发</div></div></a></div><div><a href="/post/56f26128.html" title="Spring Boot响应式编程之响应式数据访问-MongoDB 集成"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-07</div><div class="title">Spring Boot响应式编程之响应式数据访问-MongoDB 集成</div></div></a></div><div><a href="/post/12ec0295.html" title="Spring Boot响应式编程之响应式数据访问-R2DBC"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-07</div><div class="title">Spring Boot响应式编程之响应式数据访问-R2DBC</div></div></a></div><div><a href="/post/70d60696.html" title="Spring Boot响应式编程之响应式数据访问-响应式全栈"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-07</div><div class="title">Spring Boot响应式编程之响应式数据访问-响应式全栈</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A1%86%E6%9E%B6%E5%8D%87%E7%BA%A7%EF%BC%9AWebFlux-%E6%AF%94-Web-MVC-%E5%88%B0%E5%BA%95%E5%A5%BD%E5%9C%A8%E5%93%AA%E9%87%8C%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">框架升级：WebFlux 比 Web MVC 到底好在哪里？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-WebFlux-%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.1.</span> <span class="toc-text">Spring WebFlux 的应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E-WebMVC-%E5%88%B0-WebFlux"><span class="toc-number">1.2.</span> <span class="toc-text">从 WebMVC 到 WebFlux</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-WebMVC-%E6%8A%80%E6%9C%AF%E6%A0%88"><span class="toc-number">1.2.1.</span> <span class="toc-text">Spring WebMVC 技术栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-WebFlux-%E6%8A%80%E6%9C%AF%E6%A0%88"><span class="toc-number">1.2.2.</span> <span class="toc-text">Spring WebFlux 技术栈</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WebFlux-%E5%92%8C-Web-MVC-%E4%B8%AD%E7%9A%84%E5%A4%84%E7%90%86%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.3.</span> <span class="toc-text">WebFlux 和 Web MVC 中的处理模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E6%A8%A1%E5%9E%8B%E5%AF%B9%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-number">1.3.1.</span> <span class="toc-text">处理模型对性能的影响</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-number">1.4.</span> <span class="toc-text">思考题</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/d42cc345.html" title="数据结构与算法之入门篇-为什么要学习数据结构和算法">数据结构与算法之入门篇-为什么要学习数据结构和算法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/68a8f17f.html" title="数据结构与算法之入门篇-学习方法">数据结构与算法之入门篇-学习方法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/abff7577.html" title="Netty 核心原理剖析与 RPC 实践-实践总结">Netty 核心原理剖析与 RPC 实践-实践总结</a><time datetime="2021-10-14T20:34:53.000Z" title="发表于 2021-10-14 20:34:53">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/889de2a9.html" title="Netty 核心原理剖析与 RPC 实践-编程思想">Netty 核心原理剖析与 RPC 实践-编程思想</a><time datetime="2021-10-14T20:34:26.000Z" title="发表于 2021-10-14 20:34:26">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/634ac34e.html" title="Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸">Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸</a><time datetime="2021-10-14T20:33:36.000Z" title="发表于 2021-10-14 20:33:36">2021-10-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

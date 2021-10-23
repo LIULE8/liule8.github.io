@@ -1,0 +1,277 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MySQL实战宝典之高可用架构-高可用设计 | Leo's notes</title><meta name="keywords" content="MySQL"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="高可用设计：你怎么活用三大架构方案？前面学习了 MySQL 数据库复制的原理、优化，以及基于复制技术实现业务层的读写分离方案，这些内容都是为了铺垫 MySQL 数据库的高可用架构设计。因为复制是高可用的基础，但只用复制同步数据又远远不够，你还要结合自己的业务进行高可用设计。 同时，高可用也不仅仅是数据库的事情，你要从业务的全流程出发，思考怎么设计一个真正健壮的高可用架构。 现在，我们先来看看什么是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL实战宝典之高可用架构-高可用设计">
+<meta property="og:url" content="https://liule8.github.io/post/b0667a7c.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="高可用设计：你怎么活用三大架构方案？前面学习了 MySQL 数据库复制的原理、优化，以及基于复制技术实现业务层的读写分离方案，这些内容都是为了铺垫 MySQL 数据库的高可用架构设计。因为复制是高可用的基础，但只用复制同步数据又远远不够，你还要结合自己的业务进行高可用设计。 同时，高可用也不仅仅是数据库的事情，你要从业务的全流程出发，思考怎么设计一个真正健壮的高可用架构。 现在，我们先来看看什么是">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-09-03T11:14:50.000Z">
+<meta property="article:modified_time" content="2021-10-16T05:06:46.772Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/b0667a7c"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-16 05:06:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">MySQL实战宝典之高可用架构-高可用设计</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-09-03T11:14:50.000Z" title="发表于 2021-09-03 11:14:50">2021-09-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-16T05:06:46.772Z" title="更新于 2021-10-16 05:06:46">2021-10-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/">MySQL</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="MySQL实战宝典之高可用架构-高可用设计"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="高可用设计：你怎么活用三大架构方案？"><a href="#高可用设计：你怎么活用三大架构方案？" class="headerlink" title="高可用设计：你怎么活用三大架构方案？"></a>高可用设计：你怎么活用三大架构方案？</h1><p>前面学习了 MySQL 数据库复制的原理、优化，以及基于复制技术实现业务层的读写分离方案，这些内容都是为了铺垫 MySQL 数据库的高可用架构设计。因为复制是高可用的基础，但只用复制同步数据又远远不够，你还要结合自己的业务进行高可用设计。</p>
+<p>同时，高可用也不仅仅是数据库的事情，你要从业务的全流程出发，思考怎么设计一个真正健壮的高可用架构。</p>
+<p>现在，我们先来看看什么是高可用？为什么它如此重要。</p>
+<h2 id="高可用概念"><a href="#高可用概念" class="headerlink" title="高可用概念"></a>高可用概念</h2><p>首先，我们来看一下 wiki 上对高可用（High Availability）的定义：</p>
+<blockquote>
+<p>High availability (HA) is a characteristic of a system which aims to ensure an agreed level of operational performance, usually uptime, for a higher than normal period.</p>
+</blockquote>
+<p>从上面的描述来看，高可用（High Availability）是<strong>系统所能提供无故障服务的一种能力</strong>。 简单地说就是避免因服务器宕机而造成的服务不可用。</p>
+<p>我们都知道，高可用是每个业务系统设计时，开发人员必须考虑的关键点。比如你的系统在发生不可用时，业务表现如何？用户能否容忍你的不可用时长？</p>
+<p>而业界度量高可用能力也有统一标准：判断宕机时间，并以此计算出每年系统可用时间达到几个 9，来判断高可用架构是否健壮。具体如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th align="center">系统可用性%</th>
+<th align="center">宕机时间/年</th>
+<th align="center">宕机时间/月</th>
+<th align="center">宕机时间/周</th>
+<th align="center">宕机时间/天</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">90%（1个9）</td>
+<td align="center"><em>36.5 天</em></td>
+<td align="center"><em>72 小时</em></td>
+<td align="center"><em>16.8 小时</em></td>
+<td align="center"><em>2.4 小时</em></td>
+</tr>
+<tr>
+<td align="center">99%（2个9）</td>
+<td align="center"><em>3.65 天</em></td>
+<td align="center">7.20 小时</td>
+<td align="center"><em>1.68 小时</em></td>
+<td align="center"><em>14.4 分</em></td>
+</tr>
+<tr>
+<td align="center">99.9%（3个9）</td>
+<td align="center"><em>8.76 小时</em></td>
+<td align="center"><em>43.8 分</em></td>
+<td align="center"><em>10.1 分</em></td>
+<td align="center"><em>1.44分</em></td>
+</tr>
+<tr>
+<td align="center">99.99%（4个9）</td>
+<td align="center"><em>52.56 分</em></td>
+<td align="center"><em>4.38 分</em></td>
+<td align="center"><em>1.01 分</em></td>
+<td align="center"><em>8.66 秒</em></td>
+</tr>
+<tr>
+<td align="center">99.999%（5个9）</td>
+<td align="center"><em>5.26 分</em></td>
+<td align="center"><em>25.9 秒</em></td>
+<td align="center"><em>6.05 秒</em></td>
+<td align="center"><em>0.87 秒</em></td>
+</tr>
+</tbody></table>
+<p>通常来说，系统至少要达到 4 个 9（99.99%），也就是每年宕机时间不超过 52.56 分钟，否则用户体验会非常差，感觉系统不稳定。</p>
+<p>$$<br>99.99% =  1 - \frac{52.56}{365\times24\times60}<br>$$<br>不过 4 个 9 宕机 52 分钟对于生产环境的影响还是比较大，但是 5 个 9 对大部分系统来说要求又太高。所以一些云服务商会提出一个 99.995% 的可用性概念，那么系统一年的不可用时长为：</p>
+<p>$$<br>不可用时长 = ( 1 -  99.995% )\times365\times24\times60 = 26.28 (分钟)<br>$$<br>即一年最多的影响服务的时间为 26.28 分钟。</p>
+<h2 id="高可用架构设计"><a href="#高可用架构设计" class="headerlink" title="高可用架构设计"></a>高可用架构设计</h2><p>系统要达到高可用，一定要做好软硬件的冗余，消除单点故障（SPOF single point of failure）。</p>
+<p>冗余是高可用的基础，通常认为，系统投入硬件资源越多，冗余也就越多，系统可用性也就越高。</p>
+<p>除了做好冗余，系统还要做好故障转移（Failover）的处理。也就是在最短的时间内发现故障，然后把业务切换到冗余的资源上。</p>
+<p>在明确上述高可用设计的基本概念后之后，我们来看一下高可用架构设计的类型：<strong>无状态服务高可用设计、数据库高可用架构设计</strong>。</p>
+<h3 id="无状态服务高可用设计"><a href="#无状态服务高可用设计" class="headerlink" title="无状态服务高可用设计"></a>无状态服务高可用设计</h3><p>无状态的服务（如 Nginx ）高可用设计非常简单，发现问题直接转移就行，甚至可以通过负载均衡服务，当发现有问题，直接剔除：</p>
+<p><img src="http://image.leonote.cn/20210915220056.png" alt="image-20210915220056048"></p>
+<p>上图中，当第一台 Nginx 服务器出现问题，导致服务不可用，Load Balance 负载均衡服务发现后，就可以直接把它剔除。</p>
+<p>对于上层用户来说，他只会在几秒内的访问出现问题，之后服务就立刻恢复了。无状态的服务，高可用设计就是这么简单。</p>
+<h3 id="数据库高可用架构设计"><a href="#数据库高可用架构设计" class="headerlink" title="数据库高可用架构设计"></a>数据库高可用架构设计</h3><p>所以，系统高可用设计，真正的难点、痛点不在于无状态服务的设计，而在于数据库的高可用设计，这是因为：</p>
+<ul>
+<li><p>数据持久化在数据库中，是有状态的服务；</p>
+</li>
+<li><p>数据库的容量比较大，Failover 的时间相对无状态服务会更多；</p>
+</li>
+</ul>
+<ul>
+<li>一些系统，如金融场景的数据库，会要求数据完全不能丢失，这又增加了高可用实现的难度。</li>
+</ul>
+<p>其实从架构角度看，数据库高可用本身也是业务高可用，所以我们要从业务全流程的角度出发，思考数据库的高可用设计。</p>
+<p>我在这里提供了三种数据库的高可用架构设计方法，它们不但适用于 MySQL 数据库，也适用于其他数据库。</p>
+<h4 id="基于数据层的数据库高可用架构"><a href="#基于数据层的数据库高可用架构" class="headerlink" title="基于数据层的数据库高可用架构"></a>基于数据层的数据库高可用架构</h4><p>基于数据层的数据库高可用架构，就是基于数据同步技术。当主服务器 Master 发生宕机，则故障转移到从服务器 Slave。</p>
+<p>对于 MySQL 数据库来说，就是基于前面介绍的复制技术。对于读写分离架构，如果主服务器发生宕机，做如下操作就行了：</p>
+<p><img src="http://image.leonote.cn/20210915220210.png" alt="image-20210915220210666"></p>
+<p>可以发现，我们原先的 Slave3 从服务器提升为了新主机，然后建立了新的复制拓扑架构，Slave2、Slave3 都连到新 Master 进行数据同步。</p>
+<p>为了在故障转移后对 Service 服务无感知，所以需要引入 VIP（Virtual IP）虚拟 IP 技术，当发生宕机时，VIP 也需要漂移到新的主服务器。</p>
+<p>那么这个架构的真正难点在于：</p>
+<ol>
+<li><p>如何保障数据一致性；</p>
+</li>
+<li><p>如何发现主服务器宕机；</p>
+</li>
+<li><p>故障转移逻辑的处理；</p>
+</li>
+</ol>
+<p>我们可以通过 MySQL 提供的无损复制技术，来保障“数据一致性”。而“发现主服务器宕机”“处理故障转移逻辑”要由数据库高可用套件完成。</p>
+<h4 id="基于业务层的数据库高可用架构"><a href="#基于业务层的数据库高可用架构" class="headerlink" title="基于业务层的数据库高可用架构"></a>基于业务层的数据库高可用架构</h4><p>第二种“基于业务层的数据库高可用架构设计”则完全基于业务实现，数据库只是用于存储数据。</p>
+<p>当一台数据库主服务器不可用，业务直接写另一台数据库主服务器就可以了。我们来看一下这个架构：</p>
+<p><img src="http://image.leonote.cn/20210915220342.png" alt="image-20210915220342367"></p>
+<p>从上图可以看到，Service 服务写入 Master1 主服务器失败后，不用等待故障转移程序启用主从切换，而是直接把数据写入 Master2 主服务器。</p>
+<p>这看似是一种非常简单、粗暴的高可用架构实现方式，但能符合这样设计的业务却并不多，因为该设计前提是<strong>状态可修改</strong>。</p>
+<p>比如电商中的订单服务，其基本逻辑就是存储电商业务中每笔订单信息，核心逻辑就是往表Orders 中插入数据，即：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO Orders(o_orderkey, ... ) VALUES (...)</span><br></pre></td></tr></table></figure>
+
+<p>这里 o_orderkey 是主键。为了实现基于业务层的数据库高可用，可以在主键生成过程中加入额外信息，比如服务器编号，这样订单的主键设计变为了：</p>
+<p>$$<br>PK = 有序UUID-服务器编号<br>$$<br>这样的话，当写入服务器编号 1 时失败了，业务层会把订单的主键修改为服务器编号 2，这样就实现了业务层的高可用，电商中的这种订单号生成方式也称为“跳单”。</p>
+<p>而当查询订单信息时，由于主键中包含了服务器编号，那么业务知道该笔订单存储在哪台服务器，就可以非常快速地路由到指定的服务器。</p>
+<p>但这样设计的前提是整个服务的写入主键是可以进行跳单设计，且查询全部依赖主键进行搜索。</p>
+<p>看到这里，你是不是觉得非常符合 NoSQL 的 KV 访问设计呢？别忘了前面介绍的 Memcached Plugin 哦。</p>
+<h3 id="融合的高可用架构设计"><a href="#融合的高可用架构设计" class="headerlink" title="融合的高可用架构设计"></a>融合的高可用架构设计</h3><p>刚刚“基于业务层的数据库高可用架构”中，虽然通过跳单设计，可以实现写入业务的高可用实现。但这时订单服务的查询功能会受到极大影响。在上面的例子中，当发生宕机时，服务器编号为 1 的订单无法查询。</p>
+<p>所以，我给出一种业务和数据层相结合的高可用设计。这个架构可以解决宕机后，查询服务受限的问题。其架构图如下所示：</p>
+<p><img src="http://image.leonote.cn/20210915220434.png" alt="image-20210915220434695"></p>
+<p>上图中，将不同编号的订单根据不同的数据库进行存放，比如服务器编号为 1 的订单存放在数据库 DB1 中，服务器编号为 2 的订单存放在数据库 DB2 中。</p>
+<p>此外，这里也用到了 MySQL 复制中的部分复制技术，即左上角的主服务器仅将 DB1 中的数据同步到右上角的服务器。同理，右上角的主服务器仅将 DB2 中的数据同步到左上角的服务器。下面的两台从服务器不变，依然从原来的 MySQL 实例中同步数据。</p>
+<p>这样做得好处是：</p>
+<p>在常态情况下，上面两台 MySQL 数据库是双活的，都可以有数据的写入，业务的性能得到极大提升。</p>
+<p>订单数据是完整的，服务器编号为 1 和 2 的数据都在一个 MySQL 实例上。</p>
+<p>更重要的是，这样当发生宕机时，Service 服务的写入不受到影响，写入服务器编号为 1 的订单通过跳单设计写入 DB2。</p>
+<p>同时，对于订单读取也不会受到影响，因为数据都是一个实例上，如：</p>
+<p><img src="http://image.leonote.cn/20210915220551.png" alt="image-20210915220551286"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>学习了系统设计中最为重要的高可用设计，这是业务系统设计中必须考虑的一点。生产环境没有高可用，是根本无法完成上线工作的。</p>
+<p>建议加深自己对于高可用系统设计的理解。因为这些思想不限于 MySQL数据库，而是适用所有数据库以及业务系统：</p>
+<ul>
+<li><p>高可用是系统所能提供无故障服务的一种能力，度量单位是几个 9；</p>
+</li>
+<li><p>线上系统高可用目标应不低于 99.995%，否则系统频繁宕机，用户体验不好；</p>
+</li>
+<li><p>高可用实现基础是：冗余 + 故障转移；</p>
+</li>
+<li><p>无状态服务的高可用设计较为简单，直接故障转移或剔除就行；</p>
+</li>
+<li><p>数据库作为有状态的服务，设计比较复杂（冗余通过复制技术实现，故障转移需要对应的高可用套件）；</p>
+</li>
+<li><p>数据库高可用有三大架构设计，请务必牢记这几种设计。</p>
+</li>
+</ul>
+<h2 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h2><p>针对所学习的数据库三大高可用架构设计，请讲述它们的优缺点。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/b0667a7c.html">https://liule8.github.io/post/b0667a7c.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/MySQL/">MySQL</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/5bc01b23.html"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">MySQL实战宝典之高可用架构-金融级高可用架构</div></div></a></div><div class="next-post pull-right"><a href="/post/1354a6f.html"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">MySQL实战宝典之高可用架构-读写分离设计</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/d432a4f3.html" title="MySQL实战宝典之分布式架构-分布式事务"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-09</div><div class="title">MySQL实战宝典之分布式架构-分布式事务</div></div></a></div><div><a href="/post/7ab30575.html" title="MySQL实战宝典之分布式架构-分布式数据库架构"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-07</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库架构</div></div></a></div><div><a href="/post/5e11524d.html" title="MySQL实战宝典之分布式架构-分布式数据库架构选型"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-08</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库架构选型</div></div></a></div><div><a href="/post/18c1c8d9.html" title="MySQL实战宝典之分布式架构-分布式数据库索引设计"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-08</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库索引设计</div></div></a></div><div><a href="/post/a943c20f.html" title="MySQL实战宝典之分布式架构-分布式数据库表结构设计"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-08</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库表结构设计</div></div></a></div><div><a href="/post/d35cee5.html" title="MySQL实战宝典之分布式架构-分布式设计之禅"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-09</div><div class="title">MySQL实战宝典之分布式架构-分布式设计之禅</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E8%AE%BE%E8%AE%A1%EF%BC%9A%E4%BD%A0%E6%80%8E%E4%B9%88%E6%B4%BB%E7%94%A8%E4%B8%89%E5%A4%A7%E6%9E%B6%E6%9E%84%E6%96%B9%E6%A1%88%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">高可用设计：你怎么活用三大架构方案？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E6%A6%82%E5%BF%B5"><span class="toc-number">1.1.</span> <span class="toc-text">高可用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.</span> <span class="toc-text">高可用架构设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1%E9%AB%98%E5%8F%AF%E7%94%A8%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.1.</span> <span class="toc-text">无状态服务高可用设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.2.</span> <span class="toc-text">数据库高可用架构设计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E6%95%B0%E6%8D%AE%E5%B1%82%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">基于数据层的数据库高可用架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E4%B8%9A%E5%8A%A1%E5%B1%82%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">基于业务层的数据库高可用架构</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%9E%8D%E5%90%88%E7%9A%84%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.3.</span> <span class="toc-text">融合的高可用架构设计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-number">1.4.</span> <span class="toc-text">思考题</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/d42cc345.html" title="数据结构与算法之入门篇-为什么要学习数据结构和算法">数据结构与算法之入门篇-为什么要学习数据结构和算法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/68a8f17f.html" title="数据结构与算法之入门篇-学习方法">数据结构与算法之入门篇-学习方法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/abff7577.html" title="Netty 核心原理剖析与 RPC 实践-实践总结">Netty 核心原理剖析与 RPC 实践-实践总结</a><time datetime="2021-10-14T20:34:53.000Z" title="发表于 2021-10-14 20:34:53">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/889de2a9.html" title="Netty 核心原理剖析与 RPC 实践-编程思想">Netty 核心原理剖析与 RPC 实践-编程思想</a><time datetime="2021-10-14T20:34:26.000Z" title="发表于 2021-10-14 20:34:26">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/634ac34e.html" title="Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸">Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸</a><time datetime="2021-10-14T20:33:36.000Z" title="发表于 2021-10-14 20:33:36">2021-10-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

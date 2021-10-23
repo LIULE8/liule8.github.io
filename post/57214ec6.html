@@ -1,0 +1,294 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>计算机网络通关之网络层协议-路由和寻址的区别是什么? | Leo's notes</title><meta name="keywords" content="计算机网络"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="IPv4 协议：路由和寻址的区别是什么？如果说传输层协议，除了 TCP&#x2F;UDP，我们还可以有其他选择，比如 Google 开发的 QUIC 协议，帮助在传输层支持 HTTP 3.0 传输。但是在网络层，IP 协议几乎一统天下。IP 协议目前主要有两个版本 IPv4 和 IPv6。这一讲我们先介绍 IPv4 协议。 根据 Google 统计，使用 IPv6 的Google 用户比例在 30% 左右。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络通关之网络层协议-路由和寻址的区别是什么?">
+<meta property="og:url" content="https://liule8.github.io/post/57214ec6.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="IPv4 协议：路由和寻址的区别是什么？如果说传输层协议，除了 TCP&#x2F;UDP，我们还可以有其他选择，比如 Google 开发的 QUIC 协议，帮助在传输层支持 HTTP 3.0 传输。但是在网络层，IP 协议几乎一统天下。IP 协议目前主要有两个版本 IPv4 和 IPv6。这一讲我们先介绍 IPv4 协议。 根据 Google 统计，使用 IPv6 的Google 用户比例在 30% 左右。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-10-01T20:25:37.000Z">
+<meta property="article:modified_time" content="2021-10-16T05:06:48.069Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/57214ec6"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-16 05:06:48'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">计算机网络通关之网络层协议-路由和寻址的区别是什么?</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-10-01T20:25:37.000Z" title="发表于 2021-10-01 20:25:37">2021-10-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-16T05:06:48.069Z" title="更新于 2021-10-16 05:06:48">2021-10-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="计算机网络通关之网络层协议-路由和寻址的区别是什么?"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="IPv4-协议：路由和寻址的区别是什么？"><a href="#IPv4-协议：路由和寻址的区别是什么？" class="headerlink" title="IPv4 协议：路由和寻址的区别是什么？"></a>IPv4 协议：路由和寻址的区别是什么？</h1><p>如果说传输层协议，除了 TCP/UDP，我们还可以有其他选择，比如 Google 开发的 QUIC 协议，帮助在传输层支持 HTTP 3.0 传输。但是在网络层，IP 协议几乎一统天下。IP 协议目前主要有两个版本 IPv4 和 IPv6。这一讲我们先介绍 IPv4 协议。</p>
+<p>根据 Google 统计，使用 IPv6 的Google 用户比例在 30% 左右。</p>
+<p><img src="http://image.leonote.cn/20211001202700.png" alt="image-20211001202700082"></p>
+<p>IPv4使用范围很大，平时工作中很容易遇到，比如开发场景、网络优化场景、解决线上问题场景等。相信你经常会碰到一些和 IP 协议相关的名词。因此，学习 IPv4 还是非常有意义的。</p>
+<h2 id="什么是-IP-协议？"><a href="#什么是-IP-协议？" class="headerlink" title="什么是 IP 协议？"></a>什么是 IP 协议？</h2><p><strong>IP 协议（Internet Protocol）</strong>是一个处于垄断地位的网络层协议。 IPv4 就是 IP 协议的第 4 个版本，是目前互联网的主要网络层协议。IPv4 为传输层提供 Host-To-Host 的能力，IPv4 需要底层数据链路层的支持。</p>
+<p><img src="http://image.leonote.cn/20211001202813.png" alt="image-20211001202813845"></p>
+<p>IP 协议并不负责数据的可靠性。传输数据时，数据被切分成一个个数据封包。IP 协议上层的传输层协议会对数据进行一次拆分，IP 协议还会进一步进行拆分。进行两次拆分是为了适配底层的设备。</p>
+<p>之前我们提到过， 数据在网络中交换（封包交换算法），并不需要预先建立一个连接，而是任由数据在网络中传输，每个节点通过路由算法帮助数据封包选择下一个目的地。</p>
+<p>这里再复习一下可靠性，<strong>可靠性保证数据无损地到达目的地</strong>。可靠性是 IP 协议上方的 Host-To-Host 协议保证的，比如 TCP 协议通过应答机制、窗口等保证数据的可靠性。 IP 协议自身不能保证可靠性。比如 IP 协议可能会遇到下面这几个问题：</p>
+<ul>
+<li><p>封包损坏（数据传输过程中被损坏）；</p>
+</li>
+<li><p>丢包（数据发送过程中丢失）；</p>
+</li>
+<li><p>重发（数据被重发，比如中间设备通过 2 个路径传递数据）；</p>
+</li>
+<li><p>乱序（到达目的地时数据和发送数据不一致）。</p>
+</li>
+</ul>
+<p>但是 IP 协议并不会去处理这些问题，因为网络层只专注解决网络层的问题， 而且不同特性的应用在不同场景下需要解决的问题不一样。对于网络层来说，这里主要有 3 个问题要解决：</p>
+<ul>
+<li><p>延迟</p>
+</li>
+<li><p>吞吐量</p>
+</li>
+<li><p>丢包率</p>
+</li>
+</ul>
+<p>这三个是鱼和熊掌不能兼得，我们后续会讨论。</p>
+<p>另外，IP 协议目前主要有两种架构，一种是 IPv4，是目前应用最广泛的互联网协议；另一种是 IPv6，目前世界各地正在积极地部署 IPv6。这块我们最后讨论。</p>
+<h2 id="IP-协议的工作原理"><a href="#IP-协议的工作原理" class="headerlink" title="IP 协议的工作原理"></a>IP 协议的工作原理</h2><p><strong>IP 协议接收 IP 协议上方的 Host-To-Host 协议传来的数据，然后进行拆分，这个能力叫作分片（Fragmentation）</strong>。然后 IP 协议为每个片段（Fragment）增加一个 IP 头（Header），组成一个IP 封包（Datagram）。之后，IP 协议调用底层的局域网（数据链路层）传送数据。最后 IP 协议通过寻址和路由能力最终把封包送达目的地。接下来为你讲述完整的过程。</p>
+<h3 id="分片（Fragmentation）"><a href="#分片（Fragmentation）" class="headerlink" title="分片（Fragmentation）"></a>分片（Fragmentation）</h3><p><strong>分片就是把数据切分成片</strong>。 IP 协议通过它下层的局域网（链路层）协议传输数据，因此需要适配底层传输网络的传输能力。数据太大通常就不适合底层网络传输，这就需要把大的数据切片。 当然也可能选择不切片，IP 协议提供了一个能力就是把封包标记为不切片，当底层网络看到不切片的封包，又没有能力传输的时候，就会丢弃这个封包。你要注意，在网络环境中往往存在多条路径，一条路径断了，说不定其他路径可以连通。</p>
+<h3 id="增加协议头（IP-Header）"><a href="#增加协议头（IP-Header）" class="headerlink" title="增加协议头（IP Header）"></a>增加协议头（IP Header）</h3><p>切片完成之后，IP 协议会为每个切片（数据封包 Datagram）增加一个协议头。一个 IPv4 的协议头看上去就是如下图所示的样子：</p>
+<p><img src="http://image.leonote.cn/20211001203910.png" alt="image-20211001203910260"></p>
+<p>其中分成 4 个部分。</p>
+<ul>
+<li><p>最重要的是原地址和目标地址。IPv4 的地址是 4 组 8 位的数字，总共是 32 位。具体地址的作用我们在下面的“寻址部分”介绍。</p>
+</li>
+<li><p>Type Of Service 服务的类型，是为了响应不同的用户诉求，用来选择延迟、吞吐量和丢包率之间的关系。关于这块知识，本讲后半部分就会分析。</p>
+</li>
+<li><p>IHL（Internet Header Length）用来描述 IP 协议头的大小。所以 IP 协议头的大小是可变的。IHL 只有 4 位，最大值 1111 = 15。最大是 15 个双字（15*4 字节 = 60 字节）。</p>
+</li>
+<li><p>Total Length 定义报文（封包 Datagram）的长度。</p>
+</li>
+<li><p>Identification（报文的 ID），发送方分配，代表顺序。</p>
+</li>
+<li><p>Fragment offset 描述要不要分包（拆分），以及如何拆分。</p>
+</li>
+<li><p>Time To Live 描述封包存活的时间。因此每个 IP 封包发送出去后，就开始销毁倒计时。如果倒计时为 0，就会销毁。比如中间的路由器看到一个 TTL 为 0 的封包，就直接丢弃。</p>
+</li>
+<li><p>Protocol 是描述上层的协议，比如 TCP = 6，UDP = 17。</p>
+</li>
+<li><p>Options 代表可选项。</p>
+</li>
+<li><p>Checksum 用来检验封包的正确性，如果 Checksum 对不上，就需要选择丢弃这个封包。</p>
+</li>
+</ul>
+<h3 id="“鱼和熊掌”不能兼得——延迟、吞吐量、丢包率"><a href="#“鱼和熊掌”不能兼得——延迟、吞吐量、丢包率" class="headerlink" title="“鱼和熊掌”不能兼得——延迟、吞吐量、丢包率"></a>“鱼和熊掌”不能兼得——延迟、吞吐量、丢包率</h3><p>上面我们看到 IPv4 协议中提供了一个叫作 Type of Service（服务类型）的字段。这个字段是为了在延迟、吞吐量和丢包率三者间选择。</p>
+<h4 id="延迟（latency）"><a href="#延迟（latency）" class="headerlink" title="延迟（latency）"></a>延迟（latency）</h4><p>延迟指的是 1 bit 的数据从网络的一个终端传送到另一个终端需要的时间。这个时间包括在发送端准备发送的时间、排队发送的时间、发送数据的时间、数据传输的时间等。</p>
+<h4 id="吞吐量（Throughput）"><a href="#吞吐量（Throughput）" class="headerlink" title="吞吐量（Throughput）"></a>吞吐量（Throughput）</h4><p>吞吐量指单位时间内可以传输的平均数据量。比如用 bit/s 作为单位，就是 bps。<strong>吞吐量和延迟没有联系</strong>，比如延迟很高的网络，有可能吞吐量很高。可以类比成水管很大流速很慢，对比水管很细流速很快，这两种情况，最终流量可以是相等的。</p>
+<h4 id="丢包率（Packet-loss）"><a href="#丢包率（Packet-loss）" class="headerlink" title="丢包率（Packet loss）"></a>丢包率（Packet loss）</h4><p>丢表率指发送出去的封包没有到达目的地的比例。 在最大流速确定的网络中，<strong>丢表率会直接影响吞吐量</strong>。</p>
+<p>我们的网络有时候需要低延迟，比如玩一款 RTS 游戏或者 Moba 游戏，这种时候延迟非常重要。另外如果把延迟看作一个平均指标，<strong>丢包也会影响延迟</strong>——一个包丢了，需要重发。而有的应用需要高吞吐量，延迟不是很重要，比如说网盘下载文件。大部分应用期望丢包不能太严重，比如语音电话，少量丢包还能听清，大量丢包就麻烦了，根本听不清对方说什么。严格希望不丢包的应用比较少，只有极特殊的网络控制管理场景，才需要在互联网层要求不丢包。</p>
+<p>当然这三个条件，通常不能同时满足。如果同时追求延迟、吞吐量、丢包率，那么对网络设备的要求就会非常高，说白了就会非常贵。因此 IP 协议头中的 Type of Service 字段里，有以下 4 种主要的类型可以选择：</p>
+<ul>
+<li><p>低延迟</p>
+</li>
+<li><p>高吞吐量</p>
+</li>
+<li><p>低丢包率</p>
+</li>
+<li><p>低成本</p>
+</li>
+</ul>
+<h3 id="寻址（Addressing）"><a href="#寻址（Addressing）" class="headerlink" title="寻址（Addressing）"></a>寻址（Addressing）</h3><p>地址想要表达的是一个东西在哪里。寻址要做的就是：给一个地址，然后找到这个东西。IPv4 协议的寻址过程是逐级寻址。</p>
+<h4 id="IPv4-地址"><a href="#IPv4-地址" class="headerlink" title="IPv4 地址"></a>IPv4 地址</h4><p>IPv4 地址是 4 个 8 位（Octet）排列而成，总共可以编址 43 亿个地址。</p>
+<p>比如 <code>103.16.3.1</code> 就是一个合法的 Ipv4 地址。4 组数字用.分开，是为了让人可读，实际上在内存和传输过程中，就是直接用 32 位。</p>
+<p>你可以观察一下<code>103.16.3.1</code>的二进制，如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>103</th>
+<th>16</th>
+<th>3</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>01100111</td>
+<td>00010000</td>
+<td>00000011</td>
+<td>00010001</td>
+</tr>
+</tbody></table>
+<h4 id="寻址过程"><a href="#寻址过程" class="headerlink" title="寻址过程"></a>寻址过程</h4><p>寻址就是如何根据 IP 地址找到设备。因为 IPv4 的世界中，网络是一个树状模型。顶层有多个平行的网络，每个网络有自己的网络号。然后顶层网络下方又有多个子网，子网下方还有子网，最后才是设备。</p>
+<p><img src="http://image.leonote.cn/20211001204625.png" alt="image-20211001204625216"></p>
+<p>IP 协议的寻址过程需要逐级找到网络，最后定位设备。下面我们具体分析下这个过程。</p>
+<ul>
+<li><p><strong>步骤 1：找到顶层网络</strong></p>
+<p>比如<code>103.16.3.1</code>最顶层的网络号可以和<code>255.0.0.0</code>（子网掩码）做位与运算得到，如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">103.16.3.1 &amp; 255.0.0.0 &#x3D; 103.0.0.0</span><br></pre></td></tr></table></figure>
+
+<p>因此<code>103.0.0.0</code>就是<code>103.16.3.1</code>所在的顶层网络。<code>255.0.0.0</code>称作子网掩码。子网掩码的作用就是帮助根据 IP 地址找到对应子网。子网掩码是很多个1接着很多个0，和 IP 地址一起使用。</p>
+</li>
+<li><p><strong>步骤 2：找到下一层网络</strong></p>
+<p>接下来要找到下一级网络，就需要用 IP 地址和下一级的子网掩码做位与运算。 比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">103.16.3.1 &amp; 255.255.0.0 &#x3D; 103.16.0.0</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>103.16.0.0</code>就是下一级的网络号。</p>
+</li>
+<li><p><strong>步骤 3：找到再下一级网络</strong></p>
+<p>接下来使用<code>255.255.255.0</code>子网掩码找到下一级网络是<code>103.16.3.0</code>。</p>
+</li>
+<li><p><strong>步骤 4：定位设备</strong></p>
+<p>设备就在子网<code>103.16.3.0</code>中，最终找到的设备号是1。</p>
+<p>当然子网掩码也不一定都是255，比如这个子网掩码<code>255.240.0.0</code>也是可以的。但通常我们把 IPv4 的网络分成这样 4 层。</p>
+</li>
+</ul>
+<h3 id="路由（Routing）"><a href="#路由（Routing）" class="headerlink" title="路由（Routing）"></a>路由（Routing）</h3><p>在寻址过程中，数据总是存于某个局域网中。如果目的地在局域网中，就可以直接定位到设备了。如果目的地不在局域网中，这个时候，就需再去往其他网络。</p>
+<p>由于网络和网络间是网关在连接，因此如果目的地 IP 不在局域网中，就需要为 IP 封包选择通往下一个网络的路径，其实就是选择其中一个网关。你可能会问：网关有多个吗？如果一个网络和多个网络接壤，那自然需要多个网关了。下图中，路由器在选择 IP 封包下一个应该是去往哪个 Gateway？</p>
+<p><img src="http://image.leonote.cn/20211001205118.png" alt="image-20211001205117993"></p>
+<p>假如，我们要为 IP 地址 <code>14.215.177.38</code> 寻址，当前路由器所在的网络的编号是<code>16.0.0.0</code>。那么我们就需要知道去往 <code>14.0.0.0</code> 网络的 Gateway IP 地址。</p>
+<p>如果你在当前网络中用route查看路由表，可能可以看到一条下面这样的记录。</p>
+<ul>
+<li><p>Destination：<code>14.0.0.0</code></p>
+</li>
+<li><p>Gateway：<code>16.12.1.100</code></p>
+</li>
+<li><p>Mask：<code>255.0.0.0</code></p>
+</li>
+<li><p>Iface：<code>16.12.1.1</code></p>
+</li>
+</ul>
+<p>这条记录就说明如果你要去往 <code>14.0.0.0</code> 网络，IP 地址 <code>14.215.177.38</code> 先要和 <code>255.0.0.0</code> 进行位运算，然后再查表，看到 <code>14.0.0.0</code>，得知去往 Gateway 的网卡（IFace）是 <code>16.12.1.1</code>。</p>
+<p>当封包去向下一个节点后，会进入新的路由节点，然后会继续上述路由过程，直到最终定位到设备。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们学习了 IP 协议和 IP 协议的工作原理。首先 IP 协议会进行分片，将上游数据拆成一个个的封包（Datagram），然后为封包增加 IP 头部。封包发送出去后，就开始了寻址过程。寻址就是找到 IP 地址对应的设备。在局域网内，如果找不到设备，就需要路由。路由就是找到数据应该往哪里发送。最后通过层层路由定位到具体的设备。</p>
+<p><strong>尝试来回答面试题目：路由和寻址的区别是什么？</strong></p>
+<p>【解析】寻址（Addressing）就是通过地址找设备。和现实生活中的寻址是一样的，比如根据地址找到一个公寓。在 IPv4 协议中，寻址找到的是一个设备所在的位置。</p>
+<p>路由（Routing）本质是路径的选择。就好像知道地址，但是到了每个十字路口，还需要选择具体的路径。</p>
+<p>所以，要做路由，就必须能够理解地址，也就是需要借助寻址的能力。要通过寻址找到最终的设备，又要借助路由在每个节点选择数据传输的线路。因此，路由和寻址，是相辅相成的关系。</p>
+<h2 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h2><p>下面这几个地址 <code>127.0.0.1</code>, localhost, <code>0.0.0.0</code> 有什么不同？</p>
+<blockquote>
+<ol>
+<li><code>127.0.0.1</code> 是一个环回地址。并不表示“本机”，它属于{127,}集合中的一个，而所有网络号为127的地址都被称之为回环地址，所以回环地址!=<code>127.0.0.1</code>，它们是包含关系，即回环地址包含<code>127.0.0.1</code>。</li>
+<li>localhost 是个域名，而不是一个ip地址，用于指代this computer或者this host，可以用它来获取运行在本机上的网络服务。之所以我们经常把localhost与<code>127.0.0.1</code>认为是同一个是因为我们使用的大多数电脑上都将localhost指向了<code>127.0.0.1</code>这个地址。</li>
+<li>一般把<code>0.0.0.0</code>称为“unspecified”，即未指定（即无效的，无意义的）地址。</li>
+</ol>
+</blockquote>
+<h3 id="其他解答"><a href="#其他解答" class="headerlink" title="其他解答"></a>其他解答</h3><blockquote>
+<p><code>127.0.0.1</code>是本地回环地址（loopback），发送到 loopback 的数据会被转发到本地应用。</p>
+<p>localhost 指代的是本地计算机，用于访问绑定在 loopback 上的服务。localhost 是一个主机名，不仅仅可以指向 IPv4 的本地回环地址，也可以指向 IPv6 的本地回环地址 [::1]。</p>
+<p><code>0.0.0.0</code>是一个特殊目的 IP 地址，称作不可路由 IP 地址，它的用途会被特殊规定。通常情况下，当我们把一个服务绑定到<code>0.0.0.0</code>，相当于把服务绑定到任意的 IP 地址。比如一台服务器上有多个网卡，不同网卡连接不同的网络，如果服务绑定到 <code>0.0.0.0</code> 就可以保证服务在多个 IP 地址上都可以用</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/57214ec6.html">https://liule8.github.io/post/57214ec6.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/1f664990.html"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">计算机网络通关之网络层协议-Tunnel 技术是什么?</div></div></a></div><div class="next-post pull-right"><a href="/post/50b43ac7.html"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">计算机网络通关之互联网和传输层协议-TCP 协议和 UDP 协议的优势和劣势?</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/462e1124.html" title="计算机网络通关之Web 技术-DNS 域名解析系统"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-03</div><div class="title">计算机网络通关之Web 技术-DNS 域名解析系统</div></div></a></div><div><a href="/post/4764a1e7.html" title="计算机网络通关之Web 技术-HTTP 协议"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-04</div><div class="title">计算机网络通关之Web 技术-HTTP 协议</div></div></a></div><div><a href="/post/cbe8db1a.html" title="计算机网络通关之Web 技术-内容分发网络"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-03</div><div class="title">计算机网络通关之Web 技术-内容分发网络</div></div></a></div><div><a href="/post/ee104761.html" title="计算机网络通关之Web 技术-流媒体技术"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-04</div><div class="title">计算机网络通关之Web 技术-流媒体技术</div></div></a></div><div><a href="/post/27c4fbe1.html" title="计算机网络通关之Web 技术-爬虫和反爬虫"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-04</div><div class="title">计算机网络通关之Web 技术-爬虫和反爬虫</div></div></a></div><div><a href="/post/4b2a9439.html" title="计算机网络通关之互联网和传输层协议-TCP 为什么握手是 3 次、挥手是 4 次?"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-30</div><div class="title">计算机网络通关之互联网和传输层协议-TCP 为什么握手是 3 次、挥手是 4 次?</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#IPv4-%E5%8D%8F%E8%AE%AE%EF%BC%9A%E8%B7%AF%E7%94%B1%E5%92%8C%E5%AF%BB%E5%9D%80%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">IPv4 协议：路由和寻址的区别是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-IP-%E5%8D%8F%E8%AE%AE%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">什么是 IP 协议？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IP-%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">IP 协议的工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E7%89%87%EF%BC%88Fragmentation%EF%BC%89"><span class="toc-number">1.2.1.</span> <span class="toc-text">分片（Fragmentation）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E5%8D%8F%E8%AE%AE%E5%A4%B4%EF%BC%88IP-Header%EF%BC%89"><span class="toc-number">1.2.2.</span> <span class="toc-text">增加协议头（IP Header）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%80%9C%E9%B1%BC%E5%92%8C%E7%86%8A%E6%8E%8C%E2%80%9D%E4%B8%8D%E8%83%BD%E5%85%BC%E5%BE%97%E2%80%94%E2%80%94%E5%BB%B6%E8%BF%9F%E3%80%81%E5%90%9E%E5%90%90%E9%87%8F%E3%80%81%E4%B8%A2%E5%8C%85%E7%8E%87"><span class="toc-number">1.2.3.</span> <span class="toc-text">“鱼和熊掌”不能兼得——延迟、吞吐量、丢包率</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BB%B6%E8%BF%9F%EF%BC%88latency%EF%BC%89"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">延迟（latency）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%9E%E5%90%90%E9%87%8F%EF%BC%88Throughput%EF%BC%89"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">吞吐量（Throughput）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%A2%E5%8C%85%E7%8E%87%EF%BC%88Packet-loss%EF%BC%89"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">丢包率（Packet loss）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BB%E5%9D%80%EF%BC%88Addressing%EF%BC%89"><span class="toc-number">1.2.4.</span> <span class="toc-text">寻址（Addressing）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#IPv4-%E5%9C%B0%E5%9D%80"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">IPv4 地址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%BB%E5%9D%80%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">寻址过程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%EF%BC%88Routing%EF%BC%89"><span class="toc-number">1.2.5.</span> <span class="toc-text">路由（Routing）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-number">1.4.</span> <span class="toc-text">思考题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E8%A7%A3%E7%AD%94"><span class="toc-number">1.4.1.</span> <span class="toc-text">其他解答</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/d42cc345.html" title="数据结构与算法之入门篇-为什么要学习数据结构和算法">数据结构与算法之入门篇-为什么要学习数据结构和算法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/68a8f17f.html" title="数据结构与算法之入门篇-学习方法">数据结构与算法之入门篇-学习方法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/abff7577.html" title="Netty 核心原理剖析与 RPC 实践-实践总结">Netty 核心原理剖析与 RPC 实践-实践总结</a><time datetime="2021-10-14T20:34:53.000Z" title="发表于 2021-10-14 20:34:53">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/889de2a9.html" title="Netty 核心原理剖析与 RPC 实践-编程思想">Netty 核心原理剖析与 RPC 实践-编程思想</a><time datetime="2021-10-14T20:34:26.000Z" title="发表于 2021-10-14 20:34:26">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/634ac34e.html" title="Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸">Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸</a><time datetime="2021-10-14T20:33:36.000Z" title="发表于 2021-10-14 20:33:36">2021-10-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

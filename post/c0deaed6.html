@@ -1,0 +1,880 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>JVM 核心技术-工具与GC策略 | Leo's notes</title><meta name="keywords" content="JVM"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="工具与GC策略JDK 内置命令行工具*   工具 简介    java Java 应用的启动程序   javac JDK 内置的编译工具   javap 反编译 class 文件的工具   javadoc 根据 Java 代码和标准注释,自动生成相关的API说明文档   javah JNI 开发时, 根据 java 代码生成需要的 .h文件。   extcheck 检查某个 jar 文件和运行时扩">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM 核心技术-工具与GC策略">
+<meta property="og:url" content="https://liule8.github.io/post/c0deaed6.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="工具与GC策略JDK 内置命令行工具*   工具 简介    java Java 应用的启动程序   javac JDK 内置的编译工具   javap 反编译 class 文件的工具   javadoc 根据 Java 代码和标准注释,自动生成相关的API说明文档   javah JNI 开发时, 根据 java 代码生成需要的 .h文件。   extcheck 检查某个 jar 文件和运行时扩">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-09-19T17:50:05.000Z">
+<meta property="article:modified_time" content="2021-10-16T05:06:49.208Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/c0deaed6"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-16 05:06:49'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">JVM 核心技术-工具与GC策略</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-09-19T17:50:05.000Z" title="发表于 2021-09-19 17:50:05">2021-09-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-16T05:06:49.208Z" title="更新于 2021-10-16 05:06:49">2021-10-16</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">9.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>31分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="JVM 核心技术-工具与GC策略"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="工具与GC策略"><a href="#工具与GC策略" class="headerlink" title="工具与GC策略"></a>工具与GC策略</h1><h2 id="JDK-内置命令行工具"><a href="#JDK-内置命令行工具" class="headerlink" title="JDK 内置命令行工具*"></a>JDK 内置命令行工具*</h2><table>
+<thead>
+<tr>
+<th align="left">工具</th>
+<th align="left">简介</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>java</strong></td>
+<td align="left">Java 应用的启动程序</td>
+</tr>
+<tr>
+<td align="left"><strong>javac</strong></td>
+<td align="left">JDK 内置的编译工具</td>
+</tr>
+<tr>
+<td align="left"><strong>javap</strong></td>
+<td align="left">反编译 class 文件的工具</td>
+</tr>
+<tr>
+<td align="left">javadoc</td>
+<td align="left">根据 Java 代码和标准注释,自动生成相关的API说明文档</td>
+</tr>
+<tr>
+<td align="left">javah</td>
+<td align="left">JNI 开发时, 根据 java 代码生成需要的 .h文件。</td>
+</tr>
+<tr>
+<td align="left">extcheck</td>
+<td align="left">检查某个 jar 文件和运行时扩展 jar 有没有版本冲突，很少使用</td>
+</tr>
+<tr>
+<td align="left">jdb</td>
+<td align="left">Java Debugger ; 可以调试本地和远端程序, 属于 JPDA 中的一个 demo 实现, 供 其他调试器参考。开发时很少使用</td>
+</tr>
+<tr>
+<td align="left">jdeps</td>
+<td align="left">探测 class 或 jar 包需要的依赖</td>
+</tr>
+<tr>
+<td align="left">jar</td>
+<td align="left">打包工具，可以将文件和目录打包成为 .jar 文件；.jar 文件本质上就是 zip 文件,  只是后缀不同。使用时按顺序对应好选项和参数即可。</td>
+</tr>
+<tr>
+<td align="left">keytool</td>
+<td align="left">安全证书和密钥的管理工具; （支持生成、导入、导出等操作）</td>
+</tr>
+<tr>
+<td align="left">jarsingle</td>
+<td align="left">JAR 文件签名和验证工具</td>
+</tr>
+<tr>
+<td align="left">policytool</td>
+<td align="left">实际上这是一款图形界面工具, 管理本机的 Java 安全策略</td>
+</tr>
+</tbody></table>
+<h3 id="常用的命令"><a href="#常用的命令" class="headerlink" title="常用的命令"></a>常用的命令</h3><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>简介</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>jps/jinfo</td>
+<td>查看 java 进程</td>
+</tr>
+<tr>
+<td>jstat</td>
+<td>查看 JVM 内部 GC 相关信息</td>
+</tr>
+<tr>
+<td>jmap</td>
+<td>查看 heap 或类占用空间统计</td>
+</tr>
+<tr>
+<td>jstack</td>
+<td>查看线程信息</td>
+</tr>
+<tr>
+<td>jcmd</td>
+<td>执行 JVM 相关分析命令（整合命令）</td>
+</tr>
+<tr>
+<td>jrunscript/jjs</td>
+<td>执行 js 命令</td>
+</tr>
+</tbody></table>
+<h4 id="jps-jinfo"><a href="#jps-jinfo" class="headerlink" title="jps/jinfo"></a>jps/jinfo</h4><p>作用：查看java进程的一些信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Usage:</span><br><span class="line">	jps -help</span><br><span class="line">	jps [-q] [-mlv] [&lt;hostid&gt;]</span><br><span class="line"></span><br><span class="line">Definitions:</span><br><span class="line">	&lt;hostid&gt; : &lt;hostname&gt;[:&lt;port&gt;]</span><br><span class="line">	-mlv：可以查看更详细的信息，如-Xmx，-Xms， GC策略等</span><br></pre></td></tr></table></figure>
+
+<h4 id="jstat"><a href="#jstat" class="headerlink" title="jstat*"></a>jstat*</h4><p>作用：查看JVM内部GC相关的情况</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Usage:</span><br><span class="line">	jstat -help|-options</span><br><span class="line">	jstat -&lt;option&gt; [-t] [-h&lt;lines&gt;] &lt;vmid&gt; [&lt;interval&gt; [&lt;count&gt;]]</span><br><span class="line">Definitions:</span><br><span class="line">	&lt;option&gt;  	可用的选项，查看详情请使用 -options</span><br><span class="line">	&lt;vmid&gt; 	  	虚拟机标识符。格式：&lt;lvmid&gt;[@&lt;hostname&gt;[:&lt;port&gt;]]</span><br><span class="line">	&lt;lines&gt;	  	标题行间隔的频率</span><br><span class="line">	&lt;interval&gt;  采样周期，&lt;n&gt;[&quot;ms&quot;|&quot;s&quot;]，默认单位是毫秒&quot;ms&quot;</span><br><span class="line">	&lt;count&gt;		采用总次数</span><br><span class="line">	-J&lt;flag&gt;	传给jstat底层JVM的&lt;flag&gt;参数</span><br></pre></td></tr></table></figure>
+
+<p>&gt; jstat -options </p>
+<ul>
+<li><p><code>-class</code>：类加载(Class loader)信息统计. </p>
+</li>
+<li><p><code>-compiler</code>：JIT 即时编译器相关的统计信息</p>
+</li>
+<li><p><code>-gc</code>：GC 相关的堆内存信息  </p>
+<ul>
+<li><p>统计结果是字节显示</p>
+</li>
+<li><p>用法: <code>jstat -gc -h 10 -t 864 1s 20</code> </p>
+</li>
+<li><p>用法:  jstat -gc 进程ID 执行间隔（单位ms） 执行次数   <code>jstat -gc 55340 1000 1000</code></p>
+</li>
+<li><p>打印出来的信息内容如下</p>
+<ul>
+<li><table>
+<thead>
+<tr>
+<th>TimeStamp</th>
+<th>S0C</th>
+<th>S1C</th>
+<th>S0U</th>
+<th>S1U</th>
+<th>EC</th>
+<th>EU</th>
+<th>OC</th>
+<th>OU</th>
+<th>MC</th>
+<th>MU</th>
+<th>YGC</th>
+<th>YGCT</th>
+<th>FGC</th>
+<th>FGCT</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>14251645.5</td>
+<td>1152.0</td>
+<td>1152.0</td>
+<td>1456</td>
+<td>0.0</td>
+<td>9600.0</td>
+<td>2312.8</td>
+<td>11848.0</td>
+<td>8527.3</td>
+<td>31616.0</td>
+<td>26528.6</td>
+<td>113788</td>
+<td>206.082</td>
+<td>4</td>
+<td>0.122</td>
+</tr>
+</tbody></table>
+</li>
+<li><p><code>-t</code> 选项的位置是固定的，不能在前也不能在后。可以看出是用于显示时间戳，即JVM启动到现在的秒数</p>
+<ul>
+<li><code>Timestamp</code> 列： JVM启动了1425万秒，大约164天</li>
+<li><code>S0C</code>：0号存活区的当前容量(capacity)，单位KB</li>
+<li><code>S1C</code>：1号存活区的当前容量，单位KB</li>
+<li><code>S0U</code>：0号存活区的使用量(capacity)，单位KB</li>
+<li><code>S1U</code>：1号存活区的使用量，单位KB</li>
+<li><code>EC</code>：Eden区，新生代的当前容量，单位KB</li>
+<li><code>EU</code>：Eden区，新生代的使用量，单位KB</li>
+<li><code>OC</code>：Old区，老年代的当前容量，单位KB</li>
+<li><code>OU</code>：Old区，老年代的使用量，单位KB（需要关注）</li>
+<li><code>MC</code>：元数据区的容量，单位KB</li>
+<li><code>MU</code>：元数据区的使用率，单位KB</li>
+<li><code>CCSC</code>：压缩的class空间容量，单位KB</li>
+<li><code>CCSU</code>：压缩的class空间使用量，单位KB</li>
+<li><code>YGC</code>：年轻代GC的次数</li>
+<li><code>YGCT</code>：年轻代GC消耗的总时间（重点关注）</li>
+<li><code>FGC</code>：FullGC的次数</li>
+<li><code>FGCT</code>：FullGC消耗的总时间（重点关注）</li>
+<li><code>GCT</code>：垃圾收集消耗的总时间</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>-gccapacity</code>： 各个内存池分代空间的容量</p>
+</li>
+<li><p><code>-gccause</code>： 看上次 GC, 本次 GC（如果正在 GC中）的原因, 其他 输出和 -gcutil 选项一致</p>
+</li>
+<li><p><code>-gcnew</code>： 年轻代的统计信息. （New = Young = Eden + S0 + S1）</p>
+</li>
+<li><p><code>-gcnewcapacity</code>：年轻代空间大小统计</p>
+</li>
+<li><p><code>-gcold</code>：老年代和元数据区的行为统计</p>
+</li>
+<li><p><code>-gcoldcapacity</code>：old 空间大小统计</p>
+</li>
+<li><p><code>-gcmetacapacity</code>：meta 区大小统计</p>
+</li>
+<li><p><code>-gcutil</code>：GC 相关区域的使用率（utilization）统计</p>
+<ul>
+<li><p>统计结果是百分比</p>
+</li>
+<li><p>用法:  jstat -gcutil 进程ID 执行间隔（单位ms） 执行次数   <code>jstat -gcutil 55340 1000 1000</code></p>
+</li>
+<li><p>打印出来的信息内容如下</p>
+<ul>
+<li><table>
+<thead>
+<tr>
+<th>TimeStamp</th>
+<th>S0</th>
+<th>S1</th>
+<th>E</th>
+<th>O</th>
+<th>M</th>
+<th>CCS</th>
+<th>YGC</th>
+<th>YGCT</th>
+<th>FGC</th>
+<th>FGCT</th>
+<th>GCT</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>14251645.5</td>
+<td>0.00</td>
+<td>13.50</td>
+<td>55.05</td>
+<td>71.91</td>
+<td>83.84</td>
+<td>69.52</td>
+<td>113767</td>
+<td>206.036</td>
+<td>4</td>
+<td>0.122</td>
+<td>206.158</td>
+</tr>
+</tbody></table>
+</li>
+<li><p><code>-t</code> 选项的位置是固定的，不能在前也不能在后。可以看出是用于显示时间戳，即JVM启动到现在的秒数</p>
+<ul>
+<li><code>Timestamp</code> 列： JVM启动了1425万秒，大约164天</li>
+<li><code>S0</code>：就是0号存活区的百分比使用率。0%很正常，因为S0和S1随时有一个是空的</li>
+<li><code>S1</code>：就是1号存活区的百分比使用率</li>
+<li><code>E</code>：就是Eden区，新生代的百分比使用率</li>
+<li><code>O</code>：就是Old区，老年代。百分比使用率</li>
+<li><code>M</code>：就是Meta区，元数据区百分比使用率</li>
+<li><code>CCS</code>：压缩class空间（Compressed class space）的百分比使用率</li>
+<li><code>YGC</code>：(Young GC)年轻代GC的次数。11万次，不算少</li>
+<li><code>YGCT</code>：年轻代GC消耗的总时间。206秒，占总运行时间的万分之一不到，基本上可忽略</li>
+<li><code>FGC</code>：FullGC的次数，可以看到只发生了4次，问题应该不大</li>
+<li><code>FGCT</code>：FullGC的总时间，0.122秒，平均每次30ms左右，大部分系统应该能承受</li>
+<li><code>GCT</code>：所有GC加起来消耗的总时间，即<code>YGCT</code> + <code>FGCT</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>-printcompilation</code>：打印 JVM 编译统计信息</p>
+</li>
+</ul>
+<h4 id="jmap"><a href="#jmap" class="headerlink" title="jmap*"></a>jmap*</h4><p>作用：查看堆内存的使用情况</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Usage:</span><br><span class="line">	jmap -heap pid</span><br><span class="line">	jmap -histo pid</span><br><span class="line">	jmap -dump:format&#x3D;b,file&#x3D;3826.hprof</span><br><span class="line">Definitions:</span><br><span class="line">	-heap	打印堆内存（&#x2F;内存池）的配置和使用信息</span><br><span class="line">	-histo	看哪些类占用的空间最多，直方图</span><br><span class="line">	-dump:format&#x3D;b,file&#x3D;xxxx.hprof	Dump堆内存</span><br></pre></td></tr></table></figure>
+
+<p><code>jmap -histo pid</code> 运行结果</p>
+<p><img src="http://image.leonote.cn/202109192056525.png" alt="image-20210919205645454"></p>
+<p><code>instances</code>：实例数量(单位 个)</p>
+<p><code>bytes</code>：字节数（单位 B）</p>
+<p><code>class name(module)</code>：类型</p>
+<ul>
+<li>[ 代表数组</li>
+<li>B 代表Byte类型</li>
+<li>I 代表Integer类型</li>
+</ul>
+<blockquote>
+<p>从结果也符合现状，一般用的比较多的就是这些基础数据，然后是一些数据结结构，map，list等</p>
+</blockquote>
+<p><code>jmap -heap pid</code> 运行结果</p>
+<p><img src="http://image.leonote.cn/202109192102929.png" alt="image-20210919210254809"></p>
+<p>从图上可以看到</p>
+<p>该JVM进程使用的GC策略是并发GC，并发的线程数是4</p>
+<p><code>MinHeapFreeRatio</code>：堆内存最小的空闲比例</p>
+<p><code>MaxHeapFreeRatio</code>：堆内存最大的空闲比例</p>
+<p><code>MaxHeapSize</code>：堆内存最大的容量</p>
+<p><code>NewSize</code>：新生代当前容量</p>
+<p><code>MaxNewSize</code>：新生代最大容量</p>
+<p><code>OldSize</code>：老年代容量</p>
+<p><code>NewRatio</code>：老年代和新生代的比例</p>
+<p><code>SurvivorRatio</code>：eden区和存活区比例</p>
+<p><code>MetaspaceSize</code>：元数据区容量</p>
+<p><code>CompressedClassSpaceSize</code>：压缩class区容量</p>
+<p><code>MaxMetaspaceSize</code>：元数据区最大的容量</p>
+<p><code>G1HeapRegionSize</code>：G1堆内存的Region容量大小</p>
+<p>图片下半部分是堆内存的具体使用情况，From space 和 To space 指的是存活区的那两个区域，因为数据是从这两个区域来回倒腾</p>
+<h4 id="jstack"><a href="#jstack" class="headerlink" title="jstack"></a>jstack</h4><p>作用：查看线程的使用情况</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Usage:</span><br><span class="line">	jstack pid -l</span><br><span class="line">Definitions:</span><br><span class="line">	-F 强制执行 thread dump 可在 java 进程卡死（hung 住）时使用，此选项可能需要系统权限</span><br><span class="line">	-m 混合模式（mixed mode） 将 java 帧和 natice 帧一起输出，此选项可能需要系统权限</span><br><span class="line">	-l 长列表模式 将线程相关的 locks 信息一起输出，比如持有的锁，等待的锁</span><br></pre></td></tr></table></figure>
+
+<h4 id="jcmd"><a href="#jcmd" class="headerlink" title="jcmd"></a>jcmd</h4><p>综合了前面的几个命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Usage:</span><br><span class="line">	jcmd pid VM.version</span><br><span class="line">	jcmd pid VM.flags</span><br><span class="line">	jcmd pid VM.command_line</span><br><span class="line">	jcmd pid VM.sustem_properties</span><br><span class="line">	jcmd pid VM.Thread.print</span><br><span class="line">	jcmd pid VM.GC.class_histogram</span><br><span class="line">	jcmd pid VM.GC.heap_info</span><br></pre></td></tr></table></figure>
+
+<h4 id="jrunscript-jjs"><a href="#jrunscript-jjs" class="headerlink" title="jrunscript/jjs"></a>jrunscript/jjs</h4><p>作用：</p>
+<ol>
+<li>当curl命令用：jrunscript -e “cat(‘<a target="_blank" rel="noopener" href="http://www.baidu.com&#39;)&quot;">http://www.baidu.com&#39;)&quot;</a></li>
+<li>执行js脚本片段：jrunscript -e “print(‘hello,kk.jvm’+1)”</li>
+<li>执行js文件：jrunscript -l js -f /XXX/XXX/test.js</li>
+</ol>
+<p>jjs 是打开交互模式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">jjs&gt; a &#x3D; 1</span><br><span class="line">1</span><br><span class="line">jjs&gt; a + 2</span><br><span class="line">3</span><br></pre></td></tr></table></figure>
+
+<h2 id="JDK-内置图形化工具"><a href="#JDK-内置图形化工具" class="headerlink" title="JDK 内置图形化工具*"></a>JDK 内置图形化工具*</h2><h3 id="jconsole"><a href="#jconsole" class="headerlink" title="jconsole"></a>jconsole</h3><p>在命令行输入jconsole即可打开</p>
+<ul>
+<li>本地JVM可以直接选择</li>
+<li>远程JVM可以通过JMX方式连接</li>
+</ul>
+<p><img src="http://image.leonote.cn/202109192144599.png" alt="image-20210919214411532"></p>
+<p>共有6个面板</p>
+<h4 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h4><p>四项指标具体为：</p>
+<ul>
+<li><strong>堆内存使用量</strong>：此处展示的就是堆内存使用情况，从图上可以看到，堆内存使用了12MB左右，并且一直在增长</li>
+<li><strong>线程</strong>：展示了JVM中活动的线程的数量，当前时刻共有19个活动线程</li>
+<li><strong>类</strong>：JVM一共加载了4610个类，卸载类是115个</li>
+<li><strong>CPU占用率</strong>：目前CPU占用率为0%，这个数值非常低，且最高也不到2.5%，初步判断系统当前并没有什么负载和压力</li>
+</ul>
+<p>有如下几个时间维度可供选择：</p>
+<p>1分钟、5分钟、10分钟、30分钟、1小时、2小时、3小时、6小时、12小时、1天、7天、1个月、3个月、6个月、1年、全部，一共是16档</p>
+<p>当我们想关注最近1小时或者1分钟的数据，就可以选择对应的档。旁边的3个标签（内存、线程、类），也都支持选择时间范围</p>
+<p><img src="http://image.leonote.cn/202109192145376.png" alt="image-20210919214524300"></p>
+<h4 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h4><ul>
+<li>堆内存使用量，主要包括老年代（内存池”PS Old Gen”）、新生代（”PS Eden Space”）、存活区（”PS Survivor Space”）</li>
+<li>非堆内存使用量，主要包括内存池 “Metaspace”、”Code Cache”、”Compressed Class Space” 等</li>
+</ul>
+<p>可以分别选择对应的6个内存池</p>
+<p>通过内存面板，我们可以看到各个区域的内存使用和变化情况，并且可以：</p>
+<ol>
+<li>手动执行gc，见图上的标号1，点击按钮即可执行JDK中的System.gc()</li>
+<li>通过图中右下角标号2的节目，可以看到各个内存池的百分比使用率，以及堆/非堆空间的汇总使用情况</li>
+<li>从左下角标号3的界面，可以看到JVM使用的垃圾收集器，以及执行垃圾收集的次数，以及相应的时间消耗</li>
+</ol>
+<p><img src="http://image.leonote.cn/202109192153356.png" alt="image-20210919215350285"></p>
+<h4 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h4><p>线程面板展示了线程数变化信息，以及检测到线程列表</p>
+<p>我们可以根据名称直接查看线程的状态（运行还是等待中）和调用栈（正在执行什么操 作）</p>
+<p>特别地，我们还可以直接点击“检测死锁”按钮 来检测死锁，如果没有死锁则会提示“未检测到死锁”</p>
+<p><img src="http://image.leonote.cn/202109192201181.png" alt="image-20210919220126116"></p>
+<h4 id="类"><a href="#类" class="headerlink" title="类"></a>类</h4><p>类监控面板，可以直接看到 JVM 加载和卸载的类数量汇总信息，以及随着时间的动态变化</p>
+<p><img src="http://image.leonote.cn/202109192203930.png" alt="image-20210919220335869"></p>
+<h4 id="VM概要"><a href="#VM概要" class="headerlink" title="VM概要"></a>VM概要</h4><p>有五个部分： </p>
+<ol>
+<li>虚拟机的信息</li>
+<li>线程数量，以及类加载的汇总信息</li>
+<li>堆内存和 GC 统计</li>
+<li>操作系统和宿主机的设备信息，比如 CPU 数量、物理内存、虚拟内存等等</li>
+<li>JVM 启动参数和几个关键路径，这些信息其实跟 jinfo 命令看到的差不多</li>
+</ol>
+<p><img src="http://image.leonote.cn/202109192204599.png" alt="image-20210919220413543"></p>
+<h3 id="jvisualvm"><a href="#jvisualvm" class="headerlink" title="jvisualvm"></a>jvisualvm</h3><p>jvisualvm比jconsole强大</p>
+<p>在命令行输入jvisualvm即可打开</p>
+<p><img src="http://image.leonote.cn/202109200845236.png" alt="image-20210920084536174"></p>
+<p>双击指定进程</p>
+<p><img src="http://image.leonote.cn/202109200848266.png" alt="image-20210920084840201"></p>
+<p>共有五个面板</p>
+<h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><p>看到该进程的JVM的基本信息</p>
+<h4 id="监视"><a href="#监视" class="headerlink" title="监视"></a>监视</h4><p><img src="http://image.leonote.cn/202109200851472.png" alt="image-20210920085116393"></p>
+<p>能看的东西和jconsole差不多，界面要好看一些，也可以看元数据区(旧版 PermGen），可以Dump堆</p>
+<h4 id="线程-1"><a href="#线程-1" class="headerlink" title="线程"></a>线程</h4><p><img src="http://image.leonote.cn/202109200853894.png" alt="image-20210920085330821"></p>
+<p>可以看JVM的单个线程的状态，能看到当前线程消耗CPU总时间打印出来。</p>
+<p>可以通过这个界面去优化我们的线程使用，是加线程，还是要减少线程</p>
+<h4 id="抽样器"><a href="#抽样器" class="headerlink" title="抽样器"></a>抽样器</h4><p><img src="http://image.leonote.cn/202109200856742.png" alt="image-20210920085619662"></p>
+<p><img src="http://image.leonote.cn/202109200857938.png" alt="image-20210920085753865"></p>
+<p>抽样器可以看CPU和内存</p>
+<p>原理也是一样的，可以抽一个时间段，看CPU的线程时间或者内存占用情况</p>
+<blockquote>
+<p>抽样器是jvisualvm和jconsole的最大的区别，jconsole 只能看历史的情况，是当前时间点的状态。</p>
+</blockquote>
+<h4 id="Profiler（新版）"><a href="#Profiler（新版）" class="headerlink" title="Profiler（新版）"></a>Profiler（新版）</h4><p>可以对CPU和内存做性能分析，执行完后，会做一些汇总的分析</p>
+<p><img src="http://image.leonote.cn/202109200906057.png" alt="image-20210920090610976"></p>
+<p>上图分析了1443个方法，自用时间，调用次数等</p>
+<blockquote>
+<p>重点关注那些调用次数远远超过其他的热点方法</p>
+</blockquote>
+<p><img src="http://image.leonote.cn/202109200907310.png" alt="image-20210920090700242"></p>
+<p>上图分析了6594个类</p>
+<h3 id="VisualGC"><a href="#VisualGC" class="headerlink" title="VisualGC"></a>VisualGC</h3><p>这是一个插件，可以在idea里面安装</p>
+<p><img src="http://image.leonote.cn/202109200910536.png" alt="image-20210920091024445"></p>
+<p>安装完后右下角会有VisualGC的图标，面板双击选择JVM</p>
+<h3 id="jmc"><a href="#jmc" class="headerlink" title="jmc"></a>jmc</h3><p>JMC（Java Mission Control）</p>
+<p>在命令行输入jmc即可打开</p>
+<p>能够更清晰的直观的观察我们的各项使用指标</p>
+<p><img src="http://image.leonote.cn/202109200932588.png" alt="image-20210920093231476"></p>
+<p>使用仪表盘观察各项指标，分析的很详细，连死锁都可以观察出来，可以分析创建对象的速度</p>
+<p>飞行记录监控 – 相当于视频，是动态的</p>
+<blockquote>
+<p>所以目前JVM分析，最强大的工具就是JMC</p>
+</blockquote>
+<p><img src="http://image.leonote.cn/202109200933052.png" alt="image-20210920093303939"></p>
+<h2 id="GC-的背景与一般原理"><a href="#GC-的背景与一般原理" class="headerlink" title="GC 的背景与一般原理"></a>GC 的背景与一般原理</h2><h3 id="为什么会有GC"><a href="#为什么会有GC" class="headerlink" title="为什么会有GC?"></a>为什么会有GC?</h3><p>本质上内存资源的有限性，因此需要大家共享使用。</p>
+<h3 id="引用计数和循环依赖"><a href="#引用计数和循环依赖" class="headerlink" title="引用计数和循环依赖"></a>引用计数和循环依赖</h3><p>仓库与引用计数：计数为 0 </p>
+<p>简单粗暴，一般有效 </p>
+<p><img src="http://image.leonote.cn/202109200950237.png" alt="image-20210920095023173"></p>
+<p>实际情况复杂一点 仓库与仓库之间也有关系 </p>
+<p>导致形成一个环，大家的计数永远不为 0 （跟线程、事务死锁一个原理） </p>
+<p><img src="http://image.leonote.cn/202109200950169.png" alt="image-20210920095034098"></p>
+<p>这些仓库都没法再用：内存泄漏-&gt;内存溢出 </p>
+<p>怎么改进呢？引用计数-&gt;引用跟踪</p>
+<h3 id="标记清除算法"><a href="#标记清除算法" class="headerlink" title="标记清除算法"></a>标记清除算法</h3><p><img src="http://image.leonote.cn/202109201000853.png" alt="image-20210920100046787"></p>
+<p><strong>标记清除算法（Mark and Sweep）</strong></p>
+<p>不用标记全部对象，从根对象出发，只标记可达对象。如果有循环的小团体，在标记的时候就找不到了。</p>
+<ul>
+<li>Marking（标记）: 遍历所有的可达对象，并在本地内存(native)中分门别类记下。</li>
+<li>Sweeping（清除）: 这一步保证了，不可达对象所占用的内存，在之后进行内存分配时可以重用。</li>
+</ul>
+<blockquote>
+<p>并行 GC 和 CMS 的基本原理 – 标记清除算法</p>
+<p>优势：可以处理循环依赖，只扫描部分对象，提高性能</p>
+</blockquote>
+<p><strong>除了清除，还要做压缩</strong></p>
+<p><img src="http://image.leonote.cn/202109201001756.png" alt="image-20210920100101717"></p>
+<p>怎么才能标记和清除清楚上百万对象呢？</p>
+<p>答案就是 STW，让全世界停止下来</p>
+<h3 id="对象与分代"><a href="#对象与分代" class="headerlink" title="对象与分代"></a>对象与分代</h3><p><img src="http://image.leonote.cn/202109201005840.png" alt="image-20210920100506781"></p>
+<p>分代假设：大部分新生对象很快无用；</p>
+<p>存活较长时间的对象，可能存活更长时间</p>
+<p><img src="http://image.leonote.cn/202109201005150.png" alt="image-20210920100525083"></p>
+<p>内存池划分</p>
+<p><strong>经历了15次GC还存活的对象会被挪到老年代</strong></p>
+<p>不同类型对象不同区域，不同策略处理。</p>
+<h3 id="对象在内存池之间的转移"><a href="#对象在内存池之间的转移" class="headerlink" title="对象在内存池之间的转移"></a>对象在内存池之间的转移</h3><p><img src="http://image.leonote.cn/202109201010247.png" alt="image-20210920101038183"></p>
+<p>对象分配在新生代的 Eden 区，标记阶段 Eden 区存活的对象就会复制到存活区；</p>
+<p>注意：为什么是复制，不是移动？</p>
+<p>复制速度快，但是浪费空间，移动速度慢，但是减少空间</p>
+<blockquote>
+<p>两个存活区 from 和 to，互换角色。对象存活到一定周期会提升到老年代</p>
+</blockquote>
+<p>默认是15次GC后，挪到老年代</p>
+<p>由如下参数控制提升阈值 <code>-XX:+MaxTenuringThreshold=15</code></p>
+<p>老年代默认都是存活对象，采用移动方式（可能是没地方复制）：</p>
+<ol>
+<li>标记所有通过 <strong>GC roots</strong> 可达的对象；</li>
+<li>删除所有不可达对象；</li>
+<li>整理老年代空间中的内容，方法是将所有的存活对象复制，从老年代空间开始的地方依次存放。</li>
+</ol>
+<p>持久代/元数据区</p>
+<p>1.8 之前 -XX:MaxPermSize=256m</p>
+<p>1.8 之后 -XX:MaxMetaspaceSize=256m</p>
+<p><strong>哪些对象可以作为GC roots呢？</strong> – 就是当前不能被干掉的对象</p>
+<ol>
+<li><p>当前正在执行的方法里的局部变量和输入参数</p>
+</li>
+<li><p>活动线程（Active threads）</p>
+</li>
+<li><p>所有类的静态字段（static field）</p>
+</li>
+<li><p>JNI 引用（不常见）</p>
+</li>
+</ol>
+<p><img src="http://image.leonote.cn/202109201021764.png" alt="image-20210920102157666"></p>
+<blockquote>
+<p>会存在跨代的对象，就是年轻代引用了老年代的对象</p>
+</blockquote>
+<p>此阶段暂停的时间，与堆内存大小，对象的总数没有直接关系，而是由存活对象（alive objects）的数量来决定。所以增加堆内存的大小并不会直接影响标记阶段占用的时间</p>
+<h3 id="三种算法的优缺点"><a href="#三种算法的优缺点" class="headerlink" title="三种算法的优缺点"></a>三种算法的优缺点</h3><h4 id="清除算法"><a href="#清除算法" class="headerlink" title="清除算法"></a>清除算法</h4><p><img src="http://image.leonote.cn/202109201027503.png" alt="image-20210920102749446"></p>
+<blockquote>
+<p>缺点：有内存碎片</p>
+</blockquote>
+<h4 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h4><p><img src="http://image.leonote.cn/202109201028449.png" alt="image-20210920102802396"></p>
+<blockquote>
+<p>缺点：只涉及Young区</p>
+</blockquote>
+<h4 id="整理算法"><a href="#整理算法" class="headerlink" title="整理算法"></a>整理算法</h4><p><img src="http://image.leonote.cn/202109201028873.png" alt="image-20210920102813819"></p>
+<blockquote>
+<p>缺点：大范围挪动对象，速度慢。</p>
+</blockquote>
+<h2 id="串行GC-并行GC-Serial-GC-Parallel-GC"><a href="#串行GC-并行GC-Serial-GC-Parallel-GC" class="headerlink" title="串行GC / 并行GC* (Serial GC / Parallel GC)"></a>串行GC / 并行GC* (Serial GC / Parallel GC)</h2><h3 id="串行-GC（Serial-GC）-ParNewGC"><a href="#串行-GC（Serial-GC）-ParNewGC" class="headerlink" title="串行 GC（Serial GC）/  ParNewGC"></a>串行 GC（Serial GC）/  ParNewGC</h3><p><code>-XX:+UseSerialGC</code> 配置串行 GC</p>
+<ul>
+<li>对年轻代使用 mark-copy（标记-复制） 算法，</li>
+<li>对老年代使用 mark-sweep-compact（标记-清除-整理）算法。</li>
+</ul>
+<p>两者都是<strong>单线程的垃圾收集器</strong>，不能进行并行处理，所以<strong>都会触发全线暂停（STW）</strong>，停止所有的应用线程。</p>
+<p>因此这种 GC 算法不能充分利用多核 CPU。<strong>不管有多少 CPU 内核，JVM 在垃圾收集时都只能使用单个核心。CPU 利用率高，暂停时间长。</strong>简单粗暴，就像老式的电脑，动不动就卡死。</p>
+<p>该选项只适合几百 MB 堆内存的 JVM，而且是单核 CPU 时比较有用。</p>
+<p><strong>ParNewGC</strong></p>
+<p><code>-XX:+UseParNewGC</code> 改进版本的 Serial GC，可以配合 CMS 使用</p>
+<p>把单线程改成多线程</p>
+<blockquote>
+<p>总结：</p>
+<p>串行GC基本淘汰，ParNewGC 现在还会搭配 CMS GC 使用</p>
+</blockquote>
+<h3 id="并行-GC（Parallel-GC）"><a href="#并行-GC（Parallel-GC）" class="headerlink" title="并行 GC（Parallel GC）"></a>并行 GC（Parallel GC）</h3><p>几种打开方式</p>
+<p><code>-XX:+UseParallelGC</code></p>
+<p><code>-XX:+UseParallelOldGC</code></p>
+<p><code>-XX:+UseParallelGC -XX:+UseParallelOldGC</code></p>
+<p><strong>年轻代和老年代的垃圾回收都会触发 STW 事件</strong>。</p>
+<ul>
+<li>在年轻代使用 标记-复制（mark-copy）算法</li>
+<li>在老年代使用 标记-清除-整理（mark-sweep-compact）算法。</li>
+</ul>
+<p><code>-XX:ParallelGCThreads=N</code> 来指定 GC 线程数， 其默认值为 CPU 核心数。</p>
+<p>并行垃圾收集器适用于多核服务器，主要目标是增加吞吐量。</p>
+<p>因为对系统资源的有效使用，能达到更高的吞吐量：</p>
+<ul>
+<li>在 GC 期间，所有 CPU 内核都在并行清理垃圾，所以总暂停时间更短；</li>
+<li>在两次 GC 周期的间隔期，没有 GC 线程在运行，不会消耗任何系统资源。</li>
+</ul>
+<blockquote>
+<p>总结：</p>
+<p>每次消耗时间长且会STW，但是整体来看，GC效率高</p>
+</blockquote>
+<h2 id="CMS-GC-G1-GC"><a href="#CMS-GC-G1-GC" class="headerlink" title="CMS GC / G1 GC*"></a>CMS GC / G1 GC*</h2><h3 id="CMS-GC（Mostly-Concurrent-Mark-and-Sweep-Garbage-Collector）"><a href="#CMS-GC（Mostly-Concurrent-Mark-and-Sweep-Garbage-Collector）" class="headerlink" title="CMS GC（Mostly Concurrent Mark and Sweep Garbage Collector）"></a>CMS GC（Mostly Concurrent Mark and Sweep Garbage Collector）</h3><p><code>-XX:+UseConcMarkSweepGC</code></p>
+<ul>
+<li>其对年轻代采用并行 STW 方式的 mark-copy (标记-复制)算法，</li>
+<li>对老年代主要使用并发 mark-sweep (标记-清除)算法。</li>
+</ul>
+<p>CMS GC 的设计目标是<strong>避免在老年代垃圾收集时出现长时间的卡顿</strong>（所以没有了整理这一步），主要通过两种手段来达成此目标：</p>
+<ol>
+<li><p>不对老年代进行整理，而是使用<strong>空闲列表</strong>（free-lists）来管理内存空间的回收。（相当于索引）</p>
+</li>
+<li><p>在 mark-and-sweep （标记-清除） 阶段的大部分工作和应用线程一起并发执行。</p>
+<p>也就是说，在这些阶段并没有明显的应用线程暂停。但值得注意的是，它仍然和应用线程争抢CPU 时间。<strong>默认情况下，CMS 使用的并发线程数等于 CPU 核心数的 1/4。</strong></p>
+</li>
+</ol>
+<blockquote>
+<p>如果服务器是多核 CPU，并且主要调优目标是降低 GC 停顿导致的系统延迟，那么使用 CMS 是<br>个很明智的选择。进行老年代的并发回收时，可能会伴随着多次年轻代的 minor GC。</p>
+</blockquote>
+<p>思考：并行 Parallel 与并发 Concurrent 的区别</p>
+<h3 id="CMS-GC的六个阶段"><a href="#CMS-GC的六个阶段" class="headerlink" title="CMS GC的六个阶段"></a>CMS GC的六个阶段</h3><ul>
+<li>阶段 1: Initial Mark（初始标记）</li>
+<li>阶段 2: Concurrent Mark（并发标记）</li>
+<li>阶段 3: Concurrent Preclean（并发预清理）</li>
+<li>阶段 4: Final Remark（最终标记）</li>
+<li>阶段 5: Concurrent Sweep（并发清除）</li>
+<li>阶段 6: Concurrent Reset（并发重置）</li>
+</ul>
+<h4 id="Initial-Mark（初始标记）"><a href="#Initial-Mark（初始标记）" class="headerlink" title="Initial Mark（初始标记）"></a>Initial Mark（初始标记）</h4><p><img src="http://image.leonote.cn/202109201039284.png" alt="image-20210920103926205"></p>
+<p><strong>这个阶段伴随着 STW 暂停</strong>。</p>
+<p>初始标记的目标是标记所有的根对象，包括根对象直接引用的对象，以及被年轻代中所有存活对象所引用的对象（老年代单独回收）。</p>
+<h4 id="Concurrent-Mark（并发标记）"><a href="#Concurrent-Mark（并发标记）" class="headerlink" title="Concurrent Mark（并发标记）"></a>Concurrent Mark（并发标记）</h4><p><img src="http://image.leonote.cn/202109201040355.png" alt="image-20210920104022267"></p>
+<p>在此阶段，CMS GC 遍历老年代，标记所有的存活对象， 从前一阶段 “Initial Mark” 找到的根对象开始算起。 “并发标记”阶段，就是与应用程序同时运行，不用暂停的阶段。</p>
+<h4 id="Concurrent-Preclean（并发预清理）"><a href="#Concurrent-Preclean（并发预清理）" class="headerlink" title="Concurrent Preclean（并发预清理）"></a>Concurrent Preclean（并发预清理）</h4><p><img src="http://image.leonote.cn/202109201041664.png" alt="image-20210920104111556"></p>
+<p>此阶段同样是与应用线程并发执行的，不需要停止应用线程。 因为前一阶段【并发标记】与程序并发运行，可能有一些引用关系已经发生了改变。如果在并发标记过程中引用关系发生了变化，JVM 会通过“Card（卡片）”的方式将发生了改变的区域标记为“脏”区，这就是所谓的卡片标记（Card Marking）。</p>
+<h4 id="Final-Remark（最终标记）"><a href="#Final-Remark（最终标记）" class="headerlink" title="Final Remark（最终标记）"></a>Final Remark（最终标记）</h4><p><img src="http://image.leonote.cn/202109201041541.png" alt="image-20210920104153446"></p>
+<p><strong>最终标记阶段是此次 GC 事件中的第二次（也是最后一 次）STW 停顿</strong>。本阶段的目标是完成老年代中所有存活对象的标记. 因为之前的预清理阶段是并发执行的，有可能 GC 线程跟不上应用程序的修改速度。所以需要一次 STW 暂停来处理各种复杂的情况。 通常 CMS 会尝试在年轻代尽可能空的情况下执行 Final  Remark 阶段，以免连续触发多次 STW 事件</p>
+<h4 id="Concurrent-Sweep（并发清除）"><a href="#Concurrent-Sweep（并发清除）" class="headerlink" title="Concurrent Sweep（并发清除）"></a>Concurrent Sweep（并发清除）</h4><p><img src="http://image.leonote.cn/202109201042568.png" alt="image-20210920104219480"></p>
+<p>此阶段与应用程序并发执行，不需要 STW 停顿。JVM 在此阶段删除不再使用的对象，并回收他们占用的内存空间。</p>
+<h4 id="Concurrent-Reset（并发重置）"><a href="#Concurrent-Reset（并发重置）" class="headerlink" title="Concurrent Reset（并发重置）"></a>Concurrent Reset（并发重置）</h4><p>此阶段与应用程序并发执行，重置 CMS 算法相关的内部数据，为下一次 GC 循环做准备。</p>
+<blockquote>
+<p>总结：</p>
+<p>GC算法复杂，整体效率没有并行的高，暂停时间不可控</p>
+<p>CMS 垃圾收集器<strong>在减少停顿时间上做了很多复杂而有用的工作</strong>，用于垃圾回收的并发线程执行的同时，并不需要暂停应用线程。 当然， CMS 也有一些缺点，其中最大的问题就是<strong>老年代内存碎片问题（因为不压缩）</strong>，在某些情况下 GC 会造成不可预测的暂停时间，特别是堆内存较大的情况下</p>
+</blockquote>
+<h3 id="G1-GC"><a href="#G1-GC" class="headerlink" title="G1 GC"></a>G1 GC</h3><p><code>-XX:+UseG1GC -XX:MaxGCPauseMillis=50</code>  暂停50ms，默认值是200ms</p>
+<p>G1 的全称是 Garbage-First，意为垃圾优先，哪一块的垃圾最多就优先清理它。</p>
+<p><strong>G1 GC 最主要的设计目标是：将 STW 停顿的时间和分布，变成可预期且可配置的。</strong></p>
+<p>事实上，G1 GC 是一款软实时垃圾收集器，可以为其设置某项特定的性能指标。为了达成可预期停顿时间的指标，G1 GC 有一些独特的实现。</p>
+<p>首先，<strong>堆不再分成年轻代和老年代，而是划分为多个（通常是 2048 个）可以存放对象的 小块堆区域(smaller heap regions)</strong>。每个小块，可能一会被定义成 Eden 区，一会被指定为 Survivor区或者Old 区。在逻辑上，所有的 Eden 区和 Survivor区合起来就是年轻代，所有的 Old 区拼在一起那就是老年代 </p>
+<p><img src="http://image.leonote.cn/202109201044156.png" alt="image-20210920104414083"></p>
+<p>这样划分之后，使得 G1 不必每次都去收集整个堆空间，而是以增量的方式来进行处理:  每次只处理一部分内存块，称为此次 GC 的回收集(collection set)。每次 GC 暂停都会收集所有年轻代的内存块，但一般只包含部分老年代的内存块 。 G1 的另一项创新是，在并发阶段估算每个小堆块存活对象的总数。构建回收集的原则是： 垃圾最多的小块会被优先收集。这也是 G1  名称的由来。</p>
+<p><img src="http://image.leonote.cn/202109201044390.png" alt="image-20210920104440280"></p>
+<blockquote>
+<p>总结：</p>
+<p>可能前期设置了暂停50ms，G1 GC达不到要求，100ms或者200ms。工作一段时间后，可以调整自己的行为和策略，能够达到设置的暂停时间。</p>
+<p>这种一般叫启发式GC，能够调整自己的占用内存和操作时间。</p>
+</blockquote>
+<h4 id="G1-GC-配置参数"><a href="#G1-GC-配置参数" class="headerlink" title="G1 GC 配置参数"></a>G1 GC 配置参数</h4><ul>
+<li>-XX:+UseG1GC：启用 G1 GC；</li>
+<li><code>-XX:G1NewSizePercent</code>：初始年轻代占整个 Java Heap 的大小，默认值为 5%；</li>
+<li><code>-XX:G1MaxNewSizePercent</code>：最大年轻代占整个 Java Heap 的大小，默认值为 60%；</li>
+<li><code>-XX:G1HeapRegionSize</code>：设置每个 Region 的大小，单位 MB，需要为 1，2，4，8，16，32 中的某个值，默认是堆内存的 1/2000。如果这个值设置比较大，那么大对象就可以进入 Region 了。</li>
+<li><code>-XX:ConcGCThreads</code>：与 Java 应用一起执行的 GC 线程数量，<strong>默认是 Java 线程的 1/4</strong>，减少这个参数的数值可能会提升并行回收的效率，提高系统内部吞吐量。如果这个数值过低，参与回收垃圾的线程不足，也会导致并行回收机制耗时加长。</li>
+<li><code>-XX:+InitiatingHeapOccupancyPercent</code>（简称 IHOP）：G1 内部并行回收循环启动的阈值，<strong>默认为 Java Heap 的 45%</strong>。这个可以理解为<strong>老年代使用大于等于 45% 的时候</strong>，JVM 会启动垃圾回收。这个值非常重要，它决定了在什么时间启动老年代的并行回收。</li>
+<li><code>-XX:G1HeapWastePercent</code>：G1停止回收的最小内存大小，默认是堆大小的 5%。GC 会收集所有的 Region 中 的对象，但是如果下降到了 5%，就会停下来不再收集了。就是说，不必每次回收就把所有的垃圾都处理完，可以 遗留少量的下次处理，这样也降低了单次消耗的时间。</li>
+<li>-XX:G1MixedGCCountTarget：设置并行循环之后需要有多少个混合 GC 启动，默认值是 8 个。老年代 Regions 的回收时间通常比年轻代的收集时间要长一些。所以如果混合收集器比较多，可以允许 G1 延长老年代的收集时间</li>
+<li>-XX:+G1PrintRegionLivenessInfo：这个参数需要和 -XX:+UnlockDiagnosticVMOptions 配合启动，打印 JVM 的调试信息，每个 Region 里的对象存活信息。</li>
+<li>-XX:G1ReservePercent：G1 为了保留一些空间用于年代之间的提升，默认值是堆空间的 10%。因为大量执行回收的地方在年轻代（存活时间较短），所以如果你的应用里面有比较大的堆内存空间、比较多的大对象存活，这里需要保留一些内存。</li>
+<li>-XX:+G1SummarizeRSetStats：这也是一个 VM 的调试信息。如果启用，会在 VM 退出的时候打印出 Rsets 的详细总结信息。如果启用 -XX:G1SummaryRSetStatsPeriod 参数，就会阶段性地打印 Rsets 信息。</li>
+<li>-XX:+G1TraceConcRefinement：这个也是一个 VM 的调试信息，如果启用，并行回收阶段的日志就会被详细打印出来。</li>
+<li>-XX:+GCTimeRatio：这个参数就是计算花在 Java 应用线程上和花在 GC 线程上的时间比率，默认是 9，跟新生代内存的分配比例一致。这个参数主要的目的是让用户可以控制花在应用上的时间，G1 的计算公式是 100 /（1+GCTimeRatio）。这样如果参数设置为 9，则最多 10% 的时间会花在 GC 工作上面。Parallel GC 的默认值是 99，表示 1% 的时间被用在 GC 上面，这是因为 Parallel GC 贯穿整个 GC，而 G1 则根据Region 来进行划分，不需要全局性扫描整个内存堆。</li>
+<li><code>-XX:+UseStringDeduplication</code>：手动开启 Java String 对象的去重工作，这个是 JDK8u20 版本之后新增的参数，主要用于相同 String 避免重复申请内存，节约 Region 的使用。</li>
+<li><code>-XX:MaxGCPauseMills</code>：预期 G1 每次执行 GC 操作的暂停时间，单位是毫秒，默认值是 200 毫秒，G1 会尽量保证控制在这个范围内。</li>
+</ul>
+<h4 id="G1-GC-处理步骤"><a href="#G1-GC-处理步骤" class="headerlink" title="G1 GC 处理步骤"></a>G1 GC 处理步骤</h4><h4 id="年轻代模式转移暂停（Evacuation-Pause）"><a href="#年轻代模式转移暂停（Evacuation-Pause）" class="headerlink" title="年轻代模式转移暂停（Evacuation Pause）"></a>年轻代模式转移暂停（Evacuation Pause）</h4><p>G1 GC <strong>会通过前面一段时间的运行情况来不断的调整自己的回收策略和行为</strong>，以此来比较稳定地控制暂停时间。在应用程序刚启动时，G1 还没有采集到什么足够的信息，这时候就处于初始的 fully-young 模式。当年轻代空间用满后，应用线程会被暂停，年轻代内存块中的存活对象被拷贝到存活区。如果还没有存活区，则任意选择一部分空闲的内存块作为存活区。 拷贝的过程称为转移（Evacuation)，这和前面介绍的其他年轻代收集器是一样的工作原理。</p>
+<h4 id="并发标记（Concurrent-Marking）"><a href="#并发标记（Concurrent-Marking）" class="headerlink" title="并发标记（Concurrent Marking）"></a>并发标记（Concurrent Marking）</h4><p>同时也可以看到，G1 GC 的很多概念建立在 CMS 的基础上。</p>
+<p>G1 并发标记的过程与 CMS 基本上是一样的。G1 的并发标记通过 Snapshot-At-The-Beginning（起始快照）的方式，在标记阶段开始时记下所有的存活对象。即使在标记的同时又有一些变成了垃圾。通过对象的存活信息，可以构建出每个小堆块的存活状态，以便回收集能高效地进行选择。</p>
+<p>这些信息在接下来的阶段会用来执行老年代区域的垃圾收集。 </p>
+<p>有两种情况是可以完全并发执行的： </p>
+<ol>
+<li>如果在标记阶段确定某个小堆块中没有存活对象，只包含垃圾； </li>
+<li>在 STW 转移暂停期间，同时包含垃圾和存活对象的老年代小堆块。 </li>
+</ol>
+<p><strong>当堆内存的总体使用比例达到一定数值，就会触发并发标记。这个默认比例是 45%</strong>，但也可以通过 JVM 参数 InitiatingHeapOccupancyPercent 来设置。和 CMS 一样，G1 的并发标记也是由多个阶段组成， 其中一些阶段是完全并发的，还有一些阶段则会暂停应用线程。</p>
+<ol>
+<li><p><strong>阶段 1: Initial Mark（初始标记）</strong></p>
+<p>此阶段标记所有从 GC 根对象直接可达的对象。</p>
+</li>
+<li><p><strong>阶段 2: Root Region Scan（Root区扫描）</strong></p>
+<p>此阶段标记所有从 “根区域” 可达的存活对象。根区域包括：非空的区域，以及在标记过程中不得不收集的区域。</p>
+</li>
+<li><p><strong>阶段 3: Concurrent Mark（并发标记）</strong></p>
+<p>此阶段和 CMS 的并发标记阶段非常类似：只遍历对象图，并在一个特殊的位图中标记能访问到的对象。</p>
+</li>
+<li><p><strong>阶段 4: Remark（再次标记）</strong></p>
+<p>和 CMS 类似，这是一次 STW 停顿(因为不是并发的阶段)，以完成标记过程。 G1 收集器会短暂地停止应用线程，停止并发更新信息的写入，处理其中的少量信息，并标记所有在并发标记开始时未被标记的存活对象。</p>
+</li>
+<li><p><strong>阶段 5: Cleanup（清理）</strong></p>
+<p>最后这个清理阶段为即将到来的转移阶段做准备，统计小堆块中所有存活的对象，并将小堆块进行排序，以提升GC 的效率，维护并发标记的内部状态。 所有不包含存活对象的小堆块在此阶段都被回收了。有一部分任务是并发的：例如空堆区的回收，还有大部分的存活率计算。此阶段也需要一个短暂的 STW 暂停。</p>
+</li>
+</ol>
+<h4 id="转移暂停-混合模式（Evacuation-Pause-mixed-）"><a href="#转移暂停-混合模式（Evacuation-Pause-mixed-）" class="headerlink" title="转移暂停: 混合模式（Evacuation Pause (mixed)）"></a>转移暂停: 混合模式（Evacuation Pause (mixed)）</h4><p>并发标记完成之后，G1将执行一次混合收集（mixed collection），就是不只清理年轻代，还将一部分老年代区域也加入到回收集中。混合模式的转移暂停不一定紧跟并发标记阶段。有很多规则和历史数据会影响混合模式的启动时机。比如，假若在老年代中可以并发地腾出很多的小堆块，就没有必要启动混合模式。</p>
+<p>因此，在并发标记与混合转移暂停之间，很可能会存在多次 young 模式的转移暂停。</p>
+<p>具体添加到回收集的老年代小堆块的大小及顺序，也是基于许多规则来判定的。其中包括指定的软实时性能指标，存活性，以及在并发标记期间收集的 GC 效率等数据，外加一些可配置的 JVM 选项。混合收集的过程，很大程度上和前面的 fully-young gc 是一样的。</p>
+<h4 id="G1-GC-注意事项"><a href="#G1-GC-注意事项" class="headerlink" title="G1 GC 注意事项"></a>G1 GC 注意事项</h4><p>特别需要注意的是，某些情况下 G1 触发了 Full GC，这时 G1 会退化使用 Serial 收集器来完成垃圾的清理工作，</p>
+<p>它仅仅使用单线程来完成 GC 工作，GC 暂停时间将达到秒级别的。</p>
+<p>产生退化的原因：</p>
+<ol>
+<li><p><strong>并发模式失败</strong></p>
+<p>G1 启动标记周期，但在 Mixed GC 之前，老年代就被填满，这时候 G1 会放弃标记周期。解决办法：增加堆大小， 或者调整周期（例如增加线程数<code>-XX:ConcGCThreads</code> 等）。</p>
+</li>
+<li><p><strong>晋升失败</strong></p>
+<p>没有足够的内存供存活对象或晋升对象使用，由此触发了</p>
+<p>Full GC(to-space exhausted/to-space overflow）。</p>
+<p>解决办法：</p>
+<p>a. 增加 <code>-XX:G1ReservePercent</code> 选项的值（并相应增加总的堆大小）增加预留内存量。</p>
+<p>b. 通过减少 <code>-XX:InitiatingHeapOccupancyPercent</code> 提前启动标记周期。</p>
+<p>c. 也可以通过增加 <code>–XX:ConcGCThreads</code> 选项的值来增加并行标记线程的数目。</p>
+</li>
+<li><p><strong>巨型对象分配失败</strong></p>
+<p>当巨型对象找不到合适的空间进行分配时，就会启动 Full GC，来释放空间。</p>
+<p>解决办法：增加内存或者增大 <code>-XX:G1HeapRegionSize</code></p>
+</li>
+</ol>
+<h2 id="各个GC对比"><a href="#各个GC对比" class="headerlink" title="各个GC对比"></a>各个GC对比</h2><table>
+<thead>
+<tr>
+<th>收集器</th>
+<th>串行、并行、并发</th>
+<th>新生代/老年代</th>
+<th>算法</th>
+<th>目标</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Serial</td>
+<td>串行</td>
+<td>新生代</td>
+<td>复制算法</td>
+<td>响应速度优先</td>
+<td>单CPU环境下的Client模式</td>
+</tr>
+<tr>
+<td>Serial Old</td>
+<td>串行</td>
+<td>老年代</td>
+<td>标记-整理</td>
+<td>响应速度优先</td>
+<td>单CPU环境下的Client内模式、CMS的后备预案</td>
+</tr>
+<tr>
+<td>ParNew</td>
+<td>并行</td>
+<td>新生代</td>
+<td>复制算法</td>
+<td>响应速度优先</td>
+<td>多CPU环境时在Server模式下与CMS配合</td>
+</tr>
+<tr>
+<td>Parallel Scavenge</td>
+<td>并行</td>
+<td>新生代</td>
+<td>复制算法</td>
+<td>吞吐量优先</td>
+<td>在后台运算而不需要太多交互的任务</td>
+</tr>
+<tr>
+<td>Parallel Old</td>
+<td>并行</td>
+<td>老年代</td>
+<td>标记-整理</td>
+<td>吞吐量优先</td>
+<td>在后台运算而不需要太多交互的任务</td>
+</tr>
+<tr>
+<td>CMS</td>
+<td>并发</td>
+<td>老年代</td>
+<td>标记-清除</td>
+<td>响应速度优先</td>
+<td>集中在互联网站或B/S系统服务端上的Java应用</td>
+</tr>
+<tr>
+<td>G1</td>
+<td>并发</td>
+<td>both</td>
+<td>标记-整理+复制算法</td>
+<td>响应速度优先</td>
+<td>面向服务端应用，将来替换CMS</td>
+</tr>
+</tbody></table>
+<h2 id="常用的GC组合"><a href="#常用的GC组合" class="headerlink" title="常用的GC组合*"></a>常用的GC组合*</h2><p><img src="http://image.leonote.cn/202109201057492.png" alt="image-20210920105725429"></p>
+<p>常用的组合为：</p>
+<ol>
+<li>Serial + Serial Old 实现单线程的低延迟垃圾回收机制；</li>
+<li>ParNew + CMS，实现多线程的低延迟垃圾回收机制；</li>
+<li>Parallel Scavenge和Parallel Scavenge Old，实现多线程的高吞吐量垃圾回收机制</li>
+</ol>
+<h2 id="GC-如何选择"><a href="#GC-如何选择" class="headerlink" title="GC 如何选择"></a>GC 如何选择</h2><p>选择正确的 GC 算法，唯一可行的方式就是去尝试，一般性的指导原则：</p>
+<ol>
+<li>如果系统考虑吞吐优先，CPU 资源都用来最大程度处理业务，用 Parallel GC；</li>
+<li>如果系统考虑低延迟优先，每次 GC 时间尽量短，用 CMS GC；</li>
+<li>如果系统内存堆较大，同时希望整体来看平均 GC 时间可控，使用 G1 GC。<br> 对于内存大小的考量：<ol start="4">
+<li>一般 4G 以上，算是比较大，用 G1 的性价比较高。</li>
+<li>一般超过 8G，比如 16G-64G 内存，非常推荐使用 G1 GC。</li>
+</ol>
+</li>
+</ol>
+<p>最后讨论一个很多开发者经常忽视的问题，也是面试大厂常问的问题：JDK8 的默认 GC 是什么？<br>JDK9，JDK10，JDK11…等等默认的是 GC 是什么</p>
+<h2 id="ZGC-Shenandoah-GC"><a href="#ZGC-Shenandoah-GC" class="headerlink" title="ZGC / Shenandoah GC"></a>ZGC / Shenandoah GC</h2><h3 id="ZGC"><a href="#ZGC" class="headerlink" title="ZGC"></a>ZGC</h3><p><code>-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -Xmx16g</code></p>
+<p>ZGC 最主要的特点包括:</p>
+<ol>
+<li>GC 最大停顿时间不超过 10ms</li>
+<li>堆内存支持范围广，小至几百 MB 的堆空间，大至 4TB 的超大堆内存（JDK13 升至 16TB）</li>
+<li>与 G1 相比，应用吞吐量下降不超过 15%</li>
+<li>当前只支持 Linux/x64 位平台，JDK15 后支持 MacOS 和 Windows 系统</li>
+</ol>
+<h3 id="Shennandoah-GC"><a href="#Shennandoah-GC" class="headerlink" title="Shennandoah GC"></a>Shennandoah GC</h3><p><code>-XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC -Xmx16g</code></p>
+<p>Shenandoah GC 立项比 ZGC 更早，设计为 GC 线程与应用线程并发执行的方式，通过实现垃圾回收过程的并发处理，改善停顿时间，使得 GC 执行线程能够在业务处理线程运行过程中进行堆压缩、标记和整理，从而消除了绝大部分的暂停时间。</p>
+<p>Shenandoah 团队对外宣称 Shenandoah GC 的暂停时间与堆大小无关，无论是 200 MB 还是 200 GB的堆内存，都可以保障具有很低的暂停时间（注意:并不像 ZGC 那样保证暂停时间在 10ms 以内）</p>
+<h4 id="Shennandoah-GC-与其他-GC-的-STW-比较"><a href="#Shennandoah-GC-与其他-GC-的-STW-比较" class="headerlink" title="Shennandoah GC 与其他 GC 的 STW 比较"></a>Shennandoah GC 与其他 GC 的 STW 比较</h4><p><img src="http://image.leonote.cn/202109201400268.png" alt="image-20210920140013139"></p>
+<h2 id="GC总结"><a href="#GC总结" class="headerlink" title="GC总结"></a>GC总结</h2><p>到目前为止，我们一共了解了 Java 目前支持的所有 GC 算法，一共有 7 类:</p>
+<ol>
+<li>串行 GC（Serial GC）: 单线程执行，应用需要暂停；</li>
+<li>并行 GC（ParNew、Parallel Scavenge、Parallel Old）: 多线程并行地执行垃圾回收，关注于高吞吐；</li>
+<li>CMS（Concurrent Mark-Sweep）: 多线程并发标记和清除，关注与降低延迟；</li>
+<li>G1（G First）: 通过划分多个内存区域做增量整理和回收，进一步降低延迟；</li>
+<li>ZGC（Z Garbage Collector）: 通过着色指针和读屏障，实现几乎全部的并发执行，几毫秒级别的延迟，线性可扩展；</li>
+<li>Epsilon: 实验性的 GC，供性能分析使用；</li>
+<li>Shenandoah: G1 的改进版本，跟 ZGC 类似</li>
+</ol>
+<p>可以看出 GC 算法和实现的演进路线:</p>
+<ol>
+<li>串行 -&gt; 并行: 重复利用多核 CPU 的优势，大幅降低 GC 暂停时间，提升吞吐量。</li>
+<li>并行 -&gt; 并发： 不只开多个 GC 线程并行回收，还将GC操作拆分为多个步骤，让很多繁重的任务和应用线程一起并发执行，减少了单次 GC 暂停持续的时间，这能有效降低业务系统的延迟。</li>
+<li>CMS -&gt; G1： G1 可以说是在 CMS 基础上进行迭代和优化开发出来的，划分为多个小堆块进行增量回收，这样就更进一步地降低了单次 GC 暂停的时间</li>
+<li>G1 -&gt; ZGC：ZGC 号称无停顿垃圾收集器，这又是一次极大的改进。ZGC 和 G1 有一些相似的地方，但是底层的算法和思想又有了全新的突破。</li>
+</ol>
+<p><strong>脱离场景谈性能都是耍流氓</strong></p>
+<p>目前绝大部分 Java 应用系统，堆内存并不大比如 2G-4G 以内，而且对 10ms 这种低延迟的 GC 暂停不敏感，也就是说处理一个业务步骤，大概几百毫秒都是可以接受的，GC 暂停 100ms 还是 10ms 没多大区别。另一方面，系统的吞吐量反而往往是我们追求的重点，这时候就需要考虑采用并行 GC。</p>
+<p>如果堆内存再大一些，可以考虑 G1 GC。如果内存非常大（比如超过 16G，甚至是 64G、128G），或者是对延迟非常敏感（比如高频量化交易系统），就需要考虑使用本节提到的新 GC（ZGC/Shenandoah）</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/c0deaed6.html">https://liule8.github.io/post/c0deaed6.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/JVM/">JVM</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/d76ddd66.html"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Java并发编程之并发锁-什么是自旋锁？自旋的好处和后果是什么呢？</div></div></a></div><div class="next-post pull-right"><a href="/post/3de0655c.html"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Java并发编程之线程池-线程池实现“线程复用”的原理？</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/fb416a43.html" title="JVM 核心技术-GC 问题排查实战案例"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-02</div><div class="title">JVM 核心技术-GC 问题排查实战案例</div></div></a></div><div><a href="/post/8afb6c30.html" title="JVM 核心技术-JVM 常见面试问题汇总"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-02</div><div class="title">JVM 核心技术-JVM 常见面试问题汇总</div></div></a></div><div><a href="/post/53058f25.html" title="JVM 核心技术-GC总结"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-06</div><div class="title">JVM 核心技术-GC总结</div></div></a></div><div><a href="/post/7cc01704.html" title="JVM 核心技术-JVM 基础知识"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-18</div><div class="title">JVM 核心技术-JVM 基础知识</div></div></a></div><div><a href="/post/dc7732e8.html" title="JVM 核心技术-调优分析与面试经验"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-23</div><div class="title">JVM 核心技术-调优分析与面试经验</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E4%B8%8EGC%E7%AD%96%E7%95%A5"><span class="toc-number">1.</span> <span class="toc-text">工具与GC策略</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK-%E5%86%85%E7%BD%AE%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7"><span class="toc-number">1.1.</span> <span class="toc-text">JDK 内置命令行工具*</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.1.</span> <span class="toc-text">常用的命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#jps-jinfo"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">jps&#x2F;jinfo</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#jstat"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">jstat*</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#jmap"><span class="toc-number">1.1.1.3.</span> <span class="toc-text">jmap*</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#jstack"><span class="toc-number">1.1.1.4.</span> <span class="toc-text">jstack</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#jcmd"><span class="toc-number">1.1.1.5.</span> <span class="toc-text">jcmd</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#jrunscript-jjs"><span class="toc-number">1.1.1.6.</span> <span class="toc-text">jrunscript&#x2F;jjs</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK-%E5%86%85%E7%BD%AE%E5%9B%BE%E5%BD%A2%E5%8C%96%E5%B7%A5%E5%85%B7"><span class="toc-number">1.2.</span> <span class="toc-text">JDK 内置图形化工具*</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#jconsole"><span class="toc-number">1.2.1.</span> <span class="toc-text">jconsole</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A6%82%E8%A7%88"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">概览</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E5%AD%98"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">线程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BB"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#VM%E6%A6%82%E8%A6%81"><span class="toc-number">1.2.1.5.</span> <span class="toc-text">VM概要</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jvisualvm"><span class="toc-number">1.2.2.</span> <span class="toc-text">jvisualvm</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%91%E8%A7%86"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">监视</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B-1"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">线程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8A%BD%E6%A0%B7%E5%99%A8"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">抽样器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Profiler%EF%BC%88%E6%96%B0%E7%89%88%EF%BC%89"><span class="toc-number">1.2.2.5.</span> <span class="toc-text">Profiler（新版）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VisualGC"><span class="toc-number">1.2.3.</span> <span class="toc-text">VisualGC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jmc"><span class="toc-number">1.2.4.</span> <span class="toc-text">jmc</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GC-%E7%9A%84%E8%83%8C%E6%99%AF%E4%B8%8E%E4%B8%80%E8%88%AC%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">GC 的背景与一般原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89GC"><span class="toc-number">1.3.1.</span> <span class="toc-text">为什么会有GC?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E5%92%8C%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96"><span class="toc-number">1.3.2.</span> <span class="toc-text">引用计数和循环依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E8%AE%B0%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95"><span class="toc-number">1.3.3.</span> <span class="toc-text">标记清除算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E4%B8%8E%E5%88%86%E4%BB%A3"><span class="toc-number">1.3.4.</span> <span class="toc-text">对象与分代</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E5%9C%A8%E5%86%85%E5%AD%98%E6%B1%A0%E4%B9%8B%E9%97%B4%E7%9A%84%E8%BD%AC%E7%A7%BB"><span class="toc-number">1.3.5.</span> <span class="toc-text">对象在内存池之间的转移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E7%AE%97%E6%B3%95%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.3.6.</span> <span class="toc-text">三种算法的优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95"><span class="toc-number">1.3.6.1.</span> <span class="toc-text">清除算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E5%88%B6%E7%AE%97%E6%B3%95"><span class="toc-number">1.3.6.2.</span> <span class="toc-text">复制算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B4%E7%90%86%E7%AE%97%E6%B3%95"><span class="toc-number">1.3.6.3.</span> <span class="toc-text">整理算法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%B2%E8%A1%8CGC-%E5%B9%B6%E8%A1%8CGC-Serial-GC-Parallel-GC"><span class="toc-number">1.4.</span> <span class="toc-text">串行GC &#x2F; 并行GC* (Serial GC &#x2F; Parallel GC)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%B2%E8%A1%8C-GC%EF%BC%88Serial-GC%EF%BC%89-ParNewGC"><span class="toc-number">1.4.1.</span> <span class="toc-text">串行 GC（Serial GC）&#x2F;  ParNewGC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E8%A1%8C-GC%EF%BC%88Parallel-GC%EF%BC%89"><span class="toc-number">1.4.2.</span> <span class="toc-text">并行 GC（Parallel GC）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CMS-GC-G1-GC"><span class="toc-number">1.5.</span> <span class="toc-text">CMS GC &#x2F; G1 GC*</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CMS-GC%EF%BC%88Mostly-Concurrent-Mark-and-Sweep-Garbage-Collector%EF%BC%89"><span class="toc-number">1.5.1.</span> <span class="toc-text">CMS GC（Mostly Concurrent Mark and Sweep Garbage Collector）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CMS-GC%E7%9A%84%E5%85%AD%E4%B8%AA%E9%98%B6%E6%AE%B5"><span class="toc-number">1.5.2.</span> <span class="toc-text">CMS GC的六个阶段</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Initial-Mark%EF%BC%88%E5%88%9D%E5%A7%8B%E6%A0%87%E8%AE%B0%EF%BC%89"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">Initial Mark（初始标记）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Concurrent-Mark%EF%BC%88%E5%B9%B6%E5%8F%91%E6%A0%87%E8%AE%B0%EF%BC%89"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">Concurrent Mark（并发标记）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Concurrent-Preclean%EF%BC%88%E5%B9%B6%E5%8F%91%E9%A2%84%E6%B8%85%E7%90%86%EF%BC%89"><span class="toc-number">1.5.2.3.</span> <span class="toc-text">Concurrent Preclean（并发预清理）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Final-Remark%EF%BC%88%E6%9C%80%E7%BB%88%E6%A0%87%E8%AE%B0%EF%BC%89"><span class="toc-number">1.5.2.4.</span> <span class="toc-text">Final Remark（最终标记）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Concurrent-Sweep%EF%BC%88%E5%B9%B6%E5%8F%91%E6%B8%85%E9%99%A4%EF%BC%89"><span class="toc-number">1.5.2.5.</span> <span class="toc-text">Concurrent Sweep（并发清除）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Concurrent-Reset%EF%BC%88%E5%B9%B6%E5%8F%91%E9%87%8D%E7%BD%AE%EF%BC%89"><span class="toc-number">1.5.2.6.</span> <span class="toc-text">Concurrent Reset（并发重置）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G1-GC"><span class="toc-number">1.5.3.</span> <span class="toc-text">G1 GC</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#G1-GC-%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="toc-number">1.5.3.1.</span> <span class="toc-text">G1 GC 配置参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#G1-GC-%E5%A4%84%E7%90%86%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.5.3.2.</span> <span class="toc-text">G1 GC 处理步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B4%E8%BD%BB%E4%BB%A3%E6%A8%A1%E5%BC%8F%E8%BD%AC%E7%A7%BB%E6%9A%82%E5%81%9C%EF%BC%88Evacuation-Pause%EF%BC%89"><span class="toc-number">1.5.3.3.</span> <span class="toc-text">年轻代模式转移暂停（Evacuation Pause）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E6%A0%87%E8%AE%B0%EF%BC%88Concurrent-Marking%EF%BC%89"><span class="toc-number">1.5.3.4.</span> <span class="toc-text">并发标记（Concurrent Marking）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BD%AC%E7%A7%BB%E6%9A%82%E5%81%9C-%E6%B7%B7%E5%90%88%E6%A8%A1%E5%BC%8F%EF%BC%88Evacuation-Pause-mixed-%EF%BC%89"><span class="toc-number">1.5.3.5.</span> <span class="toc-text">转移暂停: 混合模式（Evacuation Pause (mixed)）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#G1-GC-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.5.3.6.</span> <span class="toc-text">G1 GC 注意事项</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%84%E4%B8%AAGC%E5%AF%B9%E6%AF%94"><span class="toc-number">1.6.</span> <span class="toc-text">各个GC对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84GC%E7%BB%84%E5%90%88"><span class="toc-number">1.7.</span> <span class="toc-text">常用的GC组合*</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GC-%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9"><span class="toc-number">1.8.</span> <span class="toc-text">GC 如何选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ZGC-Shenandoah-GC"><span class="toc-number">1.9.</span> <span class="toc-text">ZGC &#x2F; Shenandoah GC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ZGC"><span class="toc-number">1.9.1.</span> <span class="toc-text">ZGC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Shennandoah-GC"><span class="toc-number">1.9.2.</span> <span class="toc-text">Shennandoah GC</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Shennandoah-GC-%E4%B8%8E%E5%85%B6%E4%BB%96-GC-%E7%9A%84-STW-%E6%AF%94%E8%BE%83"><span class="toc-number">1.9.2.1.</span> <span class="toc-text">Shennandoah GC 与其他 GC 的 STW 比较</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GC%E6%80%BB%E7%BB%93"><span class="toc-number">1.10.</span> <span class="toc-text">GC总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/d42cc345.html" title="数据结构与算法之入门篇-为什么要学习数据结构和算法">数据结构与算法之入门篇-为什么要学习数据结构和算法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/68a8f17f.html" title="数据结构与算法之入门篇-学习方法">数据结构与算法之入门篇-学习方法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/abff7577.html" title="Netty 核心原理剖析与 RPC 实践-实践总结">Netty 核心原理剖析与 RPC 实践-实践总结</a><time datetime="2021-10-14T20:34:53.000Z" title="发表于 2021-10-14 20:34:53">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/889de2a9.html" title="Netty 核心原理剖析与 RPC 实践-编程思想">Netty 核心原理剖析与 RPC 实践-编程思想</a><time datetime="2021-10-14T20:34:26.000Z" title="发表于 2021-10-14 20:34:26">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/634ac34e.html" title="Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸">Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸</a><time datetime="2021-10-14T20:33:36.000Z" title="发表于 2021-10-14 20:33:36">2021-10-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

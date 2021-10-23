@@ -1,0 +1,410 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NIO 模型与 Netty 入门 | Leo's notes</title><meta name="keywords" content="I\O模型,Netty,Socket编程"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="NIO 模型与 Netty 入门Java Socket 编程*：如何基于 Socket 实现 Server服务器通信原理 Java 实现一个最简的 HTTP 服务器单线程版12345678910111213141516171819202122232425262728public class HttpServer01 &amp;#123;    public static void main(String[">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NIO 模型与 Netty 入门">
+<meta property="og:url" content="https://liule8.github.io/post/92b25e61.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="NIO 模型与 Netty 入门Java Socket 编程*：如何基于 Socket 实现 Server服务器通信原理 Java 实现一个最简的 HTTP 服务器单线程版12345678910111213141516171819202122232425262728public class HttpServer01 &amp;#123;    public static void main(String[">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-10-03T15:24:02.000Z">
+<meta property="article:modified_time" content="2021-10-16T05:06:48.425Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="I\O模型">
+<meta property="article:tag" content="Netty">
+<meta property="article:tag" content="Socket编程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/92b25e61"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-16 05:06:48'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">NIO 模型与 Netty 入门</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-10-03T15:24:02.000Z" title="发表于 2021-10-03 15:24:02">2021-10-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-16T05:06:48.425Z" title="更新于 2021-10-16 05:06:48">2021-10-16</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>13分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="NIO 模型与 Netty 入门"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="NIO-模型与-Netty-入门"><a href="#NIO-模型与-Netty-入门" class="headerlink" title="NIO 模型与 Netty 入门"></a>NIO 模型与 Netty 入门</h1><h2 id="Java-Socket-编程-：如何基于-Socket-实现-Server"><a href="#Java-Socket-编程-：如何基于-Socket-实现-Server" class="headerlink" title="Java Socket 编程*：如何基于 Socket 实现 Server"></a>Java Socket 编程*：如何基于 Socket 实现 Server</h2><h3 id="服务器通信原理"><a href="#服务器通信原理" class="headerlink" title="服务器通信原理"></a>服务器通信原理</h3><p><img src="http://image.leonote.cn/20211003161348.png" alt="image-20211003161348011"></p>
+<h3 id="Java-实现一个最简的-HTTP-服务器"><a href="#Java-实现一个最简的-HTTP-服务器" class="headerlink" title="Java 实现一个最简的 HTTP 服务器"></a>Java 实现一个最简的 HTTP 服务器</h3><h4 id="单线程版"><a href="#单线程版" class="headerlink" title="单线程版"></a>单线程版</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpServer01</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        ServerSocket serverSocket = <span class="keyword">new</span> ServerSocket(<span class="number">8801</span>);</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Socket accept = serverSocket.accept();</span><br><span class="line">                service(accept);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(Socket socket)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">20</span>);</span><br><span class="line">            PrintWriter printWriter = <span class="keyword">new</span> PrintWriter(socket.getOutputStream(), <span class="keyword">true</span>);</span><br><span class="line">            printWriter.println(<span class="string">&quot;HTTP/1.1 200 OK&quot;</span>);</span><br><span class="line">            printWriter.println(<span class="string">&quot;Content-Type:text/html;charset=utf-8&quot;</span>);</span><br><span class="line">            printWriter.println();</span><br><span class="line">            printWriter.println(<span class="string">&quot;hello, nio&quot;</span>);</span><br><span class="line">            printWriter.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException | IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>创建一个 ServerSocket </li>
+<li>绑定8801端口 </li>
+<li>当有客户端请求时通过 accept 方法拿到 Socket，进而可以进行处理 </li>
+<li>sleep 20ms，模拟业务操作(IO) </li>
+<li>模拟输出 HTTP 报文头和 hello </li>
+<li>关闭 socket </li>
+</ol>
+<p>可以浏览器访问 <a target="_blank" rel="noopener" href="http://localhost:8801">http://localhost:8801</a> 思考一下有什么问题</p>
+<p><strong>进行压测</strong></p>
+<p>设置 -Xmx512m 然后启动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># windows</span></span></span><br><span class="line">sb -u http://localhost:8801 -c 40 -N 30</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># mac</span></span></span><br><span class="line">wrk -c 40 -d30s http://localhost:8801</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn/20211003170520.png" alt="image-20211003170520533"></p>
+<p><strong>BIO会阻塞当前线程，代码只有一个主线程在串行工作，而且会暂停20ms，所以吞吐量非常低</strong></p>
+<h4 id="多线程版"><a href="#多线程版" class="headerlink" title="多线程版"></a>多线程版</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpServer02</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        ServerSocket serverSocket = <span class="keyword">new</span> ServerSocket(<span class="number">8802</span>);</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">final</span> Socket accept = serverSocket.accept();</span><br><span class="line">                <span class="keyword">new</span> Thread(() -&gt; service(accept)).start();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(Socket socket)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">20</span>);</span><br><span class="line">            PrintWriter printWriter = <span class="keyword">new</span> PrintWriter(socket.getOutputStream(), <span class="keyword">true</span>);</span><br><span class="line">            printWriter.println(<span class="string">&quot;HTTP/1.1 200 OK&quot;</span>);</span><br><span class="line">            printWriter.println(<span class="string">&quot;Content-Type:text/html;charset=utf-8&quot;</span>);</span><br><span class="line">            printWriter.println();</span><br><span class="line">            printWriter.println(<span class="string">&quot;hello, nio&quot;</span>);</span><br><span class="line">            printWriter.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException | IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>改进一下，绑定8802端口。</p>
+<p>每个客户端请求进来时创建一个线程，有什么问题？</p>
+<p>大概创建了4000个线程</p>
+<p><strong>进行压测</strong></p>
+<p>设置 -Xmx512m 然后启动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># windows</span></span></span><br><span class="line">sb -u http://localhost:8802 -c 40 -N 30</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># mac</span></span></span><br><span class="line">wrk -c 40 -d30s http://localhost:8802</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn/20211003171421.png" alt="image-20211003171421180"></p>
+<p>充分发挥CPU多核优势，整个处理的效率比单线程版的要高很多。但还是有问题，每次有客户来都创建一个新线程，创建销毁线程会有开销</p>
+<h4 id="线程池版"><a href="#线程池版" class="headerlink" title="线程池版"></a>线程池版</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpServer03</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        ExecutorService executorService = Executors.newFixedThreadPool(<span class="number">40</span>);</span><br><span class="line">        <span class="keyword">final</span> ServerSocket serverSocket = <span class="keyword">new</span> ServerSocket(<span class="number">8803</span>);</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">final</span> Socket accept = serverSocket.accept();</span><br><span class="line">                executorService.execute(() -&gt; service(accept));</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(Socket socket)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">20</span>);</span><br><span class="line">            PrintWriter printWriter = <span class="keyword">new</span> PrintWriter(socket.getOutputStream(), <span class="keyword">true</span>);</span><br><span class="line">            printWriter.println(<span class="string">&quot;HTTP/1.1 200 OK&quot;</span>);</span><br><span class="line">            printWriter.println(<span class="string">&quot;Content-Type:text/html;charset=utf-8&quot;</span>);</span><br><span class="line">            printWriter.println();</span><br><span class="line">            printWriter.println(<span class="string">&quot;hello, nio&quot;</span>);</span><br><span class="line">            printWriter.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException | IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再改进一下，绑定8803端口。</p>
+<p>创建一个固定大小的线程池来处理，why？ 有什么问题？</p>
+<p>线程数量可控，减少切换线程的上下文</p>
+<p><strong>进行压测</strong></p>
+<p>设置 -Xmx512m 然后启动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># windows</span></span></span><br><span class="line">sb -u http://localhost:8803 -c 40 -N 30</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># mac</span></span></span><br><span class="line">wrk -c 40 -d30s http://localhost:8803</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn/20211004090814.png" alt="image-20211004090814106"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>到目前为止所做的事</p>
+<p><img src="http://image.leonote.cn/20211004090432.png" alt="image-20211004090432372"></p>
+<h2 id="深入讨论-IO-：Server-处理时到底发生了什么"><a href="#深入讨论-IO-：Server-处理时到底发生了什么" class="headerlink" title="深入讨论 IO*：Server 处理时到底发生了什么"></a>深入讨论 IO*：Server 处理时到底发生了什么</h2><h3 id="服务器通信过程分析"><a href="#服务器通信过程分析" class="headerlink" title="服务器通信过程分析"></a>服务器通信过程分析</h3><p><img src="http://image.leonote.cn/20211003161348.png" alt="image-20211003161348011"></p>
+<p>仔细分析一下， 这个过程中，存在两种类型操作： </p>
+<ul>
+<li>CPU 计算/业务处理 </li>
+<li>IO 操作与等待/网络、磁盘、数据库 </li>
+</ul>
+<p>想想前面的例子为什么创建大量线程？</p>
+<p>因为代码等待了20ms以及一些io操作等，这时当前线程是阻塞，cpu可以干其他活，所以cpu可以处理更多的线程</p>
+<p>tomcat里面有几十个甚至上百个，远远超过我们cpu核心数。</p>
+<ul>
+<li>cpu密集型</li>
+<li>io密集型-操作io特别频繁，网络通信/数据库</li>
+</ul>
+<p><img src="http://image.leonote.cn/20211004092023.png" alt="image-20211004092023549"></p>
+<p>对于一个 IO 相关应用来说， 例如通过网络访问，服务器端读取本地（磁盘）文件，再返回给客户端（如上图）。R表示读，W表示写，C表示关闭</p>
+<p>这种情况下，大部分 CPU 等计算资源，可能就被浪费了，因为CPU要么在等网络IO，要么在等磁盘的IO。</p>
+<p>这时候创建大量的线程，可以减少一部分的CPU资源浪费，但是管理成本就上去了。</p>
+<h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><p>利用统筹学原理</p>
+<p><strong>烧开水例子</strong></p>
+<ol>
+<li><p>顺序（串行算法）</p>
+<p><img src="http://image.leonote.cn/20211004094245.png" alt="image-20211004094244936"></p>
+</li>
+<li><p>单对象同时处理（并行算法1）</p>
+<p><img src="http://image.leonote.cn/20211004094508.png" alt="image-20211004094508384"></p>
+</li>
+<li><p>双对象同时处理（并行算法2）</p>
+<p><img src="http://image.leonote.cn/20211004094836.png" alt="image-20211004094836704"></p>
+</li>
+</ol>
+<h3 id="再深入一层的看问题"><a href="#再深入一层的看问题" class="headerlink" title="再深入一层的看问题"></a>再深入一层的看问题</h3><p><img src="http://image.leonote.cn/20211004101847.png" alt="image-20211004101847579"></p>
+<p>不仅面临线程 /CPU 的问题， 还要面对数据来回复制的问题。 </p>
+<p>这个一来，对每个业务处理过程，使用一个线程以一竿子通到底的方式， 性能不是最优的，还有提升空间。 </p>
+<p>可以加缓冲区</p>
+<p>考虑一下，理想状态，是什么样的？ 流水线</p>
+<h2 id="IO-模型与相关概念-：怎么理解-NIO"><a href="#IO-模型与相关概念-：怎么理解-NIO" class="headerlink" title="IO 模型与相关概念*：怎么理解 NIO"></a>IO 模型与相关概念*：怎么理解 NIO</h2><h3 id="通信模型"><a href="#通信模型" class="headerlink" title="通信模型"></a>通信模型</h3><p>考虑一下：</p>
+<ul>
+<li>阻塞、非阻塞</li>
+<li>同步、异步</li>
+</ul>
+<p>有什么关系和区别？ </p>
+<ul>
+<li>同步异步 是通信模式。 </li>
+<li>阻塞、非阻塞 是线程处理模式。</li>
+</ul>
+<h3 id="五种IO模型"><a href="#五种IO模型" class="headerlink" title="五种IO模型"></a>五种IO模型</h3><p><img src="http://image.leonote.cn/20211003154116.png" alt="image-20211003154116083"></p>
+<p>基本上都是同步的</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/22707398">同步异步，阻塞非阻塞文章</a></p>
+</blockquote>
+<h4 id="阻塞式IO-BIO"><a href="#阻塞式IO-BIO" class="headerlink" title="阻塞式IO-BIO"></a>阻塞式IO-BIO</h4><p><img src="http://image.leonote.cn/20211003154211.png" alt="image-20211003154211522"></p>
+<p>一般通过在 while(true) 循环中服务 端会调用 accept() 方法等待接收客户 端的连接的方式监听请求，请求一旦 接收到一个连接请求，就可以建立通 信套接字在这个通信套接字上进行读 写操作，此时不能再接收其他客户端 连接请求，只能等待同当前连接的客 户端的操作执行完成， 不过可以通过 多线程来支持多个客户端的连接</p>
+<p><img src="http://image.leonote.cn/20211003154352.png" alt="image-20211003154352218"></p>
+<h4 id="非阻塞式IO-NIO"><a href="#非阻塞式IO-NIO" class="headerlink" title="非阻塞式IO-NIO"></a>非阻塞式IO-NIO</h4><p><img src="http://image.leonote.cn/20211003154432.png" alt="image-20211003154432132"></p>
+<p>非阻塞式 IO 和阻塞 IO 类比，内核会立即返回，返回后获得足够的 CPU 时间继续做其它的事情。 </p>
+<p>用户进程第一个阶段不是阻塞的，需要不断的主动询问 kernel 数据好了没有； 第二个阶段依然总是阻塞的</p>
+<p><img src="http://image.leonote.cn/20211003154541.png" alt="image-20211003154541402"></p>
+<h4 id="IO多路复用"><a href="#IO多路复用" class="headerlink" title="IO多路复用"></a>IO多路复用</h4><p><img src="http://image.leonote.cn/20211003154637.png" alt="image-20211003154637369"></p>
+<p>IO 多路复用(IO multiplexing) ，也称事件驱动 IO(event -driven IO)，就是在单个线程里同时监控多个套接字，通过 select  或 poll 轮询所负责的所有 socket，当某个 socket 有数据到达了， 就通知用户进程 。</p>
+<p>IO 复用同非阻塞 IO 本质一样，不过利用了新的 select 系统调用，由内核来负责本来是请求进程该做的轮询操作。看似比 非阻塞 IO 还多了一个系统调用开销，不过因为可以支持多路 IO，才算提高了效率。 </p>
+<p>进程先是阻塞在 select/poll 上，再是阻塞在读操作的第二个阶段上。</p>
+<p><img src="http://image.leonote.cn/20211003154911.png" alt="image-20211003154911384"></p>
+<p><strong>select/poll 的几大缺点</strong></p>
+<ol>
+<li>每次调用 select，都需要把 fd 集合从用户态拷贝到内核态，这个开销在 fd 很多时会很大 </li>
+<li>同时每次调用 select 都需要在内核遍历传递进来的所有 fd，这个开销在 fd 很多时也很大 </li>
+<li>select 支持的文件描述符数量太小了，默认是1024</li>
+</ol>
+<p><strong>epoll</strong>（Linux 2.5.44内核中引入，2.6内核正式引入，可被用于代替 POSIX select 和 poll 系统调用）</p>
+<ol>
+<li>内核与用户空间共享一块内存 </li>
+<li>通过回调解决遍历问题 </li>
+<li>fd 没有限制，可以支撑10万连接</li>
+</ol>
+<p><img src="http://image.leonote.cn/20211003155133.png" alt="image-20211003155133065"></p>
+<p><img src="http://image.leonote.cn/20211003155147.png" alt="image-20211003155147431"></p>
+<h4 id="信号驱动-IO"><a href="#信号驱动-IO" class="headerlink" title="信号驱动 IO"></a>信号驱动 IO</h4><p><img src="http://image.leonote.cn/20211003155234.png" alt="image-20211003155234561"></p>
+<p>信号驱动 IO 与 BIO 和 NIO 最大的区别就在于，在 IO 执行的数据准备阶段 ，不会阻塞用户进程。</p>
+<p>如上图所示：当用户进程需要等待数据的时候，会向内核发送一个信号，告诉内核我要什么数据，然后用户进程就继续做别的事情去了，而当内核中的数据准备好之后，内核立马发给用户进程一个信号，说 “数据准备好了， 快来查收 ”，用户进程收到信号之后， 立马调用 recvfrom，去查收数据 。</p>
+<h4 id="异步式-IO-AIO"><a href="#异步式-IO-AIO" class="headerlink" title="异步式 IO-AIO"></a>异步式 IO-AIO</h4><p>纯理论上来说，这个模型是性能最好的。执行变简单了，但是相应的编码变困难了，容易出现回调地狱。</p>
+<p><img src="http://image.leonote.cn/20211003155438.png" alt="image-20211003155438040"></p>
+<p>异步 IO 真正实现了 IO 全流程的非阻塞。</p>
+<p>用户进程发出系统调用后立即返回，内核等待数据准备完成，然后将数据拷贝到用户进程缓冲区，然后发送信号告诉用户进程 IO 操作执行完毕 （与 SIGIO 相比，一个是发送信号告诉用户进程数据准备完毕，一个是 IO 执行完毕）。 </p>
+<p><strong>windows 上有一个的 IOCP 的实现</strong>。</p>
+<p><img src="http://image.leonote.cn/20211003155555.png" alt="image-20211003155555399"></p>
+<p><img src="http://image.leonote.cn/20211003155610.png" alt="image-20211003155610694"></p>
+<blockquote>
+<p>一个场景，去打印店打印文件。 </p>
+<ul>
+<li><p><strong>同步阻塞</strong> - 阻塞IO</p>
+<p>直接排队，别的啥也干不成，直到轮到你使用打印机了，自己打印文件 </p>
+</li>
+<li><p><strong>Reactor</strong> - epoll模式（多路复用+非阻塞IO）</p>
+<p>拿个号码，回去该干嘛干嘛，等轮到你使用打印机了，店主通知你来用打印机，打印文件 </p>
+</li>
+<li><p><strong>Proactor</strong> - 纯异步（异步IO）</p>
+<p>拿个号码，回去该干嘛干嘛，等轮到你使用打印机了，店主直接给你打印好文件，通知你来拿。</p>
+</li>
+</ul>
+</blockquote>
+<h3 id="IO模型发展进程"><a href="#IO模型发展进程" class="headerlink" title="IO模型发展进程"></a>IO模型发展进程</h3><p>线程池-&gt;EDA-&gt;SEDA</p>
+<h4 id="线程池模型"><a href="#线程池模型" class="headerlink" title="线程池模型"></a>线程池模型</h4><p>线程池模型是有一个并发处理的峰值的，到了某个最佳值，再加线程，线程会互相抢资源，吞吐量会迅速下降，延迟迅速上升</p>
+<p><img src="http://image.leonote.cn/20211004123352.png" alt="image-20211004123352456"></p>
+<p><img src="http://image.leonote.cn/20211004123411.png" alt="image-20211004123411701"></p>
+<h4 id="EDA"><a href="#EDA" class="headerlink" title="EDA"></a>EDA</h4><p>事件驱动处理</p>
+<p><img src="http://image.leonote.cn/20211004123455.png" alt="image-20211004123455104"></p>
+<p><img src="http://image.leonote.cn/20211004123514.png" alt="image-20211004123514100"></p>
+<h4 id="SEDA"><a href="#SEDA" class="headerlink" title="SEDA"></a>SEDA</h4><p>分阶段的事件驱动处理</p>
+<p><img src="http://image.leonote.cn/20211004123536.png" alt="image-20211004123536742"></p>
+<h2 id="Netty-框架简介：什么是-Netty"><a href="#Netty-框架简介：什么是-Netty" class="headerlink" title="Netty 框架简介：什么是 Netty"></a>Netty 框架简介：什么是 Netty</h2><h3 id="Netty-概览"><a href="#Netty-概览" class="headerlink" title="Netty 概览"></a>Netty 概览</h3><p><img src="http://image.leonote.cn/20211003155826.png" alt="image-20211003155826826"></p>
+<p>网络应用开发框架 </p>
+<ol>
+<li>异步 </li>
+<li>事件驱动 </li>
+<li>基于 NIO </li>
+</ol>
+<p>适用于：</p>
+<ul>
+<li>服务端 </li>
+<li>客户端</li>
+<li>TCP/UDP</li>
+</ul>
+<h3 id="Netty-特性"><a href="#Netty-特性" class="headerlink" title="Netty 特性"></a>Netty 特性</h3><p>高性能的协议服务器：</p>
+<ul>
+<li>高吞吐 </li>
+<li>低延迟 </li>
+<li>低开销 </li>
+<li>零拷贝 </li>
+<li>可扩容 </li>
+<li>松耦合: 网络和业务逻辑分离</li>
+<li>使用方便、可维护性好</li>
+</ul>
+<h3 id="Netty-兼容性"><a href="#Netty-兼容性" class="headerlink" title="Netty 兼容性"></a>Netty 兼容性</h3><p><strong>JDK 兼容性</strong>：</p>
+<ul>
+<li><p>Netty 3.x：JDK5 </p>
+</li>
+<li><p>Netty 4.x：JDK6 </p>
+</li>
+<li><p><del>Netty 5.x：已废弃</del></p>
+</li>
+</ul>
+<p><strong>协议兼容性</strong>：</p>
+<ul>
+<li>兼容大部分通用协议</li>
+<li>支持自定义协议</li>
+</ul>
+<h3 id="Netty的应用"><a href="#Netty的应用" class="headerlink" title="Netty的应用"></a>Netty的应用</h3><ul>
+<li>HTTP Server</li>
+<li>HTTPS Server</li>
+<li>WebSocket Server</li>
+<li>TCP Server</li>
+<li>UDP Server</li>
+<li>In VM Pipe</li>
+</ul>
+<p><strong>Netty vs Java EE?</strong></p>
+<p>Netty 只是简单的实现Http Server，它没有实现Web容器的标准（不支持session，jsp等）</p>
+<p>Java EE 支持 java EE标准（EJB，包括了Web容器标准和Http Server），所以 Java EE的范围比Netty要大</p>
+<h3 id="Netty-基本概念"><a href="#Netty-基本概念" class="headerlink" title="Netty 基本概念"></a>Netty 基本概念</h3><ul>
+<li><p><strong>Channel</strong></p>
+<p>通道，Java NIO 中的基础概念，代表一个打开的连接，可执行读取/写入 IO 操作。 </p>
+<p>Netty 对 Channel 的所有 IO 操作都是非阻塞的。</p>
+</li>
+<li><p><strong>ChannelFuture</strong> </p>
+<p>Java 的 Future 接口，只能查询操作的完成情况，或者阻塞当前线程等待操作完成。 </p>
+<p>Netty 封装一个 ChannelFuture 接口。 我们可以将回调方法传给 ChannelFuture，在操作完成时自动执行。</p>
+</li>
+<li><p><strong>Event &amp; Handler</strong> </p>
+<p>Netty 基于事件驱动，事件和处理器可以关联到入站和出站数据流。 </p>
+</li>
+<li><p><strong>Encoder &amp;  Decoder</strong> </p>
+<p>处理网络 IO 时，需要进行序列化和反序列化，转换 Java 对象与字节流。 </p>
+<p>对入站数据进行解码，基类是 <code>ByteToMessageDecoder</code>。 </p>
+<p>对出站数据进行编码，基类是 <code>MessageToByteEncoder</code>。</p>
+</li>
+<li><p><strong>ChannelPipeline</strong> </p>
+<p>数据处理管道就是事件处理器链。 有顺序、同一 Channel 的出站处理器和入站处理器在同一个列表中。</p>
+</li>
+</ul>
+<h4 id="Event-amp-Handler"><a href="#Event-amp-Handler" class="headerlink" title="Event &amp; Handler"></a>Event &amp; Handler</h4><p>入站事件： </p>
+<ul>
+<li>通道激活和停用 </li>
+<li>读操作事件 </li>
+<li>异常事件 </li>
+<li>用户事件 </li>
+</ul>
+<p>出站事件： </p>
+<ul>
+<li>打开连接 </li>
+<li>关闭连接 </li>
+<li>写入数据 </li>
+<li>刷新数据</li>
+</ul>
+<p>事件处理程序接口: </p>
+<ul>
+<li>ChannelHandler </li>
+<li>ChannelOutboundHandler </li>
+<li>ChannelInboundHandler </li>
+</ul>
+<p>适配器（空实现，需要继承使用）： </p>
+<ul>
+<li>ChannelInboundHandlerAdapter </li>
+<li>ChannelOutboundHandlerAdapter</li>
+</ul>
+<h3 id="Netty-应用组成"><a href="#Netty-应用组成" class="headerlink" title="Netty 应用组成"></a>Netty 应用组成</h3><ul>
+<li>网络事件</li>
+<li>应用程序逻辑事件</li>
+<li>事件处理程序</li>
+</ul>
+<h2 id="Netty-使用示例-：如何使用-Netty-实现-NIO"><a href="#Netty-使用示例-：如何使用-Netty-实现-NIO" class="headerlink" title="Netty 使用示例*：如何使用 Netty 实现 NIO"></a>Netty 使用示例*：如何使用 Netty 实现 NIO</h2><h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><ul>
+<li>NettyHttpServer</li>
+<li>HttpInitializer</li>
+<li>HttpHandler</li>
+</ul>
+<h4 id="NettyHttpServer"><a href="#NettyHttpServer" class="headerlink" title="NettyHttpServer"></a>NettyHttpServer</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.netty.bootstrap.ServerBootstrap;</span><br><span class="line"><span class="keyword">import</span> io.netty.buffer.PooledByteBufAllocator;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.Channel;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.ChannelOption;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.EventLoopGroup;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.nio.NioEventLoopGroup;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.socket.nio.NioServerSocketChannel;</span><br><span class="line"><span class="keyword">import</span> io.netty.handler.logging.LogLevel;</span><br><span class="line"><span class="keyword">import</span> io.netty.handler.logging.LoggingHandler;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyHttpServer</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> port = <span class="number">8808</span>;</span><br><span class="line">    EventLoopGroup bossGroup = <span class="keyword">new</span> NioEventLoopGroup(<span class="number">2</span>);</span><br><span class="line">    EventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup(<span class="number">16</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      ServerBootstrap b = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">      b.option(ChannelOption.SO_BACKLOG, <span class="number">128</span>)</span><br><span class="line">          .childOption(ChannelOption.TCP_NODELAY, <span class="keyword">true</span>)</span><br><span class="line">          .childOption(ChannelOption.SO_KEEPALIVE, <span class="keyword">true</span>)</span><br><span class="line">          .childOption(ChannelOption.SO_REUSEADDR, <span class="keyword">true</span>)</span><br><span class="line">          .childOption(ChannelOption.SO_RCVBUF, <span class="number">32</span> * <span class="number">1024</span>)</span><br><span class="line">          .childOption(ChannelOption.SO_SNDBUF, <span class="number">32</span> * <span class="number">1024</span>)</span><br><span class="line">          <span class="comment">//          .childOption(EpollChannelOption.SO_REUSEPORT, true) // linux才有的</span></span><br><span class="line">          .childOption(ChannelOption.SO_KEEPALIVE, <span class="keyword">true</span>)</span><br><span class="line">          .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);</span><br><span class="line"></span><br><span class="line">      b.group(bossGroup, workerGroup)</span><br><span class="line">          .channel(NioServerSocketChannel.class)</span><br><span class="line">          .handler(<span class="keyword">new</span> LoggingHandler(LogLevel.INFO))</span><br><span class="line">          .childHandler(<span class="keyword">new</span> HttpInitializer());</span><br><span class="line"></span><br><span class="line">      Channel ch = b.bind(port).sync().channel();</span><br><span class="line">      System.out.println(<span class="string">&quot;开启netty http服务器，监听地址和端口为 http://127.0.0.1:&quot;</span> + port + <span class="string">&quot;/&quot;</span>);</span><br><span class="line">      ch.closeFuture().sync();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      bossGroup.shutdownGracefully();</span><br><span class="line">      workerGroup.shutdownGracefully();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="HttpInitializer"><a href="#HttpInitializer" class="headerlink" title="HttpInitializer"></a>HttpInitializer</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.netty.channel.ChannelInitializer;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.ChannelPipeline;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.socket.SocketChannel;</span><br><span class="line"><span class="keyword">import</span> io.netty.handler.codec.http.HttpObjectAggregator;</span><br><span class="line"><span class="keyword">import</span> io.netty.handler.codec.http.HttpServerCodec;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpInitializer</span> <span class="keyword">extends</span> <span class="title">ChannelInitializer</span>&lt;<span class="title">SocketChannel</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span> </span>&#123;</span><br><span class="line">    ChannelPipeline p = ch.pipeline();</span><br><span class="line">    p.addLast(<span class="keyword">new</span> HttpServerCodec()); <span class="comment">// http 编码器</span></span><br><span class="line">    <span class="comment">//    p.addLast(new HttpServerExpectContinueHandler());</span></span><br><span class="line">    p.addLast(<span class="keyword">new</span> HttpObjectAggregator(<span class="number">1024</span> * <span class="number">1024</span>));</span><br><span class="line">    p.addLast(<span class="keyword">new</span> HttpHandler()); <span class="comment">// 自己写的 http handler</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="HttpHandler"><a href="#HttpHandler" class="headerlink" title="HttpHandler"></a>HttpHandler</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.netty.buffer.Unpooled;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.ChannelFutureListener;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.ChannelHandlerContext;</span><br><span class="line"><span class="keyword">import</span> io.netty.channel.ChannelInboundHandlerAdapter;</span><br><span class="line"><span class="keyword">import</span> io.netty.handler.codec.http.*;</span><br><span class="line"><span class="keyword">import</span> io.netty.util.ReferenceCountUtil;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.google.common.net.HttpHeaders.CONNECTION;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      FullHttpRequest fullRequest = (FullHttpRequest) msg;</span><br><span class="line">      String uri = fullRequest.uri();</span><br><span class="line">      <span class="keyword">if</span> (uri.contains(<span class="string">&quot;/test&quot;</span>)) &#123;</span><br><span class="line">        handlerTest(fullRequest, ctx);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      ReferenceCountUtil.release(msg);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handlerTest</span><span class="params">(FullHttpRequest fullRequest, ChannelHandlerContext ctx)</span> </span>&#123;</span><br><span class="line">    FullHttpResponse response = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      String value = <span class="string">&quot;hello, leo liu&quot;</span>;</span><br><span class="line">      response =</span><br><span class="line">          <span class="keyword">new</span> DefaultFullHttpResponse(</span><br><span class="line">              HttpVersion.HTTP_1_1,</span><br><span class="line">              HttpResponseStatus.OK,</span><br><span class="line">              Unpooled.wrappedBuffer(value.getBytes(StandardCharsets.UTF_8)));</span><br><span class="line">      response.headers().set(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>);</span><br><span class="line">      response.headers().set(<span class="string">&quot;Content-Length&quot;</span>, response.content().readableBytes());</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      System.out.println(<span class="string">&quot;处理测试接口出错&quot;</span> + e.getMessage());</span><br><span class="line">      response = <span class="keyword">new</span> DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (fullRequest != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!HttpUtil.isKeepAlive(fullRequest)) &#123;</span><br><span class="line">          ctx.write(response).addListener(ChannelFutureListener.CLOSE);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          response.headers().set(CONNECTION, KEEP_ALIVE);</span><br><span class="line">          ctx.write(response);</span><br><span class="line">        &#125;</span><br><span class="line">        ctx.flush();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx, Throwable cause)</span> </span>&#123;</span><br><span class="line">    cause.printStackTrace();</span><br><span class="line">    ctx.close();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p><img src="http://image.leonote.cn/20211004170227.png" alt="image-20211004170227722"></p>
+<p><strong>进行压测</strong></p>
+<p>设置 -Xmx512m 然后启动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># windows</span></span></span><br><span class="line">sb -u http://localhost:8808/test -c 40 -N 30</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># mac</span></span></span><br><span class="line">wrk -c 40 -d30s http://localhost:8808/test</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.leonote.cn/20211004170633.png" alt="image-20211004170633873"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/92b25e61.html">https://liule8.github.io/post/92b25e61.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/I-O%E6%A8%A1%E5%9E%8B/">I\O模型</a><a class="post-meta__tags" href="/tags/Netty/">Netty</a><a class="post-meta__tags" href="/tags/Socket%E7%BC%96%E7%A8%8B/">Socket编程</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/4764a1e7.html"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">计算机网络通关之Web 技术-HTTP 协议</div></div></a></div><div class="next-post pull-right"><a href="/post/462e1124.html"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">计算机网络通关之Web 技术-DNS 域名解析系统</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/abff7577.html" title="Netty 核心原理剖析与 RPC 实践-实践总结"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-14</div><div class="title">Netty 核心原理剖析与 RPC 实践-实践总结</div></div></a></div><div><a href="/post/889de2a9.html" title="Netty 核心原理剖析与 RPC 实践-编程思想"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-14</div><div class="title">Netty 核心原理剖析与 RPC 实践-编程思想</div></div></a></div><div><a href="/post/3d0ce5bf.html" title="Netty 核心原理剖析与 RPC 实践之ByteBuf 与内存管理-Netty 堆外内存"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-12</div><div class="title">Netty 核心原理剖析与 RPC 实践之ByteBuf 与内存管理-Netty 堆外内存</div></div></a></div><div><a href="/post/4b479954.html" title="Netty 核心原理剖析与 RPC 实践之ByteBuf 与内存管理-Netty 零拷贝技术"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-14</div><div class="title">Netty 核心原理剖析与 RPC 实践之ByteBuf 与内存管理-Netty 零拷贝技术</div></div></a></div><div><a href="/post/e626fe38.html" title="Netty 核心原理剖析与 RPC 实践之ByteBuf 与内存管理-Recycler 对象池技术解析"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-14</div><div class="title">Netty 核心原理剖析与 RPC 实践之ByteBuf 与内存管理-Recycler 对象池技术解析</div></div></a></div><div><a href="/post/cb9ed29c.html" title="Netty 核心原理剖析与 RPC 实践之ByteBuf 与内存管理-数据传输载体 ByteBuf"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-12</div><div class="title">Netty 核心原理剖析与 RPC 实践之ByteBuf 与内存管理-数据传输载体 ByteBuf</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NIO-%E6%A8%A1%E5%9E%8B%E4%B8%8E-Netty-%E5%85%A5%E9%97%A8"><span class="toc-number">1.</span> <span class="toc-text">NIO 模型与 Netty 入门</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-Socket-%E7%BC%96%E7%A8%8B-%EF%BC%9A%E5%A6%82%E4%BD%95%E5%9F%BA%E4%BA%8E-Socket-%E5%AE%9E%E7%8E%B0-Server"><span class="toc-number">1.1.</span> <span class="toc-text">Java Socket 编程*：如何基于 Socket 实现 Server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86"><span class="toc-number">1.1.1.</span> <span class="toc-text">服务器通信原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E6%9C%80%E7%AE%80%E7%9A%84-HTTP-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">1.1.2.</span> <span class="toc-text">Java 实现一个最简的 HTTP 服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95%E7%BA%BF%E7%A8%8B%E7%89%88"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">单线程版</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%89%88"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">多线程版</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%89%88"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">线程池版</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.1.3.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%B1%E5%85%A5%E8%AE%A8%E8%AE%BA-IO-%EF%BC%9AServer-%E5%A4%84%E7%90%86%E6%97%B6%E5%88%B0%E5%BA%95%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">1.2.</span> <span class="toc-text">深入讨论 IO*：Server 处理时到底发生了什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">1.2.1.</span> <span class="toc-text">服务器通信过程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">原理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%8D%E6%B7%B1%E5%85%A5%E4%B8%80%E5%B1%82%E7%9A%84%E7%9C%8B%E9%97%AE%E9%A2%98"><span class="toc-number">1.2.2.</span> <span class="toc-text">再深入一层的看问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IO-%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5-%EF%BC%9A%E6%80%8E%E4%B9%88%E7%90%86%E8%A7%A3-NIO"><span class="toc-number">1.3.</span> <span class="toc-text">IO 模型与相关概念*：怎么理解 NIO</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E4%BF%A1%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">通信模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E7%A7%8DIO%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.3.2.</span> <span class="toc-text">五种IO模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%98%BB%E5%A1%9E%E5%BC%8FIO-BIO"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">阻塞式IO-BIO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%9E%E9%98%BB%E5%A1%9E%E5%BC%8FIO-NIO"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">非阻塞式IO-NIO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">IO多路复用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E9%A9%B1%E5%8A%A8-IO"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">信号驱动 IO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E5%BC%8F-IO-AIO"><span class="toc-number">1.3.2.5.</span> <span class="toc-text">异步式 IO-AIO</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IO%E6%A8%A1%E5%9E%8B%E5%8F%91%E5%B1%95%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.3.3.</span> <span class="toc-text">IO模型发展进程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">线程池模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EDA"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">EDA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SEDA"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">SEDA</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Netty-%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B%EF%BC%9A%E4%BB%80%E4%B9%88%E6%98%AF-Netty"><span class="toc-number">1.4.</span> <span class="toc-text">Netty 框架简介：什么是 Netty</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Netty-%E6%A6%82%E8%A7%88"><span class="toc-number">1.4.1.</span> <span class="toc-text">Netty 概览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Netty-%E7%89%B9%E6%80%A7"><span class="toc-number">1.4.2.</span> <span class="toc-text">Netty 特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Netty-%E5%85%BC%E5%AE%B9%E6%80%A7"><span class="toc-number">1.4.3.</span> <span class="toc-text">Netty 兼容性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Netty%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.4.4.</span> <span class="toc-text">Netty的应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Netty-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">1.4.5.</span> <span class="toc-text">Netty 基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Event-amp-Handler"><span class="toc-number">1.4.5.1.</span> <span class="toc-text">Event &amp; Handler</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Netty-%E5%BA%94%E7%94%A8%E7%BB%84%E6%88%90"><span class="toc-number">1.4.6.</span> <span class="toc-text">Netty 应用组成</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Netty-%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B-%EF%BC%9A%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-Netty-%E5%AE%9E%E7%8E%B0-NIO"><span class="toc-number">1.5.</span> <span class="toc-text">Netty 使用示例*：如何使用 Netty 实现 NIO</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-number">1.5.1.</span> <span class="toc-text">代码</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#NettyHttpServer"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">NettyHttpServer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HttpInitializer"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">HttpInitializer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HttpHandler"><span class="toc-number">1.5.1.3.</span> <span class="toc-text">HttpHandler</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C"><span class="toc-number">1.5.2.</span> <span class="toc-text">运行结果</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/d42cc345.html" title="数据结构与算法之入门篇-为什么要学习数据结构和算法">数据结构与算法之入门篇-为什么要学习数据结构和算法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/68a8f17f.html" title="数据结构与算法之入门篇-学习方法">数据结构与算法之入门篇-学习方法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/abff7577.html" title="Netty 核心原理剖析与 RPC 实践-实践总结">Netty 核心原理剖析与 RPC 实践-实践总结</a><time datetime="2021-10-14T20:34:53.000Z" title="发表于 2021-10-14 20:34:53">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/889de2a9.html" title="Netty 核心原理剖析与 RPC 实践-编程思想">Netty 核心原理剖析与 RPC 实践-编程思想</a><time datetime="2021-10-14T20:34:26.000Z" title="发表于 2021-10-14 20:34:26">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/634ac34e.html" title="Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸">Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸</a><time datetime="2021-10-14T20:33:36.000Z" title="发表于 2021-10-14 20:33:36">2021-10-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

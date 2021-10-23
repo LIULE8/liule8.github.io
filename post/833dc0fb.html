@@ -1,0 +1,263 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MySQL实战宝典之索引调优-子查询 | Leo's notes</title><meta name="keywords" content="MySQL"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="子查询：放心地使用子查询功能吧！前面提到了一种复杂的 SQL 情况，多表间的连接，以及怎么设计索引来提升 JOIN 的性能。 除了多表连接之外，开发同学还会大量用子查询语句（subquery）。但是因为之前版本的MySQL 数据库对子查询优化有限，所以很多 OLTP 业务场合下，我们都要求在线业务尽可能不用子查询。 然而，MySQL 8.0 版本中，子查询的优化得到大幅提升。所以从现在开始，放心大">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL实战宝典之索引调优-子查询">
+<meta property="og:url" content="https://liule8.github.io/post/833dc0fb.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="子查询：放心地使用子查询功能吧！前面提到了一种复杂的 SQL 情况，多表间的连接，以及怎么设计索引来提升 JOIN 的性能。 除了多表连接之外，开发同学还会大量用子查询语句（subquery）。但是因为之前版本的MySQL 数据库对子查询优化有限，所以很多 OLTP 业务场合下，我们都要求在线业务尽可能不用子查询。 然而，MySQL 8.0 版本中，子查询的优化得到大幅提升。所以从现在开始，放心大">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-09-01T12:49:18.000Z">
+<meta property="article:modified_time" content="2021-10-16T05:06:46.325Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/833dc0fb"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-16 05:06:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">MySQL实战宝典之索引调优-子查询</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-09-01T12:49:18.000Z" title="发表于 2021-09-01 12:49:18">2021-09-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-16T05:06:46.325Z" title="更新于 2021-10-16 05:06:46">2021-10-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/">MySQL</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>7分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="MySQL实战宝典之索引调优-子查询"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="子查询：放心地使用子查询功能吧！"><a href="#子查询：放心地使用子查询功能吧！" class="headerlink" title="子查询：放心地使用子查询功能吧！"></a>子查询：放心地使用子查询功能吧！</h1><p>前面提到了一种复杂的 SQL 情况，多表间的连接，以及怎么设计索引来提升 JOIN 的性能。</p>
+<p>除了多表连接之外，开发同学还会大量用子查询语句（subquery）。但是因为之前版本的MySQL 数据库对子查询优化有限，所以很多 OLTP 业务场合下，我们都要求在线业务尽可能不用子查询。</p>
+<p>然而，MySQL 8.0 版本中，子查询的优化得到大幅提升。所以从现在开始，<strong>放心大胆地在MySQL 中使用子查询吧！</strong></p>
+<h2 id="为什么开发同学这么喜欢写子查询？"><a href="#为什么开发同学这么喜欢写子查询？" class="headerlink" title="为什么开发同学这么喜欢写子查询？"></a>为什么开发同学这么喜欢写子查询？</h2><p>工作中发现相当多的开发同学喜欢写子查询，而不是传统的 JOIN 语句。举一个简单的例子，如果让开发同学“找出1993年，没有下过订单的客户数量”，大部分同学会用子查询来写这个需求，比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">    COUNT(c_custkey) cnt</span><br><span class="line">FROM</span><br><span class="line">    customer</span><br><span class="line">WHERE</span><br><span class="line">    c_custkey NOT IN (</span><br><span class="line">        SELECT</span><br><span class="line">            o_custkey</span><br><span class="line">        FROM</span><br><span class="line">            orders</span><br><span class="line">        WHERE</span><br><span class="line">            o_orderdate &gt;&#x3D;  &#39;1993-01-01&#39;</span><br><span class="line">            AND o_orderdate &lt;  &#39;1994-01-01&#39;</span><br><span class="line">	);</span><br></pre></td></tr></table></figure>
+
+<p>从中可以看到，子查询的逻辑非常清晰：通过 NOT IN 查询不在订单表的用户有哪些。</p>
+<p>不过上述查询是一个典型的 LEFT JOIN 问题（即在表 customer 存在，在表 orders 不存在的问题）。所以，这个问题如果用 LEFT JOIN 写，那么 SQL 如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">    COUNT(c_custkey) cnt</span><br><span class="line">FROM</span><br><span class="line">    customer</span><br><span class="line">        LEFT JOIN</span><br><span class="line">    orders ON</span><br><span class="line">            customer.c_custkey &#x3D; orders.o_custkey</span><br><span class="line">            AND o_orderdate &gt;&#x3D; &#39;1993-01-01&#39;</span><br><span class="line">            AND o_orderdate &lt; &#39;1994-01-01&#39;</span><br><span class="line">WHERE</span><br><span class="line">    o_custkey IS NULL;</span><br></pre></td></tr></table></figure>
+
+<p>可以发现，虽然 LEFT JOIN 也能完成上述需求，但不容易理解，<strong>因为 LEFT JOIN 是一个代数关系，而子查询更偏向于人类的思维角度进行理解。</strong></p>
+<p>所以，大部分人都更倾向写子查询，即便是天天与数据库打交道的 DBA 。</p>
+<p>不过从优化器的角度看，LEFT JOIN 更易于理解，能进行传统 JOIN 的两表连接，而子查询则要求优化器聪明地将其转换为最优的 JOIN 连接。</p>
+<p>我们来看一下，在 MySQL 8.0 版本中，对于上述两条 SQL，最终的执行计划都是：</p>
+<p><img src="http://image.leonote.cn/20210901210556.jpg" alt=""></p>
+<p>可以看到，不论是子查询还是 LEFT JOIN，最终都被转换成了 Nested Loop Join，所以上述两条 SQL 的执行时间是一样的。</p>
+<p>即，在 MySQL 8.0 中，优化器会自动地将 IN 子查询优化，优化为最佳的 JOIN 执行计划，这样一来，会显著的提升性能。</p>
+<h2 id="子查询-IN-和-EXISTS，哪个性能更好？"><a href="#子查询-IN-和-EXISTS，哪个性能更好？" class="headerlink" title="子查询 IN 和 EXISTS，哪个性能更好？"></a>子查询 IN 和 EXISTS，哪个性能更好？</h2><p>除了“为什么开发同学都喜欢写子查询”，关于子查询，另一个经常被问到的问题是：“ IN 和EXISTS 哪个性能更好？”要回答这个问题，我们看一个例子。</p>
+<p>针对开篇的 NOT IN 子查询，你可以改写为 NOT EXISTS 子查询，重写后的 SQL 如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">    COUNT(c_custkey) cnt</span><br><span class="line">FROM</span><br><span class="line">    customer</span><br><span class="line">WHERE</span><br><span class="line">    NOT EXISTS (</span><br><span class="line">        SELECT</span><br><span class="line">            1</span><br><span class="line">        FROM</span><br><span class="line">            orders</span><br><span class="line">        WHERE</span><br><span class="line">            o_orderdate &gt;&#x3D;  &#39;1993-01-01&#39;</span><br><span class="line">            AND o_orderdate &lt;  &#39;1994-01-01&#39;</span><br><span class="line">            AND c_custkey &#x3D; o_custkey</span><br><span class="line">    );</span><br></pre></td></tr></table></figure>
+
+<p>你要注意，千万不要盲目地相信网上的一些文章，有的说 IN 的性能更好，有的说 EXISTS 的子查询性能更好。你只关注 SQL 执行计划就可以，如果两者的执行计划一样，性能没有任何差别。</p>
+<p>接着说回来，对于上述 NOT EXISTS，它的执行计划如下图所示：</p>
+<p><img src="http://image.leonote.cn/20210901211007.jpg" alt=""></p>
+<p>你可以看到，它和 NOT IN 的子查询执行计划一模一样，所以二者的性能也是一样的。讲完子查询的执行计划之后，接下来我们来看一下一种需要对子查询进行优化的 SQL：依赖子查询。</p>
+<h2 id="依赖子查询的优化"><a href="#依赖子查询的优化" class="headerlink" title="依赖子查询的优化"></a>依赖子查询的优化</h2><p>在 MySQL 8.0 版本之前，MySQL 对于子查询的优化并不充分。所以在子查询的执行计划中会看到 DEPENDENT SUBQUERY 的提示，这表示是一个依赖子查询，子查询需要依赖外部表的关联。</p>
+<p><strong>如果你看到这样的提示，就要警惕</strong>， 因为 DEPENDENT SUBQUERY 执行速度可能非常慢，大部分时候需要你手动把它转化成两张表之间的连接。</p>
+<p>我们以下面这条 SQL 为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">    *</span><br><span class="line">FROM</span><br><span class="line">    orders</span><br><span class="line">WHERE</span><br><span class="line">    (o_clerk , o_orderdate) IN (</span><br><span class="line">        SELECT</span><br><span class="line">            o_clerk, MAX(o_orderdate)</span><br><span class="line">        FROM</span><br><span class="line">            orders</span><br><span class="line">        GROUP BY o_clerk);</span><br></pre></td></tr></table></figure>
+
+<p>上述 SQL 语句的子查询部分表示“计算出每个员工最后成交的订单时间”，然后最外层的 SQL 表示返回订单的相关信息。</p>
+<p>这条 SQL 在最新的 MySQL 8.0 中，其执行计划如下所示：</p>
+<p><img src="http://image.leonote.cn/20210901211338.jpg" alt=""></p>
+<p>通过命令 EXPLAIN FORMAT=tree 输出执行计划，你可以看到，第 3 行有这样的提示：<strong><em>Select #2 (subquery in condition; run only once)</em></strong>。这表示子查询只执行了一次，然后把最终的结果保存起来了。</p>
+<p>执行计划的第 6 行 <strong><em>Index lookup on <materialized_subquery></em></strong>，表示对表 orders 和子查询结果所得到的表进行 JOIN 连接，最后返回结果。</p>
+<p>所以，当前这个执行计划是对表 orders 做2次扫描，每次扫描约 5587618 条记录：</p>
+<ul>
+<li><p>第 1 次扫描，用于内部的子查询操作，计算出每个员工最后一次成交的时间；</p>
+</li>
+<li><p>第 2 次表 oders 扫描，查询并返回每个员工的订单信息，即返回每个员工最后一笔成交的订单信息。</p>
+</li>
+</ul>
+<p>最后，直接用命令 EXPLAIN 查看执行计划，如下图所示：</p>
+<p><img src="http://image.leonote.cn/20210901211647.jpg" alt=""></p>
+<p>如果是老版本的 MySQL 数据库，它的执行计划将会是依赖子查询，执行计划如下所示：</p>
+<p><img src="http://image.leonote.cn/20210901211802.jpg" alt=""></p>
+<p>对比 MySQL 8.0，只是在第二行的 select_type 这里有所不同，一个是 SUBQUERY，一个是DEPENDENT SUBQUERY。</p>
+<p>接着通过命令 EXPLAIN FORMAT=tree 查看更详细的执行计划过程：</p>
+<p><img src="http://image.leonote.cn/20210901211927.jpg" alt=""></p>
+<p>可以发现，第 3 行的执行技术输出是：<strong><em>Select #2 (subquery in condition; dependent)</em></strong>，并不像先前的执行计划，提示只执行一次。另外，通过第 1 行也可以发现，这条 SQL 变成了 exists 子查询，每次和子查询进行关联。</p>
+<p>所以，上述执行计划其实表示：先查询每个员工的订单信息，接着对每条记录进行内部的子查询进行依赖判断。也就是说，先进行外表扫描，接着做依赖子查询的判断。所以，子查询执行了5587618，而不是1次！！！</p>
+<p>所以，两者的执行计划，扫描次数的对比如下所示：</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">表 orders 的扫描次数</th>
+<th align="center">扫描记录数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">独立子查询</td>
+<td align="center">1 + 1</td>
+<td align="center">5587618 + 5587618</td>
+</tr>
+<tr>
+<td align="center">依赖子查询</td>
+<td align="center">1 + 1 * 5587616</td>
+<td align="center">5587618 + 5587618 * 5587616</td>
+</tr>
+</tbody></table>
+<p>对于依赖子查询的优化，就是要避免子查询由于需要对外部的依赖，而需要对子查询扫描多次的情况。所以可以通过派生表的方式，将外表和子查询的<strong>派生表</strong>进行连接，从而降低对于子查询表的扫描，从而提升 SQL 查询的性能。</p>
+<p>那么对于上面的这条 SQL ，可将其重写为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM orders o1,</span><br><span class="line">(</span><br><span class="line">    SELECT</span><br><span class="line">        o_clerk, MAX(o_orderdate)</span><br><span class="line">    FROM</span><br><span class="line">        orders</span><br><span class="line">    GROUP BY o_clerk</span><br><span class="line">) o2</span><br><span class="line">WHERE</span><br><span class="line">    o1.o_clerk &#x3D; o2.o_clerk</span><br><span class="line">    AND o1.o_orderdate &#x3D; o2.orderdate;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，我们将子查询改写为了派生表 o2，然后将表 o2 与外部表 orders 进行关联。关联的条件是：<strong><em>o1.o_clerk = o2.o_clerk AND o1.o_orderdate = o2.orderdate</em></strong>。<br>通过上面的重写后，派生表 o2 对表 orders 进行了1次扫描，返回约 5587618 条记录。派生表o1 对表 orders 扫描 1 次，返回约 1792612 条记录。这与 8.0 的执行计划就非常相似了，其执行计划如下所示：</p>
+<p><img src="http://image.leonote.cn/20210901212512.jpg" alt=""></p>
+<p>最后，来看下上述 SQL 的执行时间：</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">执行时间（秒）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">独立子查询</td>
+<td align="center">17.05</td>
+</tr>
+<tr>
+<td align="center">依赖子查询</td>
+<td align="center">24小时未能执行完成</td>
+</tr>
+<tr>
+<td align="center">派生表关联</td>
+<td align="center">17.34</td>
+</tr>
+</tbody></table>
+<p>可以看到，经过 SQL 重写后，派生表的执行速度几乎与独立子查询一样。所以，<strong>若看到依赖子查询的执行计划，记得先进行 SQL 重写优化哦</strong>。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>学习了 MySQL 子查询的优势、新版本 MySQL 8.0 对子查询的优化，以及老版本MySQL 下如何对子查询进行优化。希望你以后可以不再受子查询编写的困惑，而是在各种场景下用好子查询。</p>
+<p>总结来看：</p>
+<ul>
+<li><p>子查询相比 JOIN 更易于人类理解，所以受众更广，使用更多；</p>
+</li>
+<li><p>当前 MySQL 8.0 版本可以“毫无顾忌”地写子查询，对于子查询的优化已经相当完备；</p>
+</li>
+<li><p>对于老版本的 MySQL，<strong>请 Review 所有子查询的SQL执行计划</strong>， 对于出现 DEPENDENT SUBQUERY 的提示，请务必即使进行优化，否则对业务将造成重大的性能影响；</p>
+</li>
+<li><p>DEPENDENT SUBQUERY 的优化，一般是重写为派生表进行表连接。表连接的优化就是我们12讲所讲述的内容。</p>
+</li>
+</ul>
+<h2 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h2><ol>
+<li><p>下面的 SQL 大概表示什么样的业务逻辑？</p>
+</li>
+<li><p>查看通过命令 EXPLAIN 查看执行计划，说出 MySQL 8.0 的执行过程。</p>
+</li>
+<li><p>执行 SET @@optimizer_switch=’semijoin=off’; 接着再通过命令 EXPLAIN 查看执行计划，说出执行的过程。</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">        o_orderpriority,</span><br><span class="line">        COUNT(*) AS order_count</span><br><span class="line">FROM</span><br><span class="line">        orders</span><br><span class="line">WHERE</span><br><span class="line">        o_orderdate &gt;&#x3D; DATE &#39;1993-07-01&#39;</span><br><span class="line">        AND o_orderdate &lt; DATE &#39;1993-07-01&#39; + INTERVAL &#39;3&#39; MONTH</span><br><span class="line">        AND EXISTS (</span><br><span class="line">                SELECT</span><br><span class="line">                        *</span><br><span class="line">                FROM</span><br><span class="line">                        lineitem</span><br><span class="line">                WHERE</span><br><span class="line">                        l_orderkey &#x3D; o_orderkey</span><br><span class="line">                        AND l_commitdate &lt; l_receiptdate</span><br><span class="line">        )</span><br><span class="line">GROUP BY</span><br><span class="line">        o_orderpriority</span><br><span class="line">ORDER BY</span><br><span class="line">        o_orderpriority;</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/833dc0fb.html">https://liule8.github.io/post/833dc0fb.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/MySQL/">MySQL</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/6e1b9ec7.html"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">MySQL实战宝典之索引调优-JOIN 连接</div></div></a></div><div class="next-post pull-right"><a href="/post/849c93b3.html"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">MySQL实战宝典之索引调优-索引出错</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/d432a4f3.html" title="MySQL实战宝典之分布式架构-分布式事务"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-09</div><div class="title">MySQL实战宝典之分布式架构-分布式事务</div></div></a></div><div><a href="/post/7ab30575.html" title="MySQL实战宝典之分布式架构-分布式数据库架构"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-07</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库架构</div></div></a></div><div><a href="/post/5e11524d.html" title="MySQL实战宝典之分布式架构-分布式数据库架构选型"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-08</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库架构选型</div></div></a></div><div><a href="/post/18c1c8d9.html" title="MySQL实战宝典之分布式架构-分布式数据库索引设计"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-08</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库索引设计</div></div></a></div><div><a href="/post/a943c20f.html" title="MySQL实战宝典之分布式架构-分布式数据库表结构设计"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-08</div><div class="title">MySQL实战宝典之分布式架构-分布式数据库表结构设计</div></div></a></div><div><a href="/post/d35cee5.html" title="MySQL实战宝典之分布式架构-分布式设计之禅"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-09</div><div class="title">MySQL实战宝典之分布式架构-分布式设计之禅</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AD%90%E6%9F%A5%E8%AF%A2%EF%BC%9A%E6%94%BE%E5%BF%83%E5%9C%B0%E4%BD%BF%E7%94%A8%E5%AD%90%E6%9F%A5%E8%AF%A2%E5%8A%9F%E8%83%BD%E5%90%A7%EF%BC%81"><span class="toc-number">1.</span> <span class="toc-text">子查询：放心地使用子查询功能吧！</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BC%80%E5%8F%91%E5%90%8C%E5%AD%A6%E8%BF%99%E4%B9%88%E5%96%9C%E6%AC%A2%E5%86%99%E5%AD%90%E6%9F%A5%E8%AF%A2%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">为什么开发同学这么喜欢写子查询？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%90%E6%9F%A5%E8%AF%A2-IN-%E5%92%8C-EXISTS%EF%BC%8C%E5%93%AA%E4%B8%AA%E6%80%A7%E8%83%BD%E6%9B%B4%E5%A5%BD%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">子查询 IN 和 EXISTS，哪个性能更好？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E5%AD%90%E6%9F%A5%E8%AF%A2%E7%9A%84%E4%BC%98%E5%8C%96"><span class="toc-number">1.3.</span> <span class="toc-text">依赖子查询的优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-number">1.5.</span> <span class="toc-text">思考题</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/d42cc345.html" title="数据结构与算法之入门篇-为什么要学习数据结构和算法">数据结构与算法之入门篇-为什么要学习数据结构和算法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/68a8f17f.html" title="数据结构与算法之入门篇-学习方法">数据结构与算法之入门篇-学习方法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/abff7577.html" title="Netty 核心原理剖析与 RPC 实践-实践总结">Netty 核心原理剖析与 RPC 实践-实践总结</a><time datetime="2021-10-14T20:34:53.000Z" title="发表于 2021-10-14 20:34:53">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/889de2a9.html" title="Netty 核心原理剖析与 RPC 实践-编程思想">Netty 核心原理剖析与 RPC 实践-编程思想</a><time datetime="2021-10-14T20:34:26.000Z" title="发表于 2021-10-14 20:34:26">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/634ac34e.html" title="Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸">Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸</a><time datetime="2021-10-14T20:33:36.000Z" title="发表于 2021-10-14 20:33:36">2021-10-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

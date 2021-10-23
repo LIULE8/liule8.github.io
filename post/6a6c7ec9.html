@@ -1,0 +1,209 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>计算机网络通关之网络层协议-NAT 是如何工作的? | Leo's notes</title><meta name="keywords" content="计算机网络"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="局域网：NAT 是如何工作的？广域网是由很多的局域网组成的，比如公司网络、家庭网络、校园网络等。之前我们一直在讨论广域网的设计，今天我们到微观层面，看看局域网是如何工作的。 IPv4 的地址不够，因此需要设计子网。当一个公司申请得到一个公网 IP 后，会在自己的公司内部设计一个局域网。这个局域网所有设备的 IP 地址，通常会以 192.168 开头。这个时候，假设你的职工小明，上班时间玩王者荣耀。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络通关之网络层协议-NAT 是如何工作的?">
+<meta property="og:url" content="https://liule8.github.io/post/6a6c7ec9.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="局域网：NAT 是如何工作的？广域网是由很多的局域网组成的，比如公司网络、家庭网络、校园网络等。之前我们一直在讨论广域网的设计，今天我们到微观层面，看看局域网是如何工作的。 IPv4 的地址不够，因此需要设计子网。当一个公司申请得到一个公网 IP 后，会在自己的公司内部设计一个局域网。这个局域网所有设备的 IP 地址，通常会以 192.168 开头。这个时候，假设你的职工小明，上班时间玩王者荣耀。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-10-01T21:26:12.000Z">
+<meta property="article:modified_time" content="2021-10-16T05:06:47.969Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/6a6c7ec9"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-16 05:06:47'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">计算机网络通关之网络层协议-NAT 是如何工作的?</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-10-01T21:26:12.000Z" title="发表于 2021-10-01 21:26:12">2021-10-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-16T05:06:47.969Z" title="更新于 2021-10-16 05:06:47">2021-10-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="计算机网络通关之网络层协议-NAT 是如何工作的?"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="局域网：NAT-是如何工作的？"><a href="#局域网：NAT-是如何工作的？" class="headerlink" title="局域网：NAT 是如何工作的？"></a>局域网：NAT 是如何工作的？</h1><p>广域网是由很多的局域网组成的，比如公司网络、家庭网络、校园网络等。之前我们一直在讨论广域网的设计，今天我们到微观层面，看看局域网是如何工作的。</p>
+<p>IPv4 的地址不够，因此需要设计子网。当一个公司申请得到一个公网 IP 后，会在自己的公司内部设计一个局域网。这个局域网所有设备的 IP 地址，通常会以 <code>192.168</code> 开头。这个时候，假设你的职工小明，上班时间玩王者荣耀。当他用 UDP 协议向王者荣耀的服务器发送信息时，消息的源 IP 地址是一个内网 IP 地址，而王者荣耀的服务，是一个外网 IP 地址。</p>
+<p>这里我先向你提一个问题，数据到王者荣耀服务器可以通过寻址和路由找到目的地，但是数据从王者荣耀服务器回来的时候，王者荣耀服务器如何知道<code>192.168</code>开头的地址应该如何寻址呢？</p>
+<p>要想回答这个问题，就涉及<strong>网络地址转换协议（NAT 协议）</strong>。</p>
+<h2 id="内部网络和外部网络"><a href="#内部网络和外部网络" class="headerlink" title="内部网络和外部网络"></a>内部网络和外部网络</h2><p>对一个组织、机构、家庭来说，我们通常把内部网络称为局域网，外部网络就叫作外网。下图是一个公司多个部门的网络架构。</p>
+<p><img src="http://image.leonote.cn/20211001212759.png" alt="image-20211001212759159"></p>
+<p>我们会看到外网通过路由器接入整个公司的局域网，和路由器关联的是三台交换机，代表公司的三个部门。<strong>交换机，或者称为链路层交换机，通常工作在链路层；而路由器通常也具有交换机的能力，工作在网络层和链路层</strong>。关于它们的详细区别，我们会在本文的后续讨论。</p>
+<p>光纤是一种透明的导光介质，多束光可以在一个介质中并行传播，不仅信号容量大，重量轻，并行度高而且传播距离远。当然，光纤不能弯曲，因此办公室里用来连接交换机和个人电脑的线路肯定不能是光纤，<strong>光线通常都用于主干网络</strong>。</p>
+<h2 id="局域网数据交换（MAC-地址）"><a href="#局域网数据交换（MAC-地址）" class="headerlink" title="局域网数据交换（MAC 地址）"></a>局域网数据交换（MAC 地址）</h2><p>接下来我们讨论下同一个局域网中的设备如何交换消息。</p>
+<p>首先，我们先明确一个概念，设备间通信的本质其实是设备拥有的网络接口（网卡）间的通信。<strong>为了区别每个网络接口，互联网工程任务组（IETF）要求每个设备拥有一个唯一的编号，这个就是 MAC 地址</strong>。</p>
+<p><strong>你可能会问：IP 地址不也是唯一的吗？</strong>其实不然，一旦设备更换位置，比如你把你的电脑从北京邮寄的广州，那么 IP 地址就变了，而电脑网卡的 MAC 地址不会发生变化。总的来说，IP 地址更像现实生活中的地址，而 MAC 地址更像你的身份证号。</p>
+<p>然后，我们再明确另一个基本的概念。<strong>在一个局域网中，我们不可以将消息从一个接口（网卡）发送到另一个接口（网卡），而是要通过交换机</strong>。为什么是这样呢？因为两个网卡间没有线啊！所以数据交换，必须经过交换机，毕竟线路都是由网卡连接交换机的。</p>
+<p><img src="http://image.leonote.cn/20211001213202.png" alt="image-20211001213202228"></p>
+<p>总结下，数据的发送方，将自己的 MAC 地址、目的地 MAC 地址，以及数据作为一个分组（Packet），也称作 Frame 或者封包，发送给交换机。交换机再根据目的地 MAC 地址，将数据转发到目的地的网络接口（网卡）。</p>
+<p><strong>最后一个问题，你可能问，这个分组或者 Frame，是不是 IP 协议的分组呢？</strong>——不是，这里提到的是链路层的数据交换，它支持 IP 协议工作，是网络层的底层。所以，<strong>如果 IP 协议要传输数据，就要将数据转换成为链路层的分组，然后才可以在链路层传输</strong>。</p>
+<p>链路层分组大小受限于链路层的网络设备、线路以及使用了链路层协议的设计。你有时候可能会看到 MTU 这个缩写词，它指的是 Maximun Transmission Unit，最大传输单元，意思是链路层网络允许的最大传输数据分组的大小。<strong>因此 IP 协议要根据 MTU 拆分封包</strong>。</p>
+<p>之前介绍 TCP 协议滑动窗口的时候，还提到过一个词，叫作 MSS，这里复习下。MSS（Maximun Segment Size，最大段大小）是 TCP 段，或者称为 TCP 分组（TCP Packet）的最大大小。<strong>MSS 是传输层概念，MTU 是链路层概念</strong>。</p>
+<p>聪明的同学可以能会意识到，这不就是下面这样一个数学关系吗？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MTU &#x3D; MSS + TCP Header + IP Header</span><br></pre></td></tr></table></figure>
+
+<p><strong>这个思路有一定道理，但是不对</strong>。先说说这个思路怎么来的，你可能会这么思考：TCP 传输数据大于 MSS，就拆包。每个封包加上 TCP Header ，之后经过 IP 协议，再加上 IP Header。于是这个加上 IP 头的分组（Packet）不能超过 MTU。固然这个思路很有道理，可惜是错的。<strong>因为 TCP 解决的是广域网的问题，MTU 是一个链路层的概念，要知道不同网络 MTU 是不同的，所以二者不可能产生关联。这也是为什么 IP 协议还可能会再拆包的原因</strong>。</p>
+<h2 id="地址解析协议（ARP）"><a href="#地址解析协议（ARP）" class="headerlink" title="地址解析协议（ARP）"></a>地址解析协议（ARP）</h2><p>上面我们讨论了 MAC 地址，链路层通过 MAC 地址定位网络接口（网卡）。在一个网络接口向另一个网络接口发送数据的时候，至少要提供这样 3 个字段：</p>
+<ul>
+<li><p>源 MAC 地址</p>
+</li>
+<li><p>目标 MAC 地址</p>
+</li>
+<li><p>数据</p>
+</li>
+</ul>
+<p><strong>这里我们一起再来思考一个问题，对于一个网络接口，它如何能知道目标接口的 MAC 地址呢？</strong>我们在使用传输层协议的时候，清楚地知道目的地的 IP 地址，但是我们不知道 MAC 地址。这个时候，就需要一个中间服务帮助根据 IP 地址找到 MAC 地址——这就是地址解析协议（Address Resolution Protocol，ARP）。</p>
+<p>整个工作过程和 DNS 非常类似，如果一个网络接口已经知道目标 IP 地址对应的 MAC 地址了，它会将数据直接发送给交换机，交换机将数据转发给目的地，这个过程如下图所示：</p>
+<p><img src="http://image.leonote.cn/20211001213733.png" alt="image-20211001213733105"></p>
+<p>那么如果网络接口不知道目的地地址呢？这个时候，地址解析协议就开始工作了。发送接口会发送一个广播查询给到交换机，交换机将查询转发给所有接口。</p>
+<p><img src="http://image.leonote.cn/20211001213813.png" alt="image-20211001213813122"></p>
+<p>如果某个接口发现自己就是对方要查询的接口，则会将自己的 MAC 地址回传。接下来，会在交换机和发送接口的 ARP 表中，增加一个缓存条目。也就是说，接下来发送接口再次向 IP 地址 <code>2.2.2.2</code> 发送数据时，不需要再广播一次查询了。</p>
+<p><img src="http://image.leonote.cn/20211001213852.png" alt="image-20211001213852069"></p>
+<p><strong>前面提到这个过程和 DNS 非常相似，采用的是逐级缓存的设计减少 ARP 请求</strong>。发送接口先查询本地的 ARP 表，如果本地没有数据，然后广播 ARP 查询。这个时候如果交换机中有数据，那么查询交换机的 ARP 表；如果交换机中没有数据，才去广播消息给其他接口。<strong>注意，ARP 表是一种缓存，也要考虑缓存的设计</strong>。通常缓存的设计要考虑缓存的失效时间、更新策略、数据结构等。</p>
+<p>比如可以考虑用 TTL（Time To Live）的设计，为每个缓存条目增加一个失效时间。另外，更新策略可以考虑利用老化（Aging）算法模拟 LRU。</p>
+<p>最后请你思考路由器和交换机的异同点。不知道你有没有在网上订购过家用无线路由器，通常这种家用设备也会提供局域网，具备交换机的能力。同时，这种设备又具有路由器的能力。所以，很多同学可能会分不清路由器和交换机。</p>
+<p>总的来说，家用的路由器，也具备交换机的功能。但是当 ARP 表很大的时候，就需要专门的、能够承载大量网络接口的交换设备。就好比，如果用数组实现 ARP 表，数据量小的时候，遍历即可；但如果数据量大的话，就需要设计更高效的查询结构和设计缓存。</p>
+<h2 id="连接内网"><a href="#连接内网" class="headerlink" title="连接内网"></a>连接内网</h2><p>有时候，公司内部有多个子网。这个时候一个子网如果要访问另一个子网，就需要通过路由器。</p>
+<p><img src="http://image.leonote.cn/20211001214105.png" alt="image-20211001214105048"></p>
+<p>也就是说，图中的路由器，其实充当了两个子网通信的桥梁。在上述过程中，发送接口不能直接通过 MAC 地址发送数据到接收接口，因为子网 1 的交换机不知道子网 2 的接口。这个时候，发送接口需要通过 IP 协议，将数据发送到路由器，再由路由器转发信息到子网 2 的交换机。这里提一个问题，<strong>子网 2 的交换机如何根据 IP 地址找到接收接口呢</strong>？答案是通过查询 ARP 表。</p>
+<h2 id="连接外网（网络地址转换技术，NAT）"><a href="#连接外网（网络地址转换技术，NAT）" class="headerlink" title="连接外网（网络地址转换技术，NAT）"></a>连接外网（网络地址转换技术，NAT）</h2><p>最后我们讨论下连接外网的问题。</p>
+<p>IPv4 协议因为存在网络地址耗尽的问题，不能为一个公司提供足够的地址，因此内网 IP 可能会和外网重复。比如内网 IP 地址<code>192.168.0.1</code>发送信息给<code>22.22.22.22</code>，这个时候，其实是跨着网络的。</p>
+<p><img src="http://image.leonote.cn/20211001214219.png" alt="image-20211001214219470"></p>
+<p>跨网络必然会通过多次路由，最终将消息转发到目的地。但是这里存在一个问题，寻找的目标 IP 地址<code>22.22.22.22</code>是一个公网 IP，可以通过正常的寻址 + 路由算法定位。当<code>22.22.22.22</code>寻找<code>192.168.0.1</code>的时候，是寻找一个私网 IP，这个时候是找不到的。解决方案就是网络地址转换技术（Network Address Translation）。</p>
+<p><img src="http://image.leonote.cn/20211001214521.png" alt="image-20211001214521490"></p>
+<p>NAT 技术转换的是 IP 地址，<strong>私有 IP 通过 NAT 转换为公网 IP 发送到服务器。服务器的响应，通过 NAT 转换为私有 IP，返回给客户端。</strong>通过这种方式，就解决了内网和外网的通信问题。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总结一下，链路层发送数据靠的是 MAC 地址，MAC 地址就好像人的身份证一样。局域网中，数据不可能从一个终端直达另一个终端，而是必须经过交换机交换。交换机也叫作链路层交换机，它的工作就是不断接收数据，然后转发数据。通常意义上，交换机不具有路由功能，路由器往往具有交换功能。但是往往路由器交换的效率，不如交换机。已知 IP 地址，找到 MAC 地址的协议，叫作地址解析协议（ARP）。</p>
+<p>网络和网络的衔接，必须有路由器（或者等价的设备）。一个网络的设备不能直接发送链路层分组给另一个网络的设备，而是需要通过 IP 协议让路由器转发。</p>
+<p><strong>回答面试题目：网络地址转换协议是如何工作的？</strong></p>
+<p>【解析】网络地址解析协议（NAT）<strong>解决的是内外网通信的问题</strong>。NAT 通常发生在内网和外网衔接的路由器中，由路由器中的 NAT 模块提供网络地址转换能力。从设计上看，NAT 最核心的能力，就是能够将内网中某个 IP 地址映射到外网 IP，然后再把数据发送给外网的服务器。当服务器返回数据的时候，NAT 又能够准确地判断外网服务器的数据返回给哪个内网 IP。</p>
+<p>你可以思考下 NAT 是如何做到这点的呢？需要做两件事。</p>
+<p>NAT 需要作为一个中间层替换 IP 地址。 发送的时候，NAT 替换源 IP 地址（也就是将内网 IP 替换为出口 IP）；接收的时候，NAT 替换目标 IP 地址（也就是将出口 IP 替换回内网 IP 地址）。</p>
+<p>NAT 需要缓存内网 IP 地址和出口 IP 地址 + 端口的对应关系。也就是说，发送的时候，NAT 要为每个替换的内网 IP 地址分配不同的端口，确保出口 IP 地址+ 端口的唯一性，这样当服务器返回数据的时候，就可以根据出口 IP 地址 + 端口找到内网 IP。</p>
+<h2 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h2><p>IPv6 协议还需要 NAT 吗？</p>
+<blockquote>
+<p>IPV4存在地址耗尽，内外网地址重复，需要NAT</p>
+<p>虽然IPV6地址足够使用，但是有时候我们会希望隐藏内网的拓扑结构，因此NAT依然有其使用的意义</p>
+</blockquote>
+<h3 id="其他解答"><a href="#其他解答" class="headerlink" title="其他解答"></a>其他解答</h3><blockquote>
+<p>IPv6 解决了 IP 耗尽的问题，为机构、组织、公司、家庭等网络提供了充足的 IP 资源，从这个角度看是不是就不需要 NAT 协议了呢？</p>
+<p>在没有 IPv6 之前，NAT 是 IP 资源耗尽的主流解决方案。在一个内网中的全部设备通过 NAT 协议共享一个外网的 IPv4 地址，是目前内外网对接的主要方式。IPv6 地址资源充足，可以给全球每个设备一个独立的地址。从这个角度看 IPv6 的确不需要 NAT 协议。</p>
+<p>但是目前的情况，是 IPv6 网络还没有完全普及。尽管很多公司已经支持自己的互联网产品可以使用 IPv6 访问，但是公司内部员工使用的内部网络还是 IPv4。如果要连接 IPv6 和 IPv4 网络，仍然需要 NAT 协议（NAT64），这个协议可以让多个 IPv6 的设备共享一个 IPv4 的公网地址。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/6a6c7ec9.html">https://liule8.github.io/post/6a6c7ec9.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/710d9d60.html"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">计算机网络通关之网络编程-Socket 编程</div></div></a></div><div class="next-post pull-right"><a href="/post/1f664990.html"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">计算机网络通关之网络层协议-Tunnel 技术是什么?</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/462e1124.html" title="计算机网络通关之Web 技术-DNS 域名解析系统"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-03</div><div class="title">计算机网络通关之Web 技术-DNS 域名解析系统</div></div></a></div><div><a href="/post/4764a1e7.html" title="计算机网络通关之Web 技术-HTTP 协议"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-04</div><div class="title">计算机网络通关之Web 技术-HTTP 协议</div></div></a></div><div><a href="/post/cbe8db1a.html" title="计算机网络通关之Web 技术-内容分发网络"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-03</div><div class="title">计算机网络通关之Web 技术-内容分发网络</div></div></a></div><div><a href="/post/ee104761.html" title="计算机网络通关之Web 技术-流媒体技术"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-04</div><div class="title">计算机网络通关之Web 技术-流媒体技术</div></div></a></div><div><a href="/post/27c4fbe1.html" title="计算机网络通关之Web 技术-爬虫和反爬虫"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-04</div><div class="title">计算机网络通关之Web 技术-爬虫和反爬虫</div></div></a></div><div><a href="/post/4b2a9439.html" title="计算机网络通关之互联网和传输层协议-TCP 为什么握手是 3 次、挥手是 4 次?"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-30</div><div class="title">计算机网络通关之互联网和传输层协议-TCP 为什么握手是 3 次、挥手是 4 次?</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B1%80%E5%9F%9F%E7%BD%91%EF%BC%9ANAT-%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">局域网：NAT 是如何工作的？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E9%83%A8%E7%BD%91%E7%BB%9C%E5%92%8C%E5%A4%96%E9%83%A8%E7%BD%91%E7%BB%9C"><span class="toc-number">1.1.</span> <span class="toc-text">内部网络和外部网络</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B1%80%E5%9F%9F%E7%BD%91%E6%95%B0%E6%8D%AE%E4%BA%A4%E6%8D%A2%EF%BC%88MAC-%E5%9C%B0%E5%9D%80%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">局域网数据交换（MAC 地址）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%B0%E5%9D%80%E8%A7%A3%E6%9E%90%E5%8D%8F%E8%AE%AE%EF%BC%88ARP%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">地址解析协议（ARP）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%86%85%E7%BD%91"><span class="toc-number">1.4.</span> <span class="toc-text">连接内网</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%A4%96%E7%BD%91%EF%BC%88%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2%E6%8A%80%E6%9C%AF%EF%BC%8CNAT%EF%BC%89"><span class="toc-number">1.5.</span> <span class="toc-text">连接外网（网络地址转换技术，NAT）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-number">1.7.</span> <span class="toc-text">思考题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E8%A7%A3%E7%AD%94"><span class="toc-number">1.7.1.</span> <span class="toc-text">其他解答</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/d42cc345.html" title="数据结构与算法之入门篇-为什么要学习数据结构和算法">数据结构与算法之入门篇-为什么要学习数据结构和算法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/68a8f17f.html" title="数据结构与算法之入门篇-学习方法">数据结构与算法之入门篇-学习方法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/abff7577.html" title="Netty 核心原理剖析与 RPC 实践-实践总结">Netty 核心原理剖析与 RPC 实践-实践总结</a><time datetime="2021-10-14T20:34:53.000Z" title="发表于 2021-10-14 20:34:53">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/889de2a9.html" title="Netty 核心原理剖析与 RPC 实践-编程思想">Netty 核心原理剖析与 RPC 实践-编程思想</a><time datetime="2021-10-14T20:34:26.000Z" title="发表于 2021-10-14 20:34:26">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/634ac34e.html" title="Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸">Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸</a><time datetime="2021-10-14T20:33:36.000Z" title="发表于 2021-10-14 20:33:36">2021-10-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

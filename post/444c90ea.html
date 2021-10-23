@@ -1,0 +1,291 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>缓存的原理、引入与设计 | Leo's notes</title><meta name="keywords" content="缓存"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="缓存的原理、引入与设计业务数据访问性能太低怎么办 缓存的基本思想 缓存的优点 缓存的代价  缓存的定义 缓存最初的含义，是指用于加速 CPU 数据交换的 RAM，即随机存取存储器，通常这种存储器使用更昂贵但快速的静态 RAM（SRAM）技术，用以对 DRAM 进行加速。这是一个狭义缓存的定义。  而广义缓存的定义则更宽泛，任何可以用于数据高速交换的存储介质都是缓存，可以是硬件也可以是软件。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="缓存的原理、引入与设计">
+<meta property="og:url" content="https://liule8.github.io/post/444c90ea.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="缓存的原理、引入与设计业务数据访问性能太低怎么办 缓存的基本思想 缓存的优点 缓存的代价  缓存的定义 缓存最初的含义，是指用于加速 CPU 数据交换的 RAM，即随机存取存储器，通常这种存储器使用更昂贵但快速的静态 RAM（SRAM）技术，用以对 DRAM 进行加速。这是一个狭义缓存的定义。  而广义缓存的定义则更宽泛，任何可以用于数据高速交换的存储介质都是缓存，可以是硬件也可以是软件。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2020-10-13T20:42:59.000Z">
+<meta property="article:modified_time" content="2021-10-16T05:06:49.120Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="缓存">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/444c90ea"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-16 05:06:49'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">缓存的原理、引入与设计</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-10-13T20:42:59.000Z" title="发表于 2020-10-13 20:42:59">2020-10-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-16T05:06:49.120Z" title="更新于 2021-10-16 05:06:49">2021-10-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%BC%93%E5%AD%98/">缓存</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">5.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>16分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="缓存的原理、引入与设计"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="缓存的原理、引入与设计"><a href="#缓存的原理、引入与设计" class="headerlink" title="缓存的原理、引入与设计"></a>缓存的原理、引入与设计</h1><h2 id="业务数据访问性能太低怎么办"><a href="#业务数据访问性能太低怎么办" class="headerlink" title="业务数据访问性能太低怎么办"></a>业务数据访问性能太低怎么办</h2><ol>
+<li>缓存的基本思想</li>
+<li>缓存的优点</li>
+<li>缓存的代价</li>
+</ol>
+<h3 id="缓存的定义"><a href="#缓存的定义" class="headerlink" title="缓存的定义"></a>缓存的定义</h3><ul>
+<li><p>缓存最初的含义，是指用于加速 CPU 数据交换的 RAM，即随机存取存储器，通常这种存储器使用更昂贵但快速的静态 RAM（SRAM）技术，用以对 DRAM 进行加速。这是一个狭义缓存的定义。</p>
+</li>
+<li><p>而广义缓存的定义则更宽泛，任何可以用于数据高速交换的存储介质都是缓存，可以是硬件也可以是软件。</p>
+</li>
+</ul>
+<p><img src="http://image.leonote.cn//20201014195605.png" alt=""></p>
+<blockquote>
+<p>缓存存在的意义就是通过开辟一个新的数据交换缓冲区，来解决原始数据获取代价太大的问题，让数据得到更快的访问。目前讲的缓存主要是指广义缓存，特别是互联网产品大量使用的各种缓存组件和技术。</p>
+</blockquote>
+<h3 id="缓存原理"><a href="#缓存原理" class="headerlink" title="缓存原理"></a>缓存原理</h3><h4 id="缓存的基本思想"><a href="#缓存的基本思想" class="headerlink" title="缓存的基本思想"></a>缓存的基本思想</h4><p><img src="http://image.leonote.cn//20201014195847.png" alt=""></p>
+<p>缓存构建的基本思想是利用时间局限性原理，通过空间换时间来达到加速数据获取的目的，同时由于缓存空间的成本较高，在实际设计架构中还要考虑<strong>访问延迟</strong>和<strong>成本</strong>的权衡问题。这里面有 3 个关键点。</p>
+<ol>
+<li><p>时间局限性原理，即被获取过一次的数据在未来会被多次引用，比如一条微博被一个人感兴趣并阅读后，它大概率还会被更多人阅读，当然如果变成热门微博后，会被数以百万/千万计算的更多用户查看。</p>
+</li>
+<li><p>以空间换时间，因为原始数据获取太慢，所以我们开辟一块高速独立空间，提供高效访问，来达到数据获取加速的目的。</p>
+</li>
+<li><p>性能成本 Tradeoff，构建系统时希望系统的访问性能越高越好，访问延迟越低小越好。但维持相同数据规模的存储及访问，性能越高延迟越小，成本也会越高，所以在系统架构设计时，你需要在系统性能和开发运行成本之间做取舍。比如左边这张图，相同成本的容量，SSD 硬盘容量会比内存大 10～30 倍以上，但读写延迟却高 50～100 倍。</p>
+</li>
+</ol>
+<h4 id="缓存的优势"><a href="#缓存的优势" class="headerlink" title="缓存的优势"></a>缓存的优势</h4><p>缓存的优势主要有以下几点：</p>
+<ul>
+<li><p>提升访问性能</p>
+</li>
+<li><p>降低网络拥堵</p>
+</li>
+<li><p>减轻服务负载</p>
+</li>
+<li><p>增强可扩展性</p>
+</li>
+</ul>
+<p>缓存存储原始数据，可以<strong>大幅提升访问性能</strong>。不过在实际业务场景中，缓存中存储的往往是需要频繁访问的中间数据甚至最终结果，这些数据相比 DB 中的原始数据小很多，这样就可以<strong>减少网络流量，降低网络拥堵</strong>，同时由于减少了解析和计算，调用方和存储服务的<strong>负载也可以大幅降低</strong>。缓存的读写性能很高，预热快，在数据访问存在性能瓶颈或遇到突发流量，系统读写压力大增时，<strong>可以快速部署</strong>上线，同时在流量稳定后，也可以随时下线，从而使系统的<strong>可扩展性大大增强</strong>。</p>
+<h4 id="缓存的代价"><a href="#缓存的代价" class="headerlink" title="缓存的代价"></a>缓存的代价</h4><p>然而不幸的是，任何事情都有两面性，缓存也不例外，我们在享受缓存带来一系列好处的同时，也注定需要付出一定的代价。</p>
+<ul>
+<li><p>首先，服务系统中引入缓存，会<strong>增加系统的复杂度</strong>。</p>
+</li>
+<li><p>其次，由于缓存相比原始 DB 存储的<strong>成本更高</strong>，所以系统部署及运行的费用也会更高。</p>
+</li>
+<li><p>最后，由于一份数据同时存在缓存和 DB 中，甚至缓存内部也会有多个数据副本，多份数据就会<strong>存在一致性问题</strong>，同时缓存体系本身也会存在<strong>可用性问题和分区的问题</strong>。这就需要我们加强对缓存原理、缓存组件以及优秀缓存体系实践的理解，从系统架构之初就对缓存进行良好设计，降低缓存引入的副作用，让缓存体系成为服务系统高效稳定运行的强力基石。</p>
+</li>
+</ul>
+<blockquote>
+<p>一般来讲，服务系统的全量原始数据存储在 DB 中（如 MySQL、HBase 等），所有数据的读写都可以通过 DB 操作来获取。但 DB 读写性能低、延迟高，如 MySQL 单实例的读写 QPS 通常只有千级别（3000～6000），读写平均耗时 10～100ms 级别，如果一个用户请求需要查 20 个不同的数据来聚合，仅仅 DB 请求就需要数百毫秒甚至数秒。而 cache 的读写性能正好可以弥补 DB 的不足，比如 Memcached 的读写 QPS 可以达到 10～100万 级别，读写平均耗时在 1ms 以下，结合并发访问技术，单个请求即便查上百条数据，也可以轻松应对。</p>
+<p>但 cache 容量小，只能存储部分访问频繁的热数据，同时，同一份数据可能同时存在 cache 和 DB，如果处理不当，就会出现数据不一致的问题。所以服务系统在处理业务请求时，需要对 cache 的读写方式进行适当设计，既要保证数据高效返回，又要尽量避免数据不一致等各种问题。</p>
+</blockquote>
+<h2 id="如何根据业务来选择缓存模式和组件"><a href="#如何根据业务来选择缓存模式和组件" class="headerlink" title="如何根据业务来选择缓存模式和组件"></a>如何根据业务来选择缓存模式和组件</h2><ol>
+<li>缓存的读写模式</li>
+<li>缓存的分类</li>
+</ol>
+<h3 id="缓存读写模式"><a href="#缓存读写模式" class="headerlink" title="缓存读写模式"></a>缓存读写模式</h3><p>如下图，业务系统读写缓存有 3 种模式：</p>
+<ul>
+<li><p>Cache Aside（旁路缓存）</p>
+</li>
+<li><p>Read/Write Through（读写穿透）</p>
+</li>
+<li><p>Write Behind Caching（异步缓存写入）</p>
+</li>
+</ul>
+<p><img src="http://image.leonote.cn//20201014201011.png" alt=""></p>
+<h4 id="Cache-Aside"><a href="#Cache-Aside" class="headerlink" title="Cache Aside"></a>Cache Aside</h4><p><img src="http://image.leonote.cn//20201014201115.png" alt=""></p>
+<p>如上图所示，Cache Aside 模式中，业务应用方</p>
+<ul>
+<li>对于写，是更新 DB 后，直接将 key 从 cache 中删除，由 DB 驱动缓存数据的更新</li>
+<li>对于读，是先读 cache，如果 cache miss，则读 DB，同时将数据回写到 cache</li>
+</ul>
+<p>这种模式的特点是，业务端处理所有数据访问细节，同时利用 Lazy 计算的思想，更新 DB 后，直接删除 cache 并通过 DB 更新，确保数据以 DB 结果为准，则可以大幅降低 cache 和 DB 中数据不一致的概率。</p>
+<p>如果没有专门的存储服务，同时是对数据一致性要求比较高的业务，或者是缓存数据更新比较复杂的业务，这些情况都比较适合使用 Cache Aside 模式。如微博发展初期，不少业务采用这种模式，这些缓存数据需要通过多个原始数据进行计算后设置。在部分数据变更后，直接删除缓存。同时，使用一个 Trigger 组件，实时读取 DB 的变更日志，然后重新计算并更新缓存。如果读缓存的时候，Trigger 还没写入 cache，则由调用方自行到 DB 加载计算并写入 cache。</p>
+<blockquote>
+<p>感觉直接用<code>@Cacheable</code>和<code>@CachePut</code>注解就基本达到这个效果</p>
+</blockquote>
+<h4 id="Read-Write-Through"><a href="#Read-Write-Through" class="headerlink" title="Read/Write Through"></a>Read/Write Through</h4><p><img src="http://image.leonote.cn//20201014202424.png" alt=""></p>
+<p>如上图，对于 Cache Aside 模式，业务应用需要同时维护 cache 和 DB 两个数据存储方，过于繁琐，于是就有了 Read/Write Through 模式。</p>
+<p>在这种模式下，业务应用只关注一个存储服务即可，业务方的读写 cache 和 DB 的操作，都由存储服务代理。存储服务收到业务应用的写请求时，会首先查 cache，如果数据在 cache 中不存在，则只更新 DB，如果数据在 cache 中存在，则先更新 cache，然后更新 DB。而存储服务收到读请求时，如果命中 cache 直接返回，否则先从 DB 加载，回种到 cache 后返回响应。<strong>( cache 为准)</strong></p>
+<p>这种模式的特点是，存储服务封装了所有的数据处理细节，业务应用端代码只用关注业务逻辑本身，<strong>系统的隔离性更佳</strong>。另外，进行写操作时，如果 cache 中没有数据则不更新，有缓存数据才更新，<strong>内存效率更高</strong>。</p>
+<p>微博 Feed 的 Outbox Vector（即用户最新微博列表）就采用这种模式。一些粉丝较少且不活跃的用户发表微博后，Vector 服务会首先查询 Vector Cache，如果 cache 中没有该用户的 Outbox 记录，则不写该用户的 cache 数据，直接更新 DB 后就返回，只有 cache 中存在才会通过 CAS 指令进行更新。</p>
+<h4 id="Write-Behind-Caching"><a href="#Write-Behind-Caching" class="headerlink" title="Write Behind Caching"></a>Write Behind Caching</h4><p><img src="http://image.leonote.cn//20201014203613.png" alt=""></p>
+<p>Write Behind Caching 模式与 Read/Write Through 模式类似，也由数据存储服务来管理 cache 和 DB 的读写。不同点是，数据更新时，Read/write Through 是同步更新 cache 和 DB，而 <strong>Write Behind Caching 则是只更新缓存，不直接更新 DB</strong>，而是改为<strong><em>异步批量</em></strong>的方式来更新 DB。该模式的特点是，<em>数据存储的写性能最高，非常适合一些变更特别频繁的业务</em>，特别是可以合并写请求的业务，比如对一些计数业务，一条 Feed 被点赞 1万 次，如果更新 1万 次 DB 代价很大，而合并成一次请求直接加 1万，则是一个非常轻量的操作。但这种模型有个显著的缺点，即<em>数据的一致性变差，甚至在一些极端场景下可能会丢失数据</em>。比如系统 Crash、机器宕机时，如果有数据还没保存到 DB，则会存在丢失的风险。</p>
+<blockquote>
+<p>📌这种读写模式适合变更频率特别高，但对一致性要求不太高的业务，这样写操作可以异步批量写入 DB，减小 DB 压力。</p>
+</blockquote>
+<p>三种模式各有优劣，不存在最佳模式。</p>
+<p>实际上，我们也不可能设计出一个最佳的完美模式出来，如同前面讲到的空间换时间、访问延迟换低成本一样，高性能和强一致性从来都是有冲突的，系统设计从来就是取舍，随处需要 trade-off。</p>
+<blockquote>
+<p>重要的是思想：即如何根据业务场景，更好的做 trade-off，从而设计出更好的服务系统。</p>
+</blockquote>
+<h3 id="缓存分类及常用缓存介绍"><a href="#缓存分类及常用缓存介绍" class="headerlink" title="缓存分类及常用缓存介绍"></a>缓存分类及常用缓存介绍</h3><h4 id="按宿主层次分类"><a href="#按宿主层次分类" class="headerlink" title="按宿主层次分类"></a>按宿主层次分类</h4><p>分为本地 Cache、进程间 Cache 和远程 Cache。</p>
+<ul>
+<li><p>本地 Cache：是指业务进程内的缓存，这类缓存由于在业务系统进程内，所以读写性能超高且无任何网络开销，但不足是会随着业务系统重启而丢失。</p>
+</li>
+<li><p>进程间 Cache：是本机独立运行的缓存，这类缓存读写性能较高，不会随着业务系统重启丢数据，并且可以大幅减少网络开销，但不足是业务系统和缓存都在相同宿主机，运维复杂，且存在资源竞争。( cache 和 project 都在同一个 Linux 部署 )</p>
+</li>
+<li><p>远程 Cache：是指跨机器部署的缓存，这类缓存因为独立设备部署，容量大且易扩展，在互联网企业使用最广泛。不过远程缓存需要跨机访问，在高读写压力下，带宽容易成为瓶颈。</p>
+</li>
+</ul>
+<p>本地 Cache 的缓存组件有 Ehcache、Guava Cache 等，开发者自己也可以用 Map、Set 等轻松构建一个自己专用的本地 Cache。</p>
+<p>进程间 Cache 和远程 Cache 的缓存组件相同，只是部署位置的差异罢了，这类缓存组件有 Memcached、Redis、Pika 等。</p>
+<h4 id="按存储介质分类"><a href="#按存储介质分类" class="headerlink" title="按存储介质分类"></a>按存储介质分类</h4><p>分为内存型缓存和持久化型缓存。</p>
+<ul>
+<li><p>内存型缓存将数据存储在内存，读写性能很高，但缓存系统重启或 Crash 后，内存数据会丢失。</p>
+</li>
+<li><p>持久化型缓存将数据存储到 SSD/Fusion-IO 硬盘中，相同成本下，这种缓存的容量会比内存型缓存大 1 个数量级以上，而且数据会持久化落地，重启不丢失，但读写性能相对低 1～2 个数量级。Memcached 是典型的内存型缓存，而 Pika 以及其他基于 RocksDB 开发的缓存组件等则属于持久化型缓存。</p>
+</li>
+</ul>
+<h2 id="设计缓存架构时需要考量哪些因素"><a href="#设计缓存架构时需要考量哪些因素" class="headerlink" title="设计缓存架构时需要考量哪些因素"></a>设计缓存架构时需要考量哪些因素</h2><h3 id="缓存的引入及架构设计"><a href="#缓存的引入及架构设计" class="headerlink" title="缓存的引入及架构设计"></a>缓存的引入及架构设计</h3><h4 id="缓存组件选择"><a href="#缓存组件选择" class="headerlink" title="缓存组件选择"></a>缓存组件选择</h4><p>在设计架构缓存时，首先要选定缓存组件，比如要用 Local-Cache，还是 Redis、Memcached、Pika 等开源缓存组件，如果业务缓存需求比较特殊，还要考虑是直接定制开发一个新的缓存组件，还是对开源缓存进行二次开发，来满足业务需要。</p>
+<h4 id="缓存数据结构设计"><a href="#缓存数据结构设计" class="headerlink" title="缓存数据结构设计"></a>缓存数据结构设计</h4><p>确定好缓存组件后，还要根据业务访问的特点，进行缓存数据结构的设计。</p>
+<p>对于直接简单 KV 读写的业务，你可以将这些业务数据封装为 String、Json、Protocol Buffer 等格式，序列化成字节序列，然后直接写入缓存中。读取时，先从缓存组件获取到数据的字节序列，再进行反序列化操作即可。对于只需要存取部分字段或需要在缓存端进行计算的业务，可以把数据设计为 Hash、Set、List、Geo 等结构，存储到支持复杂集合数据类型的缓存中，如 Redis、Pika 等。</p>
+<h4 id="缓存分布设计"><a href="#缓存分布设计" class="headerlink" title="缓存分布设计"></a>缓存分布设计</h4><p>确定了缓存组件，设计好了缓存数据结构，接下来就要设计缓存的分布。可以从 3 个维度来进行缓存分布设计。</p>
+<ul>
+<li><p>首先，要选择分布式算法，是采用<strong>取模</strong>还是<strong>一致性 Hash</strong> 进行分布。取模分布的方案简单，每个 key 只会存在确定的缓存节点，一致性 Hash 分布的方案相对复杂，一个 key 对应的缓存节点不确定。但一致性 Hash 分布，可以在部分缓存节点异常时，将失效节点的数据访问均衡分散到其他正常存活的节点，从而更好地保证了缓存系统的稳定性。</p>
+</li>
+<li><p>其次，分布读写访问如何进行实施，是由缓存 Client 直接进行 <strong>Hash 分布定位读写</strong>，还是通过 <strong>Proxy 代理来进行读写</strong>路由？Client 直接读写，读写性能最佳，但需要 Client 感知分布策略。在缓存部署发生在线变化时，也需要及时通知所有缓存 Client，避免读写异常，另外，Client 实现也较复杂。而通过 Proxy 路由，Client 只需直接访问 Proxy，分布逻辑及部署变更都由 Proxy 来处理，对业务应用开发最友好，但业务访问多一跳，访问性能会有一定的损失。</p>
+</li>
+<li><p>最后，缓存系统运行过程中，如果待缓存的数据量增长过快，会导致大量缓存数据被剔除，缓存命中率会下降，数据访问性能会随之降低，这样就需要将数据从缓存节点进行动态拆分，把部分数据水平迁移到其他缓存节点。这个迁移过程需要考虑，是由 Proxy 进行迁移还是缓存 Server 自身进行迁移，甚至根本就不支持迁移。对于 Memcached，一般不支持迁移，对 Redis，社区版本是依靠缓存 Server 进行迁移，而对 Codis 则是通过 Admin、Proxy 配合后端缓存组件进行迁移。</p>
+</li>
+</ul>
+<h4 id="缓存架构部署及运维管理"><a href="#缓存架构部署及运维管理" class="headerlink" title="缓存架构部署及运维管理"></a>缓存架构部署及运维管理</h4><p>设计完毕缓存的分布策略后，接下来就要考虑缓存的架构部署及运维管理了。架构部署主要考虑如何对缓存进行分池、分层、分 IDC，以及是否需要进行异构处理。</p>
+<ol>
+<li><p>核心的、高并发访问的不同数据，需要分别分拆到独立的缓存池中，进行分别访问，避免相互影响；访问量较小、非核心的业务数据，则可以混存。</p>
+</li>
+<li><p>对海量数据、访问超过 10～100万 级的业务数据，要考虑分层访问，并且要分摊访问量，避免缓存过载。</p>
+</li>
+<li><p>如果业务系统需要多 IDC 部署甚至异地多活，则需要对缓存体系也进行多 IDC 部署，要考虑如何跨 IDC 对缓存数据进行更新，可以采用直接跨 IDC 读写，也可以采用 DataBus 配合队列机进行不同 IDC 的消息同步，然后由消息处理机进行缓存更新，还可以由各个 IDC 的 DB Trigger 进行缓存更新。</p>
+</li>
+<li><p>某些极端场景下，还需要把多种缓存组件进行组合使用，通过缓存异构达到最佳读写性能。</p>
+</li>
+<li><p>站在系统层面，要想更好得管理缓存，还要考虑缓存的服务化，考虑缓存体系如何更好得进行集群管理、监控运维等。</p>
+</li>
+</ol>
+<h3 id="缓存设计架构的常见考量点"><a href="#缓存设计架构的常见考量点" class="headerlink" title="缓存设计架构的常见考量点"></a>缓存设计架构的常见考量点</h3><p>在缓存设计架构的过程中，有一些非常重要的考量点，如下图所示，只有分析清楚了这些考量点，才能设计架构出更佳的缓存体系。   </p>
+<p><img src="http://image.leonote.cn//20201014211812.png" alt=""></p>
+<h4 id="读写方式"><a href="#读写方式" class="headerlink" title="读写方式"></a>读写方式</h4><p>首先是 value 的读写方式。是全部整体读写，还是只部分读写及变更？是否需要内部计算？比如，用户粉丝数，很多普通用户的粉丝有几千到几万，而大 V 的粉丝更是高达几千万甚至过亿，因此，获取粉丝列表肯定不能采用整体读写的方式，只能部分获取。另外在判断某用户是否关注了另外一个用户时，也不需要拉取该用户的全部关注列表，直接在关注列表上进行检查判断，然后返回 True/False 或 0/1 的方式更为高效。</p>
+<h4 id="KV-size"><a href="#KV-size" class="headerlink" title="KV size"></a>KV size</h4><p>然后是不同业务数据缓存 KV 的 size。如果单个业务的 KV size 过大，需要分拆成多个 KV 来缓存。但是，不同缓存数据的 KV size 如果差异过大，也不能缓存在一起，避免缓存效率的低下和相互影响。</p>
+<h4 id="key-的数量"><a href="#key-的数量" class="headerlink" title="key 的数量"></a>key 的数量</h4><p>key 的数量也是一个重要考虑因素。如果 key 数量不大，可以在缓存中存下全量数据，把缓存当 DB 存储来用，如果缓存读取 miss，则表明数据不存在，根本不需要再去 DB 查询。如果数据量巨大，则在缓存中尽可能只保留频繁访问的热数据，对于冷数据直接访问 DB。</p>
+<h4 id="读写峰值"><a href="#读写峰值" class="headerlink" title="读写峰值"></a>读写峰值</h4><p>另外，对缓存数据的读写峰值，如果小于 10万 级别，简单分拆到独立 Cache 池即可。而一旦数据的读写峰值超过 10万 甚至到达 100万 级的QPS，则需要对 Cache 进行分层处理，可以同时使用 Local-Cache 配合远程 cache，甚至远程缓存内部继续分层叠加分池进行处理。微博业务中，大多数核心业务的 Memcached 访问都采用的这种处理方式。</p>
+<h4 id="命中率"><a href="#命中率" class="headerlink" title="命中率"></a>命中率</h4><p>缓存的命中率对整个服务体系的性能影响甚大。对于核心高并发访问的业务，需要预留足够的容量，确保核心业务缓存维持较高的命中率。比如微博中的 Feed Vector Cache，常年的命中率高达 99.5% 以上。为了持续保持缓存的命中率，缓存体系需要持续监控，及时进行故障处理或故障转移。同时在部分缓存节点异常、命中率下降时，故障转移方案，需要考虑是采用一致性 Hash 分布的访问漂移策略，还是采用数据多层备份策略。</p>
+<h4 id="过期策略"><a href="#过期策略" class="headerlink" title="过期策略"></a>过期策略</h4><ul>
+<li><p>可以设置较短的过期时间，让冷 key 自动过期；</p>
+</li>
+<li><p>也可以让 key 带上时间戳，同时设置较长的过期时间，比如很多业务系统内部有这样一些 <code>key:key_20190801</code>。</p>
+</li>
+</ul>
+<h4 id="平均缓存穿透加载时间"><a href="#平均缓存穿透加载时间" class="headerlink" title="平均缓存穿透加载时间"></a>平均缓存穿透加载时间</h4><p>平均缓存穿透加载时间在某些业务场景下也很重要，对于一些缓存穿透后，加载时间特别长或者需要复杂计算的数据，而且访问量还比较大的业务数据，要配置更多容量，维持更高的命中率，从而减少穿透到 DB 的概率，来确保整个系统的访问性能。</p>
+<h4 id="缓存可运维性"><a href="#缓存可运维性" class="headerlink" title="缓存可运维性"></a>缓存可运维性</h4><p>对于缓存的可运维性考虑，则需要考虑缓存体系的集群管理，如何进行一键扩缩容，如何进行缓存组件的升级和变更，如何快速发现并定位问题，如何持续监控报警，最好有一个完善的运维平台，将各种运维工具进行集成。</p>
+<h4 id="缓存安全性"><a href="#缓存安全性" class="headerlink" title="缓存安全性"></a>缓存安全性</h4><p>对于缓存的安全性考虑，一方面可以限制来源 IP，只允许内网访问，同时对于一些关键性指令，需要增加访问权限，避免被攻击或误操作时，导致重大后果。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/444c90ea.html">https://liule8.github.io/post/444c90ea.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%BC%93%E5%AD%98/">缓存</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/feb0b826.html"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spring Data JPA之高级用法-DataSource 加载过程</div></div></a></div><div class="next-post pull-right"><a href="/post/7b59e5b8.html"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CollectionUtils工具类</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/486bf242.html" title="7大缓存经典问题"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-23</div><div class="title">7大缓存经典问题</div></div></a></div><div><a href="/post/c38e39a2.html" title="分布式缓存-分布式Redis实战"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-09</div><div class="title">分布式缓存-分布式Redis实战</div></div></a></div><div><a href="/post/2dbd5aa4.html" title="分布式缓存-Memcached的原理及架构剖析"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-07</div><div class="title">分布式缓存-Memcached的原理及架构剖析</div></div></a></div><div><a href="/post/e6b50640.html" title="分布式缓存-Memcached进阶"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-07</div><div class="title">分布式缓存-Memcached进阶</div></div></a></div><div><a href="/post/24d8710e.html" title="分布式缓存-Redis原理、协议及使用"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-06-16</div><div class="title">分布式缓存-Redis原理、协议及使用</div></div></a></div><div><a href="/post/a0be8adb.html" title="分布式缓存-Redis进阶(上)"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-02</div><div class="title">分布式缓存-Redis进阶(上)</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">313</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E7%9A%84%E5%8E%9F%E7%90%86%E3%80%81%E5%BC%95%E5%85%A5%E4%B8%8E%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.</span> <span class="toc-text">缓存的原理、引入与设计</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE%E6%80%A7%E8%83%BD%E5%A4%AA%E4%BD%8E%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="toc-number">1.1.</span> <span class="toc-text">业务数据访问性能太低怎么办</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">缓存的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E5%8E%9F%E7%90%86"><span class="toc-number">1.1.2.</span> <span class="toc-text">缓存原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">缓存的基本思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">缓存的优势</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E7%9A%84%E4%BB%A3%E4%BB%B7"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">缓存的代价</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%A0%B9%E6%8D%AE%E4%B8%9A%E5%8A%A1%E6%9D%A5%E9%80%89%E6%8B%A9%E7%BC%93%E5%AD%98%E6%A8%A1%E5%BC%8F%E5%92%8C%E7%BB%84%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">如何根据业务来选择缓存模式和组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E8%AF%BB%E5%86%99%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.2.1.</span> <span class="toc-text">缓存读写模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Cache-Aside"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">Cache Aside</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Read-Write-Through"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">Read&#x2F;Write Through</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Write-Behind-Caching"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">Write Behind Caching</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E5%88%86%E7%B1%BB%E5%8F%8A%E5%B8%B8%E7%94%A8%E7%BC%93%E5%AD%98%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.2.2.</span> <span class="toc-text">缓存分类及常用缓存介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%89%E5%AE%BF%E4%B8%BB%E5%B1%82%E6%AC%A1%E5%88%86%E7%B1%BB"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">按宿主层次分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%89%E5%AD%98%E5%82%A8%E4%BB%8B%E8%B4%A8%E5%88%86%E7%B1%BB"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">按存储介质分类</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E7%BC%93%E5%AD%98%E6%9E%B6%E6%9E%84%E6%97%B6%E9%9C%80%E8%A6%81%E8%80%83%E9%87%8F%E5%93%AA%E4%BA%9B%E5%9B%A0%E7%B4%A0"><span class="toc-number">1.3.</span> <span class="toc-text">设计缓存架构时需要考量哪些因素</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E7%9A%84%E5%BC%95%E5%85%A5%E5%8F%8A%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.3.1.</span> <span class="toc-text">缓存的引入及架构设计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E7%BB%84%E4%BB%B6%E9%80%89%E6%8B%A9"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">缓存组件选择</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">缓存数据结构设计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E5%88%86%E5%B8%83%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">缓存分布设计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E6%9E%B6%E6%9E%84%E9%83%A8%E7%BD%B2%E5%8F%8A%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">缓存架构部署及运维管理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E8%AE%BE%E8%AE%A1%E6%9E%B6%E6%9E%84%E7%9A%84%E5%B8%B8%E8%A7%81%E8%80%83%E9%87%8F%E7%82%B9"><span class="toc-number">1.3.2.</span> <span class="toc-text">缓存设计架构的常见考量点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%BB%E5%86%99%E6%96%B9%E5%BC%8F"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">读写方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#KV-size"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">KV size</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#key-%E7%9A%84%E6%95%B0%E9%87%8F"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">key 的数量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%BB%E5%86%99%E5%B3%B0%E5%80%BC"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">读写峰值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%B8%AD%E7%8E%87"><span class="toc-number">1.3.2.5.</span> <span class="toc-text">命中率</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%87%E6%9C%9F%E7%AD%96%E7%95%A5"><span class="toc-number">1.3.2.6.</span> <span class="toc-text">过期策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B3%E5%9D%87%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E5%8A%A0%E8%BD%BD%E6%97%B6%E9%97%B4"><span class="toc-number">1.3.2.7.</span> <span class="toc-text">平均缓存穿透加载时间</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E5%8F%AF%E8%BF%90%E7%BB%B4%E6%80%A7"><span class="toc-number">1.3.2.8.</span> <span class="toc-text">缓存可运维性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E5%AE%89%E5%85%A8%E6%80%A7"><span class="toc-number">1.3.2.9.</span> <span class="toc-text">缓存安全性</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/d42cc345.html" title="数据结构与算法之入门篇-为什么要学习数据结构和算法">数据结构与算法之入门篇-为什么要学习数据结构和算法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/68a8f17f.html" title="数据结构与算法之入门篇-学习方法">数据结构与算法之入门篇-学习方法</a><time datetime="2021-10-19T13:07:36.000Z" title="发表于 2021-10-19 13:07:36">2021-10-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/abff7577.html" title="Netty 核心原理剖析与 RPC 实践-实践总结">Netty 核心原理剖析与 RPC 实践-实践总结</a><time datetime="2021-10-14T20:34:53.000Z" title="发表于 2021-10-14 20:34:53">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/889de2a9.html" title="Netty 核心原理剖析与 RPC 实践-编程思想">Netty 核心原理剖析与 RPC 实践-编程思想</a><time datetime="2021-10-14T20:34:26.000Z" title="发表于 2021-10-14 20:34:26">2021-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/634ac34e.html" title="Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸">Netty 核心原理剖析与 RPC 实践之自定义RPC-总结与进阶延伸</a><time datetime="2021-10-14T20:33:36.000Z" title="发表于 2021-10-14 20:33:36">2021-10-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>
