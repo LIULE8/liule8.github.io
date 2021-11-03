@@ -1,0 +1,190 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>趣学设计模式之设计模式-门面模式 | Leo's notes</title><meta name="keywords" content="设计模式"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="门面模式：如何实现 API 网关的高可用性？前面我们已经学习了组合模式、桥接模式、装饰模式、适配器模式这 4 种结构型设计模式，今天我们接着再来学习另一种新的结构型模式——门面模式。门面模式的原理非常容易理解，使用也非常灵活，因此，它的应用非常广泛。 不过，你是不是经常把门面模式和代理模式搞混淆？比如，业务 API 网关和 Nginx 网关是不是差不多？实际上这两种模式的本质原理是不同的。相信通过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="趣学设计模式之设计模式-门面模式">
+<meta property="og:url" content="https://liule8.github.io/post/5a088a81.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="门面模式：如何实现 API 网关的高可用性？前面我们已经学习了组合模式、桥接模式、装饰模式、适配器模式这 4 种结构型设计模式，今天我们接着再来学习另一种新的结构型模式——门面模式。门面模式的原理非常容易理解，使用也非常灵活，因此，它的应用非常广泛。 不过，你是不是经常把门面模式和代理模式搞混淆？比如，业务 API 网关和 Nginx 网关是不是差不多？实际上这两种模式的本质原理是不同的。相信通过">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://liule8.github.io/images/posts/cover/designPatterns.png">
+<meta property="article:published_time" content="2021-11-03T12:47:00.000Z">
+<meta property="article:modified_time" content="2021-11-03T11:20:30.496Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://liule8.github.io/images/posts/cover/designPatterns.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/5a088a81"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-11-03 11:20:30'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">351</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">46</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/images/posts/cover/designPatterns.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">趣学设计模式之设计模式-门面模式</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-11-03T12:47:00.000Z" title="发表于 2021-11-03 12:47:00">2021-11-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-11-03T11:20:30.496Z" title="更新于 2021-11-03 11:20:30">2021-11-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="趣学设计模式之设计模式-门面模式"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="门面模式：如何实现-API-网关的高可用性？"><a href="#门面模式：如何实现-API-网关的高可用性？" class="headerlink" title="门面模式：如何实现 API 网关的高可用性？"></a>门面模式：如何实现 API 网关的高可用性？</h1><p>前面我们已经学习了组合模式、桥接模式、装饰模式、适配器模式这 4 种结构型设计模式，今天我们接着再来学习另一种新的结构型模式——门面模式。门面模式的原理非常容易理解，使用也非常灵活，因此，它的应用非常广泛。</p>
+<p>不过，你是不是经常把门面模式和代理模式搞混淆？比如，业务 API 网关和 Nginx 网关是不是差不多？实际上这两种模式的本质原理是不同的。相信通过今天的学习，会帮助你找到一个更准确的答案。</p>
+<p>话不多说，让我们开始今天的学习吧。</p>
+<h2 id="模式原理分析"><a href="#模式原理分析" class="headerlink" title="模式原理分析"></a>模式原理分析</h2><p>门面模式的原始定义是：为子系统中的一组接口提供统一的接口。它定义了一个更高级别的接口，使子系统更易于使用。</p>
+<p>这个定义告诉我们门面模式的本质就是统一多个接口的功能。换句话说，<strong>当我们需要用更统一的标准方式来与系统交互时，就可以采用门面模式</strong>。比如，使用 Slf4j 日志框架来统一 log4j、log4j2、CommonLog 等日志框架。再比如，在支付时通过扫描二维码来使用支付系统。对于用户来说，他们并不关心后台系统实现有多么复杂，只关心最终能否支付成功。</p>
+<p>不过，这里要注意的是，“定义更高级别的接口”不代表只能定义一个接口，这也是和代理模式根本的不同之处。也就是说，<strong>门面模式可能代理的是多个接口，而代理模式通常只是代理某一个接口</strong>。</p>
+<p>下面我们就来看看门面模式的 UML 图：</p>
+<p><img src="http://image.leonote.cn/20211103192029.png" alt="image-20211103192029663"></p>
+<p>可以看到，门面模式包含的关键角色有两个：</p>
+<ul>
+<li><strong>门面系统</strong>，负责处理依赖子系统的请求，并将请求代理给适当的子系统进行处理；</li>
+<li><strong>子系统</strong>，代表某个领域内的功能实现，比如，订单、用户、支付等，专门处理由门面系统指派的任务。</li>
+</ul>
+<p>我们平时最常见的电脑开机按钮就是一个门面模式，点击按钮电脑就会启动，再点击按钮电脑就会关闭，至于电脑如何运行 CPU、启动内存、读取硬盘、点亮显示器，我们其实并不关心。我们只关心使用视角下的电脑，而不关心电脑本身是如何运行的。</p>
+<p>门面模式封装的变化主要是子系统的一切变化（自身复杂性、可能出现的问题等），并且随着子系统的独立演化，子系统可能变得越来越复杂，但是只要和门面系统的交互不发生改变，那么就并不会影响门面系统。就好比，虽然后端研发团队不断地迭代更新 API 版本，但只要接口定义不变，那么前端团队就不需要进行任何修改。</p>
+<p>所以说，门面模式的原理本质就是<strong>简化外部系统使用内部多个子系统的使用方式</strong>。</p>
+<h2 id="使用场景分析"><a href="#使用场景分析" class="headerlink" title="使用场景分析"></a>使用场景分析</h2><p>一般来讲，门面模式常用的使用场景有以下几种。</p>
+<ul>
+<li><strong>简化复杂系统</strong>。 比如，当我们开发了一整套的电商系统后（包括订单、商品、支付、会员等系统），我们不能让用户依次使用这些系统后才能完成商品的购买，而是需要一个门户网站或手机 App 这样简化过的门面系统来提供在线的购物功能。</li>
+<li><strong>减少客户端处理的系统数量</strong>。 比如，在 Web 应用中，系统与系统之间的调用可能需要处理 Database 数据库、Model 业务对象等，其中使用 Database 对象就需要处理打开数据库、关闭连接等操作，然后转换为 Model 业务对象，实在是太麻烦了。如果能够创建一个数据库使用的门面（其实就是常说的 DAO 层），那么实现以上过程将变得容易很多。</li>
+<li><strong>让一个系统（或对象）为多个系统（或对象）工作</strong>。 比如，线程池 ThreadPool 就是一个门面模式，它为系统提供了统一的线程对象的创建、销毁、使用等。</li>
+<li><strong>联合更多的系统来扩展原有系统</strong>。 当我们的电商系统中需要一些新功能时，比如，人脸识别，我们可以不需要自行研发，而是购买别家公司的系统来提供服务，这时通过门面系统就能方便快速地进行扩展。</li>
+<li><strong>作为一个简洁的中间层</strong>。 门面模式还可以用来隐藏或者封装系统中的分层结构，同时作为一个简化的中间层来使用。比如，在秒杀、库存、钱包等场景中，我们需要共享有状态的数据时（如商品库存、账户里的钱），在不改变原有系统的前提下，通过一个中间的共享层（如将秒杀活动的商品库存总数统一放在 Redis 里），就能统一进行各种服务（如，秒杀详情页、商品详情页、购物车等）的调用。</li>
+</ul>
+<p><strong>总结来说，门面模式在使用的时候能够提供一个简单的概览视图，让使用者能够很方便地去使用</strong>。实际上，这一视图对于绝大多数用户来说已经足够了。比如，点击添加商品到购物车、结算、支付、等待收货……虽然对于电商系统本身来说需要考虑各种各样的情况，但是对于用户来说，购物网站这个门面就已经足够他们使用了。</p>
+<p>这也是为什么手机上的 App 虽然只有一个，但是实际上这个 App 背后需要的可能是成百上千的“一个人”在运营和研发这个 App。</p>
+<p>所以说，<span alt="underline">门面模式本身并不是一个代码实现的模式，而是组合更多的其他模式来使用的一种通用解决方案。</span></p>
+<h2 id="为什么使用门面模式？"><a href="#为什么使用门面模式？" class="headerlink" title="为什么使用门面模式？"></a>为什么使用门面模式？</h2><p>分析完门面模式的原理和使用场景后，我们再来说说使用门面模式的原因，主要有以下两个。</p>
+<p><strong>第一个，为了解决遗留系统重构的问题</strong>。 遗留系统通常是指承担着当前多个系统处理流程中重要的一环，但可能因为开发时间太过久远或初始维护团队发生重大调整，进而导致遗留下来的代码难以维护而得名。在重构遗留系统的过程中，内部子系统通常可能是非常复杂的，一般新维护的团队基本上不会修改原有系统的接口，但是新功能又必须要上线，这时就会采用门面模式先统一重要的接口，然后再逐渐地更新与迁移功能到新系统上，完成遗留系统的重构。这样既能保证原有线上系统不受影响，也能不断更新老旧的代码，让代码更易维护。结合我多年的经验来看，门面模式在设计上就是为了兼容更多不同的系统，非常适合重构遗留系统。</p>
+<p><strong>第二个，为了解决分层架构中的扩展问题</strong>。 不管是单体应用还是分布式应用，使用分层架构时，容易出现各个层次的入口和出口被滥用的现象，比如，视图层滥用 DAO 层来访问数据存储。实际上，对于更高层的使用者来说，有时其实并不关心底层的实现逻辑。如果底层提供了太丰富的功能而又没有做限制时，就容易让高层的使用者混淆。而使用门面模式能够清晰地定义一类操作，比如，数据的增删改查门面系统，任务调度的门面系统。一方面，门面模式能够充当权限管控的角色（按类区分），让上层的访问能够汇聚到一个门面系统中，方便使用。另一方面，门面模式也能简化下层不同子系统的依赖关系（按分类关系聚合），避免滥用。这样在每一层里进行系统扩展时，就不会影响到其他系统。</p>
+<h2 id="收益什么？损失什么？"><a href="#收益什么？损失什么？" class="headerlink" title="收益什么？损失什么？"></a>收益什么？损失什么？</h2><p>通过上面的分析，我们可以得出使用门面模式主要有以下几个优点。</p>
+<ul>
+<li><strong>对使用者屏蔽子系统的细节，因而减少了使用者处理的对象数目，让整个系统使用起来更加方便</strong>。比如，API 网关对外只有一个调用点，而后端服务可以用成百上千的服务系统连接网关。</li>
+<li><strong>实现了子系统与使用者之间的松散耦合关系</strong>。比如，活动时用户只需要点击抢购按钮就能实现一键下单并送货，用户不用知道商品系统是如何扣减商品的，也不用知道物流系统如何调度送货的。</li>
+<li><strong>有助于建立层次结构系统，并简化层与层之间的依赖关系</strong>。比如，视图层要访问存储层数据时，如果直接使用数据访问接口会造成依赖混乱，而按照某一个分类的服务建立一个门面服务层，比如，动态路由读写数据门面系统、数据埋点采集门面系统等，能够提供更简化统一的操作。</li>
+<li><strong>能够消除复杂的循环依赖</strong>。比如，为多个外部系统提供统一的 SDK 应用包，统一定义不同的接口方法，指定对应的子系统进行使用。</li>
+<li><strong>有利于系统在不同平台之间的移植和重构</strong>。 比如，系统早期通过 C# 实现，但现在团队期望通过 Java 进行重构，这时门面系统就可以充当中间的协议统一者，提供 HTTP 协议接口，然后逐渐迁移代码功能，使用过渡与升级同时并存的方式，完成系统的切换与升级。</li>
+</ul>
+<p>当然，门面模式也有一些缺点。</p>
+<ul>
+<li><strong>降低了可靠性</strong>。从架构模式上看，可能会出现过多的子系统依赖一个门面系统的情况，常见的网关模式就是这样，只要网关挂掉，所有子系统可能就无法使用了。</li>
+<li><strong>容易导致子系统越来越复杂</strong>。有了简化的门面系统后，子系统可能就会不受约束地自由扩展。如果子系统在进行跨版本的升级而不通知门面系统时，就可能会造成系统的不可用。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><strong>门面模式的本质是：简化调用，统一操作</strong>。</p>
+<p>门面模式最典型的一种应用就是 API 网关，这个你可能已经非常熟悉了，特别是随着微服务的不断流行，API 网关充当着越来越重要的角色。API 网关要解决的一个主要问题就是：高可用性。但实际上你会发现，从模式的原理上很难解决高可用的问题，因为只要依赖的系统越多，网关出现了问题，那么所有系统都变成了不可用状态。这也是有时不使用 API 网关的原因。现在更多的是通过其他手段来保护网关，比如，降级、限流、熔断等操作，或者通过不断扩展网关的吞吐量处理能力来提高网关的可用性。</p>
+<p>虽然门面模式满足最小知识原则，但这仅仅是对于用户而言的，而对于使用系统的维护者来说，庞大的子系统依然需要大量的业务知识。</p>
+<p>门面模式虽然有很多优势，如统一对外的服务管控，但是同样劣势也很明显，如造成系统单点故障而使所有系统不可用。所以说，门面模式更多是为了简化操作而提出的一种优化方法，不要过于迷信它，而是应该辩证地看待它。</p>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>虽然门面模式有很多优点，但请你思考下，一个系统中是只有一个门面系统好，还是有多个门面系统更好？为什么？</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/5a088a81.html">https://liule8.github.io/post/5a088a81.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></div><div class="post_share"><div class="social-share" data-image="/images/posts/cover/designPatterns.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/4238191e.html"><img class="prev-cover" src="/images/posts/cover/designPatterns.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">趣学设计模式之设计模式-享元模式</div></div></a></div><div class="next-post pull-right"><a href="/post/45d4b33f.html"><img class="next-cover" src="/images/posts/cover/designPatterns.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">趣学设计模式之设计模式-装饰模式</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/364ea8cc.html" title="设计模式"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-08</div><div class="title">设计模式</div></div></a></div><div><a href="/post/3de10f44.html" title="趣学设计模式之编程思维-分层思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-26</div><div class="title">趣学设计模式之编程思维-分层思维</div></div></a></div><div><a href="/post/19cb0842.html" title="趣学设计模式之编程思维-学习思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-26</div><div class="title">趣学设计模式之编程思维-学习思维</div></div></a></div><div><a href="/post/4a488f3.html" title="趣学设计模式之编程思维-对象思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-27</div><div class="title">趣学设计模式之编程思维-对象思维</div></div></a></div><div><a href="/post/f50b517d.html" title="趣学设计模式之编程思维-组合思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-26</div><div class="title">趣学设计模式之编程思维-组合思维</div></div></a></div><div><a href="/post/fad392b1.html" title="趣学设计模式之编程思维-迭代思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-28</div><div class="title">趣学设计模式之编程思维-迭代思维</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">351</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">46</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%A8%E9%9D%A2%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0-API-%E7%BD%91%E5%85%B3%E7%9A%84%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">门面模式：如何实现 API 网关的高可用性？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">模式原理分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">使用场景分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E9%97%A8%E9%9D%A2%E6%A8%A1%E5%BC%8F%EF%BC%9F"><span class="toc-number">1.3.</span> <span class="toc-text">为什么使用门面模式？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B6%E7%9B%8A%E4%BB%80%E4%B9%88%EF%BC%9F%E6%8D%9F%E5%A4%B1%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.4.</span> <span class="toc-text">收益什么？损失什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83"><span class="toc-number">1.6.</span> <span class="toc-text">思考</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/744f530d.html" title="数据结构与算法之基础篇-排序(上)"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之基础篇-排序(上)"/></a><div class="content"><a class="title" href="/post/744f530d.html" title="数据结构与算法之基础篇-排序(上)">数据结构与算法之基础篇-排序(上)</a><time datetime="2021-11-03T20:48:50.000Z" title="发表于 2021-11-03 20:48:50">2021-11-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/d8f4be44.html" title="趣学设计模式之设计模式-代理模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-代理模式"/></a><div class="content"><a class="title" href="/post/d8f4be44.html" title="趣学设计模式之设计模式-代理模式">趣学设计模式之设计模式-代理模式</a><time datetime="2021-11-03T19:39:58.000Z" title="发表于 2021-11-03 19:39:58">2021-11-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/4238191e.html" title="趣学设计模式之设计模式-享元模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-享元模式"/></a><div class="content"><a class="title" href="/post/4238191e.html" title="趣学设计模式之设计模式-享元模式">趣学设计模式之设计模式-享元模式</a><time datetime="2021-11-03T19:21:49.000Z" title="发表于 2021-11-03 19:21:49">2021-11-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/5a088a81.html" title="趣学设计模式之设计模式-门面模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-门面模式"/></a><div class="content"><a class="title" href="/post/5a088a81.html" title="趣学设计模式之设计模式-门面模式">趣学设计模式之设计模式-门面模式</a><time datetime="2021-11-03T12:47:00.000Z" title="发表于 2021-11-03 12:47:00">2021-11-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/45d4b33f.html" title="趣学设计模式之设计模式-装饰模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-装饰模式"/></a><div class="content"><a class="title" href="/post/45d4b33f.html" title="趣学设计模式之设计模式-装饰模式">趣学设计模式之设计模式-装饰模式</a><time datetime="2021-11-02T20:26:16.000Z" title="发表于 2021-11-02 20:26:16">2021-11-02</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>

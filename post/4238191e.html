@@ -1,0 +1,208 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>趣学设计模式之设计模式-享元模式 | Leo's notes</title><meta name="keywords" content="设计模式"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="享元模式：如何通过共享对象减少内存加载消耗？在上一讲中，我们介绍了门面模式，门面模式应用广泛，不仅可以在架构设计层面组合不同的子系统来完成庞大功能（比如，电商系统），而且还可以在代码级别用于对象之间的调用解耦。 今天我们继续学习另外一种结构型模式——享元模式。享元模式的原理和实现都很简单，但是应用场景却相对狭窄，它和现在我们所熟知的缓存模式、池化模式有所联系，却又有不同。 那么，话不多说，让我们开">
+<meta property="og:type" content="article">
+<meta property="og:title" content="趣学设计模式之设计模式-享元模式">
+<meta property="og:url" content="https://liule8.github.io/post/4238191e.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="享元模式：如何通过共享对象减少内存加载消耗？在上一讲中，我们介绍了门面模式，门面模式应用广泛，不仅可以在架构设计层面组合不同的子系统来完成庞大功能（比如，电商系统），而且还可以在代码级别用于对象之间的调用解耦。 今天我们继续学习另外一种结构型模式——享元模式。享元模式的原理和实现都很简单，但是应用场景却相对狭窄，它和现在我们所熟知的缓存模式、池化模式有所联系，却又有不同。 那么，话不多说，让我们开">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://liule8.github.io/images/posts/cover/designPatterns.png">
+<meta property="article:published_time" content="2021-11-03T19:21:49.000Z">
+<meta property="article:modified_time" content="2021-11-03T11:37:43.430Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://liule8.github.io/images/posts/cover/designPatterns.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/4238191e"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-11-03 11:37:43'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">351</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">46</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/images/posts/cover/designPatterns.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">趣学设计模式之设计模式-享元模式</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-11-03T19:21:49.000Z" title="发表于 2021-11-03 19:21:49">2021-11-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-11-03T11:37:43.430Z" title="更新于 2021-11-03 11:37:43">2021-11-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="趣学设计模式之设计模式-享元模式"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="享元模式：如何通过共享对象减少内存加载消耗？"><a href="#享元模式：如何通过共享对象减少内存加载消耗？" class="headerlink" title="享元模式：如何通过共享对象减少内存加载消耗？"></a>享元模式：如何通过共享对象减少内存加载消耗？</h1><p>在上一讲中，我们介绍了门面模式，门面模式应用广泛，不仅可以在架构设计层面组合不同的子系统来完成庞大功能（比如，电商系统），而且还可以在代码级别用于对象之间的调用解耦。</p>
+<p>今天我们继续学习另外一种结构型模式——享元模式。享元模式的原理和实现都很简单，但是应用场景却相对狭窄，它和现在我们所熟知的缓存模式、池化模式有所联系，却又有不同。</p>
+<p>那么，话不多说，让我们开始今天的学习吧。</p>
+<h2 id="模式原理分析"><a href="#模式原理分析" class="headerlink" title="模式原理分析"></a>模式原理分析</h2><p>享元模式的原始定义是：摒弃了在每个对象中保存所有数据的方式，通过共享多个对象所共有的相同状态，从而让我们能在有限的内存容量中载入更多对象。</p>
+<p>从这个定义中你可以发现，享元模式要解决的核心问题就是<strong>节约内存空间</strong>，使用的办法是<strong>找出相似对象之间的共有特征，然后复用这些特征</strong>。</p>
+<p>我们先来看看 UML 图是如何表示享元模式的，如下图：</p>
+<p><img src="http://image.leonote.cn/20211103192829.png" alt="image-20211103192829349"></p>
+<p>从这个 UML 图中，我们能看出享元模式包含的关键角色有四个。</p>
+<ul>
+<li><strong>享元类（Flyweight）</strong>：定义了享元对象需要实现的公共操作方法。在该方法中会使用一个状态作为输入参数，也叫外部状态，由客户端保存，在运行时改变。</li>
+<li><strong>享元工厂类（Flyweight Factory）</strong>：管理一个享元对象类的缓存池。它会存储享元对象之间需要传递的共有状态，比如，按照大写英文字母来作为状态标识，这种只在享元对象之间传递的方式就叫内部状态。同时，它还提供了一个通用方法 getFlyweight()，主要通过内部状态标识来获取享元对象。</li>
+<li><strong>可共享的具体享元类（ConcreteFlyweight）</strong>：能够复用享元工厂内部状态并实现享元类公共操作的具体实现类。</li>
+<li><strong>非共享的具体享元类（UnsharedConcreteFlyweight）</strong>：不复用享元工厂内部状态，但实现享元类的具体实现类。</li>
+</ul>
+<p>为帮助你更准确地理解，这里我们稍微拓展一下，简单介绍下内部状态和外部状态。</p>
+<ul>
+<li><strong>内部状态</strong>：不会随环境改变而改变的状态，俗称不可变对象。比如，在 Java 中 Integer 对象初始化就是缓存 -127 到 128 的值，无论怎么使用 Integer，这些值都不会变化。</li>
+<li><strong>外部状态</strong>：随环境改变而改变的状态。通常是某个对象所独有的，不能被共享，因此，也只能由客户端保存。之所以需要外部状态就是因为客户端需要不同的定制化操作。</li>
+</ul>
+<p>下面我们再来看看 UML 对应的代码实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//享元类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Flyweight</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">operation</span><span class="params">(<span class="keyword">int</span> state)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//享元工厂类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FlyweighFactory</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 定义一个池容器</span></span><br><span class="line">    <span class="keyword">public</span> Map&lt;String,Flyweight&gt; pool = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FlyweighFactory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        pool.put(<span class="string">&quot;A&quot;</span>, <span class="keyword">new</span> ConcreteFlyweight(<span class="string">&quot;A&quot;</span>));<span class="comment">//将对应的内部状态添加进去</span></span><br><span class="line">        pool.put(<span class="string">&quot;B&quot;</span>, <span class="keyword">new</span> ConcreteFlyweight(<span class="string">&quot;B&quot;</span>));</span><br><span class="line">        pool.put(<span class="string">&quot;C&quot;</span>, <span class="keyword">new</span> ConcreteFlyweight(<span class="string">&quot;C&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//根据内部状态来查找值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Flyweight <span class="title">getFlyweight</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (pool.containsKey(key)) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;===享元池中有，直接复用，key：&quot;</span>+key);</span><br><span class="line">            <span class="keyword">return</span> pool.get(key);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;===享元池中没有，重新创建并复用，key：&quot;</span>+key);</span><br><span class="line">            Flyweight flyweightNew = <span class="keyword">new</span> ConcreteFlyweight(key);</span><br><span class="line">            pool.put(key,flyweightNew);</span><br><span class="line">            <span class="keyword">return</span> flyweightNew;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//共享的具体享元类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteFlyweight</span> <span class="keyword">implements</span> <span class="title">Flyweight</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String uniqueKey;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteFlyweight</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.uniqueKey = key;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operation</span><span class="params">(<span class="keyword">int</span> state)</span> </span>&#123;</span><br><span class="line">        System.out.printf(<span class="string">&quot;=== 享元内部状态：%s,外部状态：%s%n&quot;</span>,uniqueKey,state);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//非共享的具体享元类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UnsharedConcreteFlyweight</span> <span class="keyword">implements</span> <span class="title">Flyweight</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String uniqueKey;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UnsharedConcreteFlyweight</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.uniqueKey = key;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operation</span><span class="params">(<span class="keyword">int</span> state)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;=== 使用不共享的对象，内部状态：&quot;</span>+uniqueKey+<span class="string">&quot;，外部状态：&quot;</span>+state);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;享元池中有，直接复用，key：A</span><br><span class="line">&#x3D;&#x3D;&#x3D; 享元内部状态：A,外部状态：9</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;享元池中有，直接复用，key：B</span><br><span class="line">&#x3D;&#x3D;&#x3D; 享元内部状态：B,外部状态：8</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;享元池中没有，重新创建并复用，key：D</span><br><span class="line">&#x3D;&#x3D;&#x3D; 享元内部状态：D,外部状态：7</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;创建不共享的对象，key：uX</span><br><span class="line">&#x3D;&#x3D;&#x3D; 使用不共享的对象，内部状态：uX，外部状态：6</span><br></pre></td></tr></table></figure>
+
+<p>这段代码实现非常简单，不过这里你可能会联想到缓存模式，比如，LRU 缓存模式。但这两者是完全不同的设计意图，它们的本质区别在于：<strong>享元模式要解决的问题是节约内存的空间大小，而缓存模式本质上是为了节省时间</strong>。</p>
+<p>回到上面的代码分析中，我们能看出享元模式封装的变化有：</p>
+<ul>
+<li><p>对象内部状态的定义规则，比如，是通过字母共享状态，还是通过固定的数字来共享状态；</p>
+</li>
+<li><p>具体享元对象所实现的公共操作的逻辑。</p>
+</li>
+</ul>
+<p>所以说，<strong>享元模式本质上是通过创建更多的可复用对象的共有特征来尽可能地减少创建重复对象的内存消耗</strong>。</p>
+<h2 id="使用场景分析"><a href="#使用场景分析" class="headerlink" title="使用场景分析"></a>使用场景分析</h2><p>一般来讲，享元模式常用的使用场景有以下几种。</p>
+<ul>
+<li><p>系统中存在大量重复创建的对象。比如，同一个商品的展示图片、详情介绍、文字介绍等，当自营商家系统调用或第三方商家调用时，商品系统可以使用同一个对象来节省内存空间。</p>
+</li>
+<li><p>可以使用外部特定的状态来控制使用的对象。比如，使用常用的中文汉字作为读取的标识，读取享元池中共享的多个中文汉字对象。</p>
+</li>
+</ul>
+<ul>
+<li>相关性很高并且可以复用的对象。比如，公司的组织结构人员基本信息、网站的分类信息列表等。</li>
+</ul>
+<p>在现实中，享元模式最常使用的场景是在<strong>编辑器软件</strong>中，比如，在一个文档中多次出现相同的图片，则只需要创建一个图片对象，通过在应用程序中设置该图片出现的位置，就可以实现该图片在不同地方多次重复显示的效果。</p>
+<p>在 Java 中，享元模式一个常用的场景就是，使用数据类的包装类对象的 valueOf() 方法。比如，使用 Integer.valueOf() 方法时，实际的代码实现中有一个叫 IntegerCache 的静态类，它就是一直缓存了 -127 到 128 范围内的数值，如下代码所示，你可以在 Java JDK 中的 Integer 类的源码中找到这段代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Integer <span class="title">valueOf</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (i &gt;= IntegerCache.low &amp;&amp; i &lt;= IntegerCache.high)</span><br><span class="line">		<span class="keyword">return</span> IntegerCache.cache[i + (-IntegerCache.low)];</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Integer(i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你会发现，享元模式本质上在使用时就是找到不可变的特征，并缓存起来，当类似对象使用时从缓存中读取，以达到节省内存空间的目的。比如，在需要承接大流量的系统中使用图片，我们都知道高清图片即便是压缩后占用的内存空间也很大，那么在使用图片时节省内存空间就是首要考虑的设计因素，而享元模式可以很好地帮助我们解决这类问题场景。</p>
+<h2 id="为什么使用享元模式？"><a href="#为什么使用享元模式？" class="headerlink" title="为什么使用享元模式？"></a>为什么使用享元模式？</h2><p>分析完享元模式的原理和使用场景后，我们再来说说使用享元模式的原因，主要有以下两个。</p>
+<p><strong>第一个，减少内存消耗，节省服务器成本</strong>。 比如，当大量商家的商品图片、固定文字（如商品介绍、商品属性）在不同的网页进行展示时，通常不需要重复创建对象，而是可以使用同一个对象，以避免重复存储而浪费内存空间。由于通过享元模式构建的对象是共享的，所以当程序在运行时不仅不用重复创建，还能减少程序与操作系统的 IO 交互次数，大大提升了读写性能。</p>
+<p><strong>第二个，聚合同一类的不可变对象，提高对象复用性</strong>。 比如，Java 中的 Number 对象族类（Integet、Long、Double 等）都是使用了享元模式例子，通过缓存不同范围数值来重复使用相同的数值。</p>
+<h2 id="收益什么？损失什么？"><a href="#收益什么？损失什么？" class="headerlink" title="收益什么？损失什么？"></a>收益什么？损失什么？</h2><p>通过上面的分析，我们可以得出使用享元模式主要有以下优点。</p>
+<ul>
+<li><strong>可以极大减少内存中对象的数量，使得相同对象或相似对象在内存中只保存一份</strong>。</li>
+<li><strong>通过封装内存特有的运行状态，达到共享对象之间高效复用的目的</strong>。</li>
+</ul>
+<p>同样，享元模式也不是万能的，它也有一些缺点。</p>
+<ul>
+<li><strong>以时间换空间，间接增加了系统的实现复杂度</strong>。比如，需要分离出内部状态和外部状态，其中，外部状态这个定义比较模糊，也很难统一，而内部状态除了一些常用的常量容易被找到以外，那些更通用的组件对象在不同的业务系统中其实是不容易被找到的，因为不同的人对相似对象的理解并不一致，这就需要对程序员的代码设计实现思维有一定的要求。</li>
+<li><strong>运行时间更长，对于一些需要快速响应的系统并不合适</strong>。享元模式的目的是节省空间，而没有说需要提供更短的时间，这适合数据类项目的使用，而不适合一些有高并发要求的系统。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>享元模式为共享对象定义了一个很好的结构范例。不过，用好享元模式的<strong>关键在于找到不可变对象</strong>，比如，常用数字、字符等。</p>
+<p>之所以做对象共享而不是对象复制的一个很重要的原因，就在于节省对象占用的内存空间大小。缓存模式和享元模式最大的区别就是：<strong>享元模式强调的是空间效率</strong>，比如，一个很大的数据模型对象如何尽量少占用内存并提供可复用的能力；而<strong>缓存模式强调的是时间效率</strong>，比如，缓存秒杀的活动数据和库存数据等，数据可能会占用很多内存和磁盘空间，但是得保证在大促活动开始时要能及时响应用户的购买需求。也就是说，两者本质上解决的问题类型是不同的。</p>
+<p>虽然享元模式的应用不如缓存模式多，但是对于超大型数据模式来说，它却是非常有效的优化方法之一。特别是对于现在越来越多的数据系统来说，共享变得更加重要，因为复制虽然时间效率更高，但是空间上可能完全不够。</p>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>如果现在有一个超出服务器内存大小的对象需要加载使用，你该怎么使用享元模式进行解决呢？</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/4238191e.html">https://liule8.github.io/post/4238191e.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></div><div class="post_share"><div class="social-share" data-image="/images/posts/cover/designPatterns.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/d8f4be44.html"><img class="prev-cover" src="/images/posts/cover/designPatterns.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">趣学设计模式之设计模式-代理模式</div></div></a></div><div class="next-post pull-right"><a href="/post/5a088a81.html"><img class="next-cover" src="/images/posts/cover/designPatterns.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">趣学设计模式之设计模式-门面模式</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/364ea8cc.html" title="设计模式"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-08</div><div class="title">设计模式</div></div></a></div><div><a href="/post/3de10f44.html" title="趣学设计模式之编程思维-分层思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-26</div><div class="title">趣学设计模式之编程思维-分层思维</div></div></a></div><div><a href="/post/19cb0842.html" title="趣学设计模式之编程思维-学习思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-26</div><div class="title">趣学设计模式之编程思维-学习思维</div></div></a></div><div><a href="/post/4a488f3.html" title="趣学设计模式之编程思维-对象思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-27</div><div class="title">趣学设计模式之编程思维-对象思维</div></div></a></div><div><a href="/post/f50b517d.html" title="趣学设计模式之编程思维-组合思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-26</div><div class="title">趣学设计模式之编程思维-组合思维</div></div></a></div><div><a href="/post/fad392b1.html" title="趣学设计模式之编程思维-迭代思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-28</div><div class="title">趣学设计模式之编程思维-迭代思维</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">351</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">46</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E5%85%B1%E4%BA%AB%E5%AF%B9%E8%B1%A1%E5%87%8F%E5%B0%91%E5%86%85%E5%AD%98%E5%8A%A0%E8%BD%BD%E6%B6%88%E8%80%97%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">享元模式：如何通过共享对象减少内存加载消耗？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">模式原理分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">使用场景分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F%EF%BC%9F"><span class="toc-number">1.3.</span> <span class="toc-text">为什么使用享元模式？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B6%E7%9B%8A%E4%BB%80%E4%B9%88%EF%BC%9F%E6%8D%9F%E5%A4%B1%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.4.</span> <span class="toc-text">收益什么？损失什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83"><span class="toc-number">1.6.</span> <span class="toc-text">思考</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/744f530d.html" title="数据结构与算法之基础篇-排序(上)"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之基础篇-排序(上)"/></a><div class="content"><a class="title" href="/post/744f530d.html" title="数据结构与算法之基础篇-排序(上)">数据结构与算法之基础篇-排序(上)</a><time datetime="2021-11-03T20:48:50.000Z" title="发表于 2021-11-03 20:48:50">2021-11-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/d8f4be44.html" title="趣学设计模式之设计模式-代理模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-代理模式"/></a><div class="content"><a class="title" href="/post/d8f4be44.html" title="趣学设计模式之设计模式-代理模式">趣学设计模式之设计模式-代理模式</a><time datetime="2021-11-03T19:39:58.000Z" title="发表于 2021-11-03 19:39:58">2021-11-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/4238191e.html" title="趣学设计模式之设计模式-享元模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-享元模式"/></a><div class="content"><a class="title" href="/post/4238191e.html" title="趣学设计模式之设计模式-享元模式">趣学设计模式之设计模式-享元模式</a><time datetime="2021-11-03T19:21:49.000Z" title="发表于 2021-11-03 19:21:49">2021-11-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/5a088a81.html" title="趣学设计模式之设计模式-门面模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-门面模式"/></a><div class="content"><a class="title" href="/post/5a088a81.html" title="趣学设计模式之设计模式-门面模式">趣学设计模式之设计模式-门面模式</a><time datetime="2021-11-03T12:47:00.000Z" title="发表于 2021-11-03 12:47:00">2021-11-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/45d4b33f.html" title="趣学设计模式之设计模式-装饰模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-装饰模式"/></a><div class="content"><a class="title" href="/post/45d4b33f.html" title="趣学设计模式之设计模式-装饰模式">趣学设计模式之设计模式-装饰模式</a><time datetime="2021-11-02T20:26:16.000Z" title="发表于 2021-11-02 20:26:16">2021-11-02</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>
