@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>分布式缓存-Redis原理、协议及使用 | Leo's notes</title><meta name="keywords" content="缓存"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Redis原理、协议及使用Redis是如何运行的Redis 基本原理Redis 简介Redis 是一款基于 ANSI C 语言编写的，BSD 许可的，日志型 key-value 存储组件，它的所有数据结构都存在内存中，可以用作缓存、数据库和消息中间件。 Redis 是 Remote dictionary server 即远程字典服务的缩写，一个 Redis 实例可以有多个存储数据的字典，客户端可以">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>分布式缓存-Redis原理、协议及使用 | Leo's notes</title><meta name="keywords" content="缓存"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Redis原理、协议及使用 Redis是如何运行的 Redis 基本原理 Redis 简介 Redis 是一款基于 ANSI C 语言编写的，BSD 许可的，日志型 key-value 存储组件，它的所有数据结构都存在内存中，可以用作缓存、数据库和消息中间件。 Redis 是 Remote dictionary server 即远程字典服务的缩写，一个 Redis 实例可以有多个存储数据的字典，客">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式缓存-Redis原理、协议及使用">
 <meta property="og:url" content="https://liule8.github.io/post/24d8710e.html">
 <meta property="og:site_name" content="Leo&#39;s notes">
-<meta property="og:description" content="Redis原理、协议及使用Redis是如何运行的Redis 基本原理Redis 简介Redis 是一款基于 ANSI C 语言编写的，BSD 许可的，日志型 key-value 存储组件，它的所有数据结构都存在内存中，可以用作缓存、数据库和消息中间件。 Redis 是 Remote dictionary server 即远程字典服务的缩写，一个 Redis 实例可以有多个存储数据的字典，客户端可以">
+<meta property="og:description" content="Redis原理、协议及使用 Redis是如何运行的 Redis 基本原理 Redis 简介 Redis 是一款基于 ANSI C 语言编写的，BSD 许可的，日志型 key-value 存储组件，它的所有数据结构都存在内存中，可以用作缓存、数据库和消息中间件。 Redis 是 Remote dictionary server 即远程字典服务的缩写，一个 Redis 实例可以有多个存储数据的字典，客">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
 <meta property="article:published_time" content="2021-06-16T12:50:37.000Z">
@@ -139,17 +139,24 @@
           document.documentElement.classList.remove('hide-aside')
         }
       }
-    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">358</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">46</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">分布式缓存-Redis原理、协议及使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-06-16T12:50:37.000Z" title="发表于 2021-06-16 12:50:37">2021-06-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-16T05:06:49.085Z" title="更新于 2021-10-16 05:06:49">2021-10-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%BC%93%E5%AD%98/">缓存</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">7.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>23分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="分布式缓存-Redis原理、协议及使用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Redis原理、协议及使用"><a href="#Redis原理、协议及使用" class="headerlink" title="Redis原理、协议及使用"></a>Redis原理、协议及使用</h1><h2 id="Redis是如何运行的"><a href="#Redis是如何运行的" class="headerlink" title="Redis是如何运行的"></a>Redis是如何运行的</h2><h3 id="Redis-基本原理"><a href="#Redis-基本原理" class="headerlink" title="Redis 基本原理"></a>Redis 基本原理</h3><h4 id="Redis-简介"><a href="#Redis-简介" class="headerlink" title="Redis 简介"></a>Redis 简介</h4><p>Redis 是一款基于 ANSI C 语言编写的，BSD 许可的，日志型 key-value 存储组件，它的所有数据结构都存在内存中，可以用作缓存、数据库和消息中间件。</p>
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">358</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">46</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">分布式缓存-Redis原理、协议及使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-06-16T12:50:37.000Z" title="发表于 2021-06-16 12:50:37">2021-06-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-16T05:06:49.085Z" title="更新于 2021-10-16 05:06:49">2021-10-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%BC%93%E5%AD%98/">缓存</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">7.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>23分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="分布式缓存-Redis原理、协议及使用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>Redis原理、协议及使用</h1>
+<h2 id="Redis是如何运行的">Redis是如何运行的</h2>
+<h3 id="Redis-基本原理">Redis 基本原理</h3>
+<h4 id="Redis-简介">Redis 简介</h4>
+<p>Redis 是一款基于 ANSI C 语言编写的，BSD 许可的，日志型 key-value 存储组件，它的所有数据结构都存在内存中，可以用作缓存、数据库和消息中间件。</p>
 <p>Redis 是 Remote dictionary server 即远程字典服务的缩写，一个 Redis 实例可以有多个存储数据的字典，客户端可以通过 select 来选择字典即 DB 进行数据存储。</p>
-<h4 id="Redis-特性"><a href="#Redis-特性" class="headerlink" title="Redis 特性"></a>Redis 特性</h4><p>同为 key-value 存储组件，Memcached 只能支持二进制字节块这一种数据类型。而 Redis 的数据类型却丰富的多，它具有 8 种核心数据类型，每种数据类型都有一系列操作指令对应。Redis 性能很高，单线程压测可以达到 10~11w 的 QPS。</p>
+<h4 id="Redis-特性">Redis 特性</h4>
+<p>同为 key-value 存储组件，Memcached 只能支持二进制字节块这一种数据类型。而 Redis 的数据类型却丰富的多，它具有 8 种核心数据类型，每种数据类型都有一系列操作指令对应。Redis 性能很高，单线程压测可以达到 10~11w 的 QPS。</p>
 <p>虽然 Redis 所有数据的读写操作，都在内存中进行，但也可以将所有数据进行落盘做持久化。Redis 提供了 2 种持久化方式。</p>
 <ul>
-<li><p>快照方式，将某时刻所有数据都写入硬盘的 RDB 文件；</p>
+<li>
+<p>快照方式，将某时刻所有数据都写入硬盘的 RDB 文件；</p>
 </li>
-<li><p>追加文件方式，即将所有写命令都以追加的方式写入硬盘的 AOF 文件中。</p>
+<li>
+<p>追加文件方式，即将所有写命令都以追加的方式写入硬盘的 AOF 文件中。</p>
 </li>
 </ul>
-<p>线上 Redis 一般会同时使用两种方式，通过开启 appendonly 及关联配置项，将写命令及时追加到 AOF 文件，同时在每日流量低峰时，通过 bgsave 保存当时所有内存数据快照。 </p>
+<p>线上 Redis 一般会同时使用两种方式，通过开启 appendonly 及关联配置项，将写命令及时追加到 AOF 文件，同时在每日流量低峰时，通过 bgsave 保存当时所有内存数据快照。</p>
 <p>对于互联网系统的线上流量，读操作远远大于写操作。以微博为例，读请求占总体流量的 90%左右。大量的读请求，通常会远超 Redis 的可承载范围。此时，可以使用 Redis 的复制特性，让一个 Redis 实例作为 master，然后通过复制挂载多个不断同步更新的副本，即多个 slave。通过读写分离，把所有写操作落在 Redis 的 master，所有读操作随机落在 Redis 的多个 slave 中，从而大幅提升 Redis 的读写能力。</p>
 <p>Lua 是一个高效、简洁、易扩展的脚本语言，可以方便的嵌入其他语言中使用。Redis 自 2.6 版本开始支持 Lua。通过支持 client 端自定义的 Lua 脚本，Redis 可以减少网络开销，提升处理性能，还可以把脚本中的多个操作作为一个整体来操作，实现原子性更新。</p>
 <p>Redis 还支持事务，在 multi 指令后，指定多个操作，然后通过 exec 指令一次性执行，中途如果出现异常，则不执行所有命令操作，否则，按顺序一次性执行所有操作，执行过程中不会执行任何其他指令。</p>
@@ -158,120 +165,160 @@
 <p><img src="http://image.leonote.cn/20210714221853.png" alt=""></p>
 <p>作为缓存组件，Redis 的最大优势是支持丰富的数据类型。目前，Redis 支持 8 种核心数据类型，包括 string、list、set、sorted set、hash、bitmap、geo、hyperloglog。</p>
 <p>Redis 的所有内存数据结构都存在全局的 dict 字典中，dict 类似 Memcached 的 hashtable。Redis 的 dict 也有 2 个哈希表，插入新 key 时，一般用 0 号哈希表，随着 key 的插入或删除，当 0 号哈希表的 keys 数大于哈希表桶数，或 kyes 数小于哈希桶的 1/10 时，就对 hash 表进行扩缩。dict 中，哈希表解决冲突的方式，与 Memcached 相同，也是使用桶内单链表，来指向多个 hash 相同的 key/value 数据。</p>
-<h4 id="Redis-高性能"><a href="#Redis-高性能" class="headerlink" title="Redis 高性能"></a>Redis 高性能</h4><p>Redis 一般被看作单进程/单线程组件，因为 Redis 的网络 IO 和命令处理，都在核心进程中由单线程处理。Redis 基于 Epoll 事件模型开发，可以进行非阻塞网络 IO，同时由于单线程命令处理，整个处理过程不存在竞争，不需要加锁，没有上下文切换开销，所有数据操作都是在内存中操作，所以 Redis 的性能很高，单个实例即可以达到 10w 级的 QPS。核心线程除了负责网络 IO 及命令处理外，还负责写数据到缓冲，以方便将最新写操作同步到 AOF、slave。</p>
+<h4 id="Redis-高性能">Redis 高性能</h4>
+<p>Redis 一般被看作单进程/单线程组件，因为 Redis 的网络 IO 和命令处理，都在核心进程中由单线程处理。Redis 基于 Epoll 事件模型开发，可以进行非阻塞网络 IO，同时由于单线程命令处理，整个处理过程不存在竞争，不需要加锁，没有上下文切换开销，所有数据操作都是在内存中操作，所以 Redis 的性能很高，单个实例即可以达到 10w 级的 QPS。核心线程除了负责网络 IO 及命令处理外，还负责写数据到缓冲，以方便将最新写操作同步到 AOF、slave。</p>
 <p>除了主进程，Redis 还会 fork 一个子进程，来进行重负荷任务的处理。Redis fork 子进程主要有 3 种场景。</p>
 <ul>
-<li><p>收到 bgrewriteaof 命令时，Redis 调用 fork，构建一个子进程，子进程往临时 AOF文件中，写入重建数据库状态的所有命令，当写入完毕，子进程则通知父进程，父进程把新增的写操作也追加到临时 AOF 文件，然后将临时文件替换老的 AOF 文件，并重命名。</p>
+<li>
+<p>收到 bgrewriteaof 命令时，Redis 调用 fork，构建一个子进程，子进程往临时 AOF文件中，写入重建数据库状态的所有命令，当写入完毕，子进程则通知父进程，父进程把新增的写操作也追加到临时 AOF 文件，然后将临时文件替换老的 AOF 文件，并重命名。</p>
 </li>
-<li><p>收到 bgsave 命令时，Redis 构建子进程，子进程将内存中的所有数据通过快照做一次持久化落地，写入到 RDB 中。</p>
+<li>
+<p>收到 bgsave 命令时，Redis 构建子进程，子进程将内存中的所有数据通过快照做一次持久化落地，写入到 RDB 中。</p>
 </li>
-<li><p>当需要进行全量复制时，master 也会启动一个子进程，子进程将数据库快照保存到 RDB 文件，在写完 RDB 快照文件后，master 就会把 RDB 发给 slave，同时将后续新的写指令都同步给 slave。</p>
+<li>
+<p>当需要进行全量复制时，master 也会启动一个子进程，子进程将数据库快照保存到 RDB 文件，在写完 RDB 快照文件后，master 就会把 RDB 发给 slave，同时将后续新的写指令都同步给 slave。</p>
 </li>
 </ul>
 <p><img src="http://image.leonote.cn/20210714221918.png" alt=""></p>
 <p>主进程中，除了主线程处理网络 IO 和命令操作外，还有 3 个辅助 BIO 线程。这 3 个 BIO 线程分别负责处理，文件关闭、AOF 缓冲数据刷新到磁盘，以及清理对象这三个任务队列。</p>
 <p>Redis 在启动时，会同时启动这三个 BIO 线程，然后 BIO 线程休眠等待任务。当需要执行相关类型的后台任务时，就会构建一个 bio_job 结构，记录任务参数，然后将 bio_job 追加到任务队列尾部。然后唤醒 BIO 线程，即可进行任务执行。</p>
-<h4 id="Redis-持久化"><a href="#Redis-持久化" class="headerlink" title="Redis 持久化"></a>Redis 持久化</h4><p>Redis 的持久化是通过 RDB 和 AOF 文件进行的。RDB 只记录某个时间点的快照，可以通过设置指定时间内修改 keys 数的阀值，超过则自动构建 RDB 内容快照，不过线上运维，一般会选择在业务低峰期定期进行。RDB 存储的是构建时刻的数据快照，内存数据一旦落地，不会理会后续的变更。而 AOF，记录是构建整个数据库内容的命令，它会随着新的写操作不断进行追加操作。由于不断追加，AOF 会记录数据大量的中间状态，AOF 文件会变得非常大，此时，可以通过 bgrewriteaof 指令，对 AOF 进行重写，只保留数据的最后内容，来大大缩减 AOF 的内容。</p>
-<p><img src="http://image.leonote.cn/20210714221944.png" alt=""><br>为了提升系统的可扩展性，提升读操作的支撑能力，Redis 支持 master-slave 的复制功能。当 Redis 的 slave 部署并设置完毕后，slave 会和 master 建立连接，进行全量同步。</p>
+<h4 id="Redis-持久化">Redis 持久化</h4>
+<p>Redis 的持久化是通过 RDB 和 AOF 文件进行的。RDB 只记录某个时间点的快照，可以通过设置指定时间内修改 keys 数的阀值，超过则自动构建 RDB 内容快照，不过线上运维，一般会选择在业务低峰期定期进行。RDB 存储的是构建时刻的数据快照，内存数据一旦落地，不会理会后续的变更。而 AOF，记录是构建整个数据库内容的命令，它会随着新的写操作不断进行追加操作。由于不断追加，AOF 会记录数据大量的中间状态，AOF 文件会变得非常大，此时，可以通过 bgrewriteaof 指令，对 AOF 进行重写，只保留数据的最后内容，来大大缩减 AOF 的内容。</p>
+<p><img src="http://image.leonote.cn/20210714221944.png" alt=""><br>
+为了提升系统的可扩展性，提升读操作的支撑能力，Redis 支持 master-slave 的复制功能。当 Redis 的 slave 部署并设置完毕后，slave 会和 master 建立连接，进行全量同步。</p>
 <p>第一次建立连接，或者长时间断开连接后，缺失的指令超过 master 复制缓冲区的大小，都需要先进行一次全量同步。全量同步时，master 会启动一个子进程，将数据库快照保存到文件中，然后将这个快照文件发给 slave，同时将快照之后的写指令也同步给 slave。</p>
 <p>全量同步完成后，如果 slave 短时间中断，然后重连复制，缺少的写指令长度小于 master 的复制缓冲大小，master 就会把 slave 缺失的内容全部发送给 slave，进行增量复制。</p>
 <p>Redis 的 master 可以挂载多个 slave，同时 slave 还可以继续挂载 slave，通过这种方式，可以有效减轻 master 的压力，同时在 master 挂掉后，可以在 slave 通过 slaveof no one 指令，使当前 slave 停止与 master 的同步，转而成为新的 master。</p>
-<h4 id="Redis-集群管理"><a href="#Redis-集群管理" class="headerlink" title="Redis 集群管理"></a>Redis 集群管理</h4><p>Redis 的集群管理有 3 种方式。</p>
+<h4 id="Redis-集群管理">Redis 集群管理</h4>
+<p>Redis 的集群管理有 3 种方式。</p>
 <ul>
-<li><p>client 分片访问，client 对 key 做 hash，然后按取模或一致性 hash，把 key 的读写分散到不同的 Redis 实例上。</p>
+<li>
+<p>client 分片访问，client 对 key 做 hash，然后按取模或一致性 hash，把 key 的读写分散到不同的 Redis 实例上。</p>
 </li>
-<li><p>在 Redis 前加一个 proxy，把路由策略、后端 Redis 状态维护的工作都放到 proxy 中进行，client 直接访问 proxy，后端 Redis 变更，只需修改 proxy 配置即可。</p>
+<li>
+<p>在 Redis 前加一个 proxy，把路由策略、后端 Redis 状态维护的工作都放到 proxy 中进行，client 直接访问 proxy，后端 Redis 变更，只需修改 proxy 配置即可。</p>
 </li>
-<li><p>直接使用 Redis cluster。Redis 创建之初，使用方直接给 Redis 的节点分配 slot，后续访问时，对 key 做 hash 找到对应的 slot，然后访问 slot 所在的 Redis 实例。在需要扩容缩容时，可以在线通过 cluster setslot 指令，以及 migrate 指令，将 slot 下所有 key 迁移到目标节点，即可实现扩缩容的目的。</p>
+<li>
+<p>直接使用 Redis cluster。Redis 创建之初，使用方直接给 Redis 的节点分配 slot，后续访问时，对 key 做 hash 找到对应的 slot，然后访问 slot 所在的 Redis 实例。在需要扩容缩容时，可以在线通过 cluster setslot 指令，以及 migrate 指令，将 slot 下所有 key 迁移到目标节点，即可实现扩缩容的目的。</p>
 </li>
 </ul>
-<h2 id="如何使用Redis核心数据类型"><a href="#如何使用Redis核心数据类型" class="headerlink" title="如何使用Redis核心数据类型"></a>如何使用Redis核心数据类型</h2><h3 id="Redis-数据类型"><a href="#Redis-数据类型" class="headerlink" title="Redis 数据类型"></a>Redis 数据类型</h3><p>Redis 有 8 种核心数据类型，分别是 ：</p>
+<h2 id="如何使用Redis核心数据类型">如何使用Redis核心数据类型</h2>
+<h3 id="Redis-数据类型">Redis 数据类型</h3>
+<p>Redis 有 8 种核心数据类型，分别是 ：</p>
 <ul>
-<li><p>string 字符串类型；</p>
+<li>
+<p>string 字符串类型；</p>
 </li>
-<li><p>list 列表类型；</p>
+<li>
+<p>list 列表类型；</p>
 </li>
-<li><p>set 集合类型；</p>
+<li>
+<p>set 集合类型；</p>
 </li>
-<li><p>sorted set 有序集合类型；</p>
+<li>
+<p>sorted set 有序集合类型；</p>
 </li>
-<li><p>hash 类型；</p>
+<li>
+<p>hash 类型；</p>
 </li>
-<li><p>bitmap 位图类型； </p>
+<li>
+<p>bitmap 位图类型；</p>
 </li>
-<li><p>geo 地理位置类型；</p>
+<li>
+<p>geo 地理位置类型；</p>
 </li>
-<li><p>HyperLogLog 基数统计类型。</p>
+<li>
+<p>HyperLogLog 基数统计类型。</p>
 </li>
 </ul>
-<h4 id="string-字符串"><a href="#string-字符串" class="headerlink" title="string 字符串"></a>string 字符串</h4><p>string 是 Redis 的最基本数据类型。可以把它理解为 Mc 中 key 对应的 value 类型。string 类型是二进制安全的，即 string 中可以包含任何数据。</p>
+<h4 id="string-字符串">string 字符串</h4>
+<p>string 是 Redis 的最基本数据类型。可以把它理解为 Mc 中 key 对应的 value 类型。string 类型是二进制安全的，即 string 中可以包含任何数据。</p>
 <p>Redis 中的普通 string 采用 raw encoding 即原始编码方式，该编码方式会动态扩容，并通过提前预分配冗余空间，来减少内存频繁分配的开销。</p>
 <p>在字符串长度小于 1MB 时，按所需长度的 2 倍来分配，超过 1MB，则按照每次额外增加 1MB 的容量来预分配。</p>
 <p>Redis 中的数字也存为 string 类型，但编码方式跟普通 string 不同，数字采用整型编码，字符串内容直接设为整数值的二进制字节序列。</p>
 <p>在存储普通字符串，序列化对象，以及计数器等场景时，都可以使用 Redis 的字符串类型，字符串数据类型对应使用的指令包括 set、get、mset、incr、decr 等。</p>
-<h4 id="list-列表"><a href="#list-列表" class="headerlink" title="list 列表"></a>list 列表</h4><p>Redis 的 list 列表，是一个快速双向链表，存储了一系列的 string 类型的字串值。list 中的元素按照插入顺序排列。插入元素的方式，可以通过 lpush 将一个或多个元素插入到列表的头部，也可以通过 rpush 将一个或多个元素插入到队列尾部，还可以通过 lset、linsert 将元素插入到指定位置或指定元素的前后。</p>
+<h4 id="list-列表">list 列表</h4>
+<p>Redis 的 list 列表，是一个快速双向链表，存储了一系列的 string 类型的字串值。list 中的元素按照插入顺序排列。插入元素的方式，可以通过 lpush 将一个或多个元素插入到列表的头部，也可以通过 rpush 将一个或多个元素插入到队列尾部，还可以通过 lset、linsert 将元素插入到指定位置或指定元素的前后。</p>
 <p>list 列表的获取，可以通过 lpop、rpop 从对头或队尾弹出元素，如果队列为空，则返回 nil。还可以通过 Blpop、Brpop 从队头/队尾阻塞式弹出元素，如果 list 列表为空，没有元素可供弹出，则持续阻塞，直到有其他 client 插入新的元素。这里阻塞弹出元素，可以设置过期时间，避免无限期等待。最后，list 列表还可以通过 LrangeR 获取队列内指定范围内的所有元素。Redis 中，list 列表的偏移位置都是基于 0 的下标，即列表第一个元素的下标是 0，第二个是 1。偏移量也可以是负数，倒数第一个是 -1，倒数第二个是 -2，依次类推。</p>
 <p><img src="http://image.leonote.cn/20210714222016.png" alt=""></p>
 <p>list 列表，对于常规的 pop、push 元素，性能很高，时间复杂度为 O(1)，因为是列表直接追加或弹出。但对于通过随机插入、随机删除，以及随机范围获取，需要轮询列表确定位置，性能就比较低下了。</p>
 <p>feed timeline 存储时，由于 feed id 一般是递增的，可以直接存为 list，用户发表新 feed，就直接追加到队尾。另外消息队列、热门 feed 等业务场景，都可以使用 list 数据结构。</p>
 <p>操作 list 列表时，可以用 lpush、lpop、rpush、rpop、lrange 来进行常规的队列进出及范围获取操作，在某些特殊场景下，也可以用 lset、linsert 进行随机插入操作，用 lrem 进行指定元素删除操作；最后，在消息列表的消费时，还可以用 Blpop、Brpop 进行阻塞式获取，从而在列表暂时没有元素时，可以安静的等待新元素的插入，而不需要额外持续的查询。</p>
-<h4 id="set-集合"><a href="#set-集合" class="headerlink" title="set 集合"></a>set 集合</h4><p>set 是 string 类型的无序集合，set 中的元素是唯一的，即 set 中不会出现重复的元素。Redis 中的集合一般是通过 dict 哈希表实现的，所以插入、删除，以及查询元素，可以根据元素 hash 值直接定位，时间复杂度为 O(1)。</p>
+<h4 id="set-集合">set 集合</h4>
+<p>set 是 string 类型的无序集合，set 中的元素是唯一的，即 set 中不会出现重复的元素。Redis 中的集合一般是通过 dict 哈希表实现的，所以插入、删除，以及查询元素，可以根据元素 hash 值直接定位，时间复杂度为 O(1)。</p>
 <p>对 set 类型数据的操作，除了常规的添加、删除、查找元素外，还可以用以下指令对 set 进行操作。</p>
 <ul>
-<li><p>sismember 指令判断该 key 对应的 set 数据结构中，是否存在某个元素，如果存在返回 1，否则返回 0；</p>
+<li>
+<p>sismember 指令判断该 key 对应的 set 数据结构中，是否存在某个元素，如果存在返回 1，否则返回 0；</p>
 </li>
-<li><p>sdiff 指令来对多个 set 集合执行差集；</p>
+<li>
+<p>sdiff 指令来对多个 set 集合执行差集；</p>
 </li>
-<li><p>sinter 指令对多个集合执行交集；</p>
+<li>
+<p>sinter 指令对多个集合执行交集；</p>
 </li>
-<li><p>sunion 指令对多个集合执行并集；</p>
+<li>
+<p>sunion 指令对多个集合执行并集；</p>
 </li>
-<li><p>spop 指令弹出一个随机元素；</p>
+<li>
+<p>spop 指令弹出一个随机元素；</p>
 </li>
-<li><p>srandmember 指令返回一个或多个随机元素。</p>
+<li>
+<p>srandmember 指令返回一个或多个随机元素。</p>
 </li>
 </ul>
 <p>set 集合的特点是查找、插入、删除特别高效，时间复杂度为 O(1)，所以在社交系统中，可以用于存储关注的好友列表，用来判断是否关注，还可以用来做好友推荐使用。另外，还可以利用 set 的唯一性，来对服务的来源业务、来源 IP 进行精确统计。</p>
-<h4 id="sorted-set-有序集合"><a href="#sorted-set-有序集合" class="headerlink" title="sorted set 有序集合"></a>sorted set 有序集合</h4><p>Redis 中的 sorted set 有序集合也称为 zset，有序集合同 set 集合类似，也是 string 类型元素的集合，且所有元素不允许重复。</p>
+<h4 id="sorted-set-有序集合">sorted set 有序集合</h4>
+<p>Redis 中的 sorted set 有序集合也称为 zset，有序集合同 set 集合类似，也是 string 类型元素的集合，且所有元素不允许重复。</p>
 <p>但有序集合中，每个元素都会关联一个 double 类型的 score 分数值。有序集合通过这个 score 值进行由小到大的排序。有序集合中，元素不允许重复，但 score 分数值却允许重复。</p>
 <p>有序集合除了常规的添加、删除、查找元素外，还可以通过以下指令对 sorted set 进行操作。</p>
 <ul>
-<li><p>zscan 指令：按顺序获取有序集合中的元素；</p>
+<li>
+<p>zscan 指令：按顺序获取有序集合中的元素；</p>
 </li>
-<li><p>zscore 指令：获取元素的 score 值；</p>
+<li>
+<p>zscore 指令：获取元素的 score 值；</p>
 </li>
-<li><p>zrange指令：通过指定 score 返回指定 score 范围内的元素；</p>
+<li>
+<p>zrange指令：通过指定 score 返回指定 score 范围内的元素；</p>
 </li>
-</ul>
-<ul>
-<li><p>在某个元素的 score 值发生变更时，还可以通过 zincrby 指令对该元素的 score 值进行加减。</p>
+<li>
+<p>在某个元素的 score 值发生变更时，还可以通过 zincrby 指令对该元素的 score 值进行加减。</p>
 </li>
-<li><p>通过 zinterstore、zunionstore 指令对多个有序集合进行取交集和并集，然后将新的有序集合存到一个新的 key 中，如果有重复元素，重复元素的 score 进行相加，然后作为新集合中该元素的 score 值。</p>
+<li>
+<p>通过 zinterstore、zunionstore 指令对多个有序集合进行取交集和并集，然后将新的有序集合存到一个新的 key 中，如果有重复元素，重复元素的 score 进行相加，然后作为新集合中该元素的 score 值。</p>
 </li>
 </ul>
 <p>sorted set 有序集合的特点是：</p>
 <ul>
-<li><p>所有元素按 score 排序，而且不重复；</p>
+<li>
+<p>所有元素按 score 排序，而且不重复；</p>
 </li>
-<li><p>查找、插入、删除非常高效，时间复杂度为 O(1)。</p>
+<li>
+<p>查找、插入、删除非常高效，时间复杂度为 O(1)。</p>
 </li>
 </ul>
 <p>因此，可以用有序集合来统计排行榜，实时刷新榜单，还可以用来记录学生成绩，从而轻松获取某个成绩范围内的学生名单，还可以用来对系统统计增加权重值，从而在 dashboard 实时展示。</p>
-<h4 id="hash-哈希"><a href="#hash-哈希" class="headerlink" title="hash 哈希"></a>hash 哈希</h4><p>Redis 中的哈希实际是 field 和 value 的一个映射表。</p>
+<h4 id="hash-哈希">hash 哈希</h4>
+<p>Redis 中的哈希实际是 field 和 value 的一个映射表。</p>
 <p>hash 数据结构的特点是在单个 key 对应的哈希结构内部，可以记录多个键值对，即 field 和 value 对，value 可以是任何字符串。而且这些键值对查询和修改很高效。</p>
 <p>所以可以用 hash 来存储具有多个元素的复杂对象，然后分别修改或获取这些元素。hash 结构中的一些重要指令，包括：hmset、hmget、hexists、hgetall、hincrby 等。</p>
 <ul>
-<li><p>hmset 指令批量插入多个 field、value 映射；</p>
+<li>
+<p>hmset 指令批量插入多个 field、value 映射；</p>
 </li>
-<li><p>hmget 指令获取多个 field 对应的 value 值；</p>
+<li>
+<p>hmget 指令获取多个 field 对应的 value 值；</p>
 </li>
-<li><p>hexists 指令判断某个 field 是否存在；</p>
+<li>
+<p>hexists 指令判断某个 field 是否存在；</p>
+</li>
+<li>
+<p>如果 field 对应的 value 是整数，还可以用 hincrby 来对该 value 进行修改。</p>
 </li>
 </ul>
-<ul>
-<li>如果 field 对应的 value 是整数，还可以用 hincrby 来对该 value 进行修改。</li>
-</ul>
-<h4 id="bitmap-位图"><a href="#bitmap-位图" class="headerlink" title="bitmap 位图"></a>bitmap 位图</h4><p>Redis 中的 bitmap 位图是一串连续的二进制数字，底层实际是基于 string 进行封装存储的，按 bit 位进行指令操作的。bitmap 中每一 bit 位所在的位置就是 offset 偏移，可以用 setbit、bitfield 对 bitmap 中每个 bit 进行置 0 或置 1 操作，也可以用 bitcount 来统计 bitmap 中的被置 1 的 bit 数，还可以用 bitop 来对多个 bitmap 进行求与、或、异或等操作。</p>
+<h4 id="bitmap-位图">bitmap 位图</h4>
+<p>Redis 中的 bitmap 位图是一串连续的二进制数字，底层实际是基于 string 进行封装存储的，按 bit 位进行指令操作的。bitmap 中每一 bit 位所在的位置就是 offset 偏移，可以用 setbit、bitfield 对 bitmap 中每个 bit 进行置 0 或置 1 操作，也可以用 bitcount 来统计 bitmap 中的被置 1 的 bit 数，还可以用 bitop 来对多个 bitmap 进行求与、或、异或等操作。</p>
 <p><img src="http://image.leonote.cn/20210714222040.png" alt=""></p>
 <p>bitmap 位图的特点是按位设置、求与、求或等操作很高效，而且存储成本非常低，用来存对象标签属性的话，一个 bit 即可存一个标签。可以用 bitmap，存用户最近 N 天的登录情况，每天用 1 bit，登录则置 1。个性推荐在社交应用中非常重要，可以对新闻、feed 设置一系列标签，如军事、娱乐、视频、图片、文字等，用 bitmap 来存储这些标签，在对应标签 bit 位上置 1。对用户，也可以采用类似方式，记录用户的多种属性，并可以很方便的根据标签来进行多维度统计。bitmap 位图的重要指令包括：setbit、 getbit、bitcount、bitfield、 bitop、bitpos 等。</p>
 <p>在移动社交时代，LBS 应用越来越多，比如微信、陌陌中附近的人，美团、大众点评中附近的美食、电影院，滴滴、优步中附近的专车等。要实现这些功能，就得使用地理位置信息进行搜索。地球的地理位置是使用二维的经纬度进行表示的，只要确定一个点的经纬度，就可以确认它在地球的位置。</p>
@@ -279,85 +326,121 @@
 <p>在存储某个位置点时，首先利用 Geohash 算法，将该位置二维的经纬度，映射编码成一维的 52 位整数值，将位置名称、经纬度编码 score 作为键值对，存储到分类 key 对应的 sorted set 中。</p>
 <p>需要计算某个位置点 A 附近的人时，首先以指定位置 A 为中心点，以距离作为半径，算出 GEO 哈希 8 个方位的范围， 然后依次轮询方位范围内的所有位置点，只要这些位置点到中心位置 A 的距离在要求距离范围内，就是目标位置点。轮询完所有范围内的位置点后，重新排序即得到位置点 A 附近的所有目标。</p>
 <ul>
-<li><p>使用 geoadd，将位置名称（如人、车辆、店名）与对应的地理位置信息添加到指定的位置分类 key 中；</p>
+<li>
+<p>使用 geoadd，将位置名称（如人、车辆、店名）与对应的地理位置信息添加到指定的位置分类 key 中；</p>
 </li>
-<li><p>使用 geopos 方便地查询某个名称所在的位置信息；</p>
+<li>
+<p>使用 geopos 方便地查询某个名称所在的位置信息；</p>
 </li>
-<li><p>使用 georadius 获取指定位置附近，不超过指定距离的所有元素；</p>
+<li>
+<p>使用 georadius 获取指定位置附近，不超过指定距离的所有元素；</p>
 </li>
-<li><p>使用 geodist 来获取指定的两个位置之间的距离。</p>
+<li>
+<p>使用 geodist 来获取指定的两个位置之间的距离。</p>
 </li>
 </ul>
 <p>这样，是不是就可以实现，找到附近的餐厅，算出当前位置到对应餐厅的距离，这样的功能了？</p>
 <p>Redis GEO 地理位置，利用 Geohash 将大量的二维经纬度转一维的整数值，这样可以方便的对地理位置进行查询、距离测量、范围搜索。但由于地理位置点非常多，一个地理分类 key 下可能会有大量元素，在 GEO 设计时，需要提前进行规划，避免单 key 过度膨胀。</p>
 <p>Redis 的 GEO 地理位置数据结构，应用场景很多，比如查询某个地方的具体位置，查当前位置到目的地的距离，查附近的人、餐厅、电影院等。GEO 地理位置数据结构中，重要指令包括 geoadd、geopos、geodist、georadius、georadiusbymember 等。</p>
-<h4 id="hyperLogLog-基数统计"><a href="#hyperLogLog-基数统计" class="headerlink" title="hyperLogLog 基数统计"></a>hyperLogLog 基数统计</h4><p>Redis 的 hyperLogLog 是用来做基数统计的数据类型，当输入巨大数量的元素做统计时，只需要很小的内存即可完成。HyperLogLog 不保存元数据，只记录待统计元素的估算数量，这个估算数量是一个带有 0.81% 标准差的近似值，在大多数业务场景，对海量数据，不足 1% 的误差是可以接受的。</p>
+<h4 id="hyperLogLog-基数统计">hyperLogLog 基数统计</h4>
+<p>Redis 的 hyperLogLog 是用来做基数统计的数据类型，当输入巨大数量的元素做统计时，只需要很小的内存即可完成。HyperLogLog 不保存元数据，只记录待统计元素的估算数量，这个估算数量是一个带有 0.81% 标准差的近似值，在大多数业务场景，对海量数据，不足 1% 的误差是可以接受的。</p>
 <p>Redis 的 HyperLogLog 在统计时，如果计数数量不大，采用稀疏矩阵存储，随着计数的增加，稀疏矩阵占用的空间也会逐渐增加，当超过阀值后，则改为稠密矩阵，稠密矩阵占用的空间是固定的，约为12KB字节。</p>
 <p>通过 hyperLoglog 数据类型，你可以利用 pfadd 向基数统计中增加新的元素，可以用 pfcount 获得 hyperLogLog 结构中存储的近似基数数量，还可以用 hypermerge 将多个 hyperLogLog 合并为一个 hyperLogLog 结构，从而可以方便的获取合并后的基数数量。</p>
 <p>hyperLogLog 的特点是统计过程不记录独立元素，占用内存非常少，非常适合统计海量数据。在大中型系统中，统计每日、每月的 UV 即独立访客数，或者统计海量用户搜索的独立词条数，都可以用 hyperLogLog 数据类型来进行处理。</p>
-<h2 id="Redis协议的请求和响应有哪些“套路”可循？"><a href="#Redis协议的请求和响应有哪些“套路”可循？" class="headerlink" title="Redis协议的请求和响应有哪些“套路”可循？"></a>Redis协议的请求和响应有哪些“套路”可循？</h2><h3 id="Redis-协议"><a href="#Redis-协议" class="headerlink" title="Redis 协议"></a>Redis 协议</h3><p>Redis 支持 8 种核心数据结构，每种数据结构都有一系列的操作指令，除此之外，Redis 还有事务、集群、发布订阅、脚本等一系列相关的指令。为了方便以一种统一的风格和原则来设计和使用这些指令，Redis 设计了 RESP，即 Redis Serialization Protocol，中文意思是 Redis 序列化协议。RESP 是二进制安全协议，可以供 Redis 或其他任何 Client-Server 使用。在 Redis 内部，还会基于 RESP 进一步扩展细节。</p>
-<h4 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h4><p>Redis 序列化协议的设计原则有三个：</p>
+<h2 id="Redis协议的请求和响应有哪些“套路”可循？">Redis协议的请求和响应有哪些“套路”可循？</h2>
+<h3 id="Redis-协议">Redis 协议</h3>
+<p>Redis 支持 8 种核心数据结构，每种数据结构都有一系列的操作指令，除此之外，Redis 还有事务、集群、发布订阅、脚本等一系列相关的指令。为了方便以一种统一的风格和原则来设计和使用这些指令，Redis 设计了 RESP，即 Redis Serialization Protocol，中文意思是 Redis 序列化协议。RESP 是二进制安全协议，可以供 Redis 或其他任何 Client-Server 使用。在 Redis 内部，还会基于 RESP 进一步扩展细节。</p>
+<h4 id="设计原则">设计原则</h4>
+<p>Redis 序列化协议的设计原则有三个：</p>
 <ol>
-<li><p>第一是实现简单；</p>
+<li>
+<p>第一是实现简单；</p>
 </li>
-<li><p>第二是可快速解析；</p>
+<li>
+<p>第二是可快速解析；</p>
 </li>
-<li><p>第三是便于阅读。</p>
+<li>
+<p>第三是便于阅读。</p>
 </li>
 </ol>
 <p>Redis 协议的请求响应模型有三种，除了 2 种特殊模式，其他基本都是 ping-pong 模式，即 client 发送一个请求，server 回复一个响应，一问一答的访问模式。</p>
 <p>2 种特殊模式：</p>
 <ul>
-<li><p>pipeline 模式，即 client 一次连续发送多个请求，然后等待 server 响应，server 处理完请求后，把响应返回给 client。</p>
+<li>
+<p>pipeline 模式，即 client 一次连续发送多个请求，然后等待 server 响应，server 处理完请求后，把响应返回给 client。</p>
 </li>
-<li><p>pub/sub 模式。即发布订阅模式，client 通过 subscribe 订阅一个 channel，然后 client 进入订阅状态，静静等待。当有消息产生时，server 会持续自动推送消息给 client，不需要 client 的额外请求。而且客户端在进入订阅状态后，只可接受订阅相关的命令如 SUBSCRIBE、PSUBSCRIBE、UNSUBSCRIBE 和 PUNSUBSCRIBE，除了这些命令，其他命令一律失效。</p>
+<li>
+<p>pub/sub 模式。即发布订阅模式，client 通过 subscribe 订阅一个 channel，然后 client 进入订阅状态，静静等待。当有消息产生时，server 会持续自动推送消息给 client，不需要 client 的额外请求。而且客户端在进入订阅状态后，只可接受订阅相关的命令如 SUBSCRIBE、PSUBSCRIBE、UNSUBSCRIBE 和 PUNSUBSCRIBE，除了这些命令，其他命令一律失效。</p>
 </li>
 </ul>
 <p>Redis 协议的请求和响应也是有固定套路的。</p>
 <p>对于请求指令，格式有 2 种类型。</p>
 <ol>
-<li><p>当你没有 redis-client，但希望可以用通用工具 telnet，直接与 Redis 交互时，Redis 协议虽然简单易于阅读，但在交互式会话中使用，并不容易拼写，此时可以用第一种格式，即 inline cmd 内联命令格式。使用 inline cmd 内联格式，只需要用空格分隔请求指令及参数，简单快速，一个简单的例子如 mget key1 key2\r\n。</p>
+<li>
+<p>当你没有 redis-client，但希望可以用通用工具 telnet，直接与 Redis 交互时，Redis 协议虽然简单易于阅读，但在交互式会话中使用，并不容易拼写，此时可以用第一种格式，即 inline cmd 内联命令格式。使用 inline cmd 内联格式，只需要用空格分隔请求指令及参数，简单快速，一个简单的例子如 mget key1 key2\r\n。</p>
 </li>
-<li><p>第二种格式是 Array 数组格式类型。请求指令用的数组类型，与 Redis 响应的数组类型相同。</p>
+<li>
+<p>第二种格式是 Array 数组格式类型。请求指令用的数组类型，与 Redis 响应的数组类型相同。</p>
 </li>
 </ol>
-<h4 id="响应格式"><a href="#响应格式" class="headerlink" title="响应格式"></a>响应格式</h4><p>Redis 协议的响应格式有 5 种，分别是：</p>
+<h4 id="响应格式">响应格式</h4>
+<p>Redis 协议的响应格式有 5 种，分别是：</p>
 <ol>
-<li><p>simple strings 简单字符串类型，以 + 开头，后面跟字符串，以 CRLF（即 \r\n）结尾。这种类型不是二进制安全类型，字符串中不能包含 \r 或者 \n。比如许多响应回复以 OK 作为操作成功的标志，协议内容就是 +OK\r\n 。</p>
+<li>
+<p>simple strings 简单字符串类型，以 + 开头，后面跟字符串，以 CRLF（即 \r\n）结尾。这种类型不是二进制安全类型，字符串中不能包含 \r 或者 \n。比如许多响应回复以 OK 作为操作成功的标志，协议内容就是 +OK\r\n 。</p>
 </li>
-<li><p>Redis 协议将错误作为一种专门的类型，格式同简单字符串类型，唯一不同的是以 -（减号）开头。Redis 内部实现对 Redis 协议做了进一步规范，减号后面一般先跟 ERR 或者 WRONGTYPE，然后再跟其他简单字符串，最后以 CRLF（回车换行）结束。这里给了两个示例，client 在解析响应时，一旦发现 - 开头，就知道收到 Error 响应。</p>
+<li>
+<p>Redis 协议将错误作为一种专门的类型，格式同简单字符串类型，唯一不同的是以 -（减号）开头。Redis 内部实现对 Redis 协议做了进一步规范，减号后面一般先跟 ERR 或者 WRONGTYPE，然后再跟其他简单字符串，最后以 CRLF（回车换行）结束。这里给了两个示例，client 在解析响应时，一旦发现 - 开头，就知道收到 Error 响应。</p>
 </li>
-<li><p>Integer 整数类型。整数类型以 ：开头，后面跟字符串表示的数字，最后以回车换行结尾。Redis 中许多命令都返回整数，但整数的含义要由具体命令来确定。比如，对于 incr 指令，：后的整数表示变更后的数值；对于 llen 表示 list 列表的长度，对于 exists 指令，1 表示 key 存在，0 表示 key 不存在。这里给个例子，：后面跟了个 1000，然后回车换行结束。</p>
+<li>
+<p>Integer 整数类型。整数类型以 ：开头，后面跟字符串表示的数字，最后以回车换行结尾。Redis 中许多命令都返回整数，但整数的含义要由具体命令来确定。比如，对于 incr 指令，：后的整数表示变更后的数值；对于 llen 表示 list 列表的长度，对于 exists 指令，1 表示 key 存在，0 表示 key 不存在。这里给个例子，：后面跟了个 1000，然后回车换行结束。</p>
 </li>
-<li><p>bulk strings 字符串块类型。字符串块分头部和真正字符串内容两部分。字符串块类型的头部， 为 $ 开头，随后跟真正字符串内容的字节长度，然后以 CRLF 结尾。字符串块的头部之后，跟随真正的字符串内容，最后以 CRLF 结束字符串块。字符串块用于表示二进制安全的字符串，最大长度可以支持 512MB。一个常规的例子，“$6\r\nfoobar\r\n”，对于空字串，可以表示为 “$0\r\n\r\n”，NULL字串： “$-1\r\n”。</p>
+<li>
+<p>bulk strings 字符串块类型。字符串块分头部和真正字符串内容两部分。字符串块类型的头部， 为 $ 开头，随后跟真正字符串内容的字节长度，然后以 CRLF 结尾。字符串块的头部之后，跟随真正的字符串内容，最后以 CRLF 结束字符串块。字符串块用于表示二进制安全的字符串，最大长度可以支持 512MB。一个常规的例子，“$6\r\nfoobar\r\n”，对于空字串，可以表示为 “0\r\n\r\n”，NULL字串： “-1\r\n”。</p>
 </li>
-<li><p>Arrays 数组类型，如果一个命令需要返回多条数据就需要用数组格式类型，另外，前面提到 client 的请求命令也是主要采用这种格式。</p>
+<li>
+<p>Arrays 数组类型，如果一个命令需要返回多条数据就需要用数组格式类型，另外，前面提到 client 的请求命令也是主要采用这种格式。</p>
 </li>
 </ol>
 <p>Arrays 数组类型，以 * 开头，随后跟一个数组长度 N，然后以回车换行结尾；然后后面跟随 N 个数组元素，每个数组元素的类型，可以是 Redis 协议中除内联格式外的任何一种类型。</p>
-<p>比如一个字符串块的数组实例，<em>2\r\n$3\r\nget\r\n$3\r\nkey\r\n。整数数组实例：”<em>3\r\n:1\r\n:2\r\n:3\r\n”，混合数组实例：”</em>3\r\n :1\r\n-Bar\r\n$6\r\n foobar\r\n”，空数组：”*0\r\n”，NULL数组：”</em>-1\r\n”。</p>
-<h4 id="协议分类"><a href="#协议分类" class="headerlink" title="协议分类"></a>协议分类</h4><p>Redis 协议主要分为 16 种，其中 8 种协议对应 8 种数据类型，选择了使用什么数据类型，就使用对应的响应操作指令即可。</p>
+<p>比如一个字符串块的数组实例，*2\r\n$3\r\nget\r\n$3\r\nkey\r\n。整数数组实例：”*3\r\n:1\r\n:2\r\n:3\r\n&quot;，混合数组实例：&quot;*3\r\n :1\r\n-Bar\r\n$6\r\n foobar\r\n”，空数组：”<em>0\r\n”，NULL数组：”</em>-1\r\n”。</p>
+<h4 id="协议分类">协议分类</h4>
+<p>Redis 协议主要分为 16 种，其中 8 种协议对应 8 种数据类型，选择了使用什么数据类型，就使用对应的响应操作指令即可。</p>
 <p>剩下 8 种协议如下所示：</p>
 <ol>
-<li><p>pub-sub 发布订阅协议，client 可以订阅 channel，持续等待 server 推送消息。</p>
+<li>
+<p>pub-sub 发布订阅协议，client 可以订阅 channel，持续等待 server 推送消息。</p>
 </li>
-<li><p>事务协议，事务协议可以用 multi 和 exec 封装一些列指令，来一次性执行。</p>
+<li>
+<p>事务协议，事务协议可以用 multi 和 exec 封装一些列指令，来一次性执行。</p>
 </li>
-<li><p>脚本协议，关键指令是 eval、evalsha 和 script等。</p>
+<li>
+<p>脚本协议，关键指令是 eval、evalsha 和 script等。</p>
 </li>
-<li><p>连接协议，主要包括权限控制，切换 DB，关闭连接等。</p>
+<li>
+<p>连接协议，主要包括权限控制，切换 DB，关闭连接等。</p>
 </li>
-<li><p>复制协议，包括 slaveof、role、psync 等。</p>
+<li>
+<p>复制协议，包括 slaveof、role、psync 等。</p>
 </li>
-<li><p>配置协议，config set/get 等，可以在线修改/获取配置。</p>
+<li>
+<p>配置协议，config set/get 等，可以在线修改/获取配置。</p>
 </li>
-<li><p>调试统计协议，如 slowlog，monitor，info 等。</p>
+<li>
+<p>调试统计协议，如 slowlog，monitor，info 等。</p>
 </li>
-<li><p>其他内部命令，如 migrate，dump，restore 等。</p>
+<li>
+<p>其他内部命令，如 migrate，dump，restore 等。</p>
 </li>
 </ol>
-<h4 id="Redis-client-的使用及改进"><a href="#Redis-client-的使用及改进" class="headerlink" title="Redis client 的使用及改进"></a>Redis client 的使用及改进</h4><p>由于 Redis 使用广泛，几乎所有主流语言都有对 Redis 开发了对应的 client。以 Java 语言为例，广泛使用的有 Jedis、Redisson 等。对于 Jedis client，它的优势是轻量，简洁，便于集成和改造，它支持连接池，提供指令维度的操作，几乎支持 Redis 的所有指令，但它不支持读写分离。Redisson 基于 Netty 实现，非阻塞 IO，性能较高，而且支持异步请求和连接池，还支持读写分离、读负载均衡，它内建了 tomcat Session ，支持 spring session 集成，但 redisson 实现相对复杂。</p>
+<h4 id="Redis-client-的使用及改进">Redis client 的使用及改进</h4>
+<p>由于 Redis 使用广泛，几乎所有主流语言都有对 Redis 开发了对应的 client。以 Java 语言为例，广泛使用的有 Jedis、Redisson 等。对于 Jedis client，它的优势是轻量，简洁，便于集成和改造，它支持连接池，提供指令维度的操作，几乎支持 Redis 的所有指令，但它不支持读写分离。Redisson 基于 Netty 实现，非阻塞 IO，性能较高，而且支持异步请求和连接池，还支持读写分离、读负载均衡，它内建了 tomcat Session ，支持 spring session 集成，但 redisson 实现相对复杂。</p>
 <p>在新项目启动时，如果只是简单的 Redis 访问业务场景，可以直接用 Jedis，甚至可以简单封装 Jedis，实现 master-slave 的读写分离方案。如果想直接使用读写分离，想集成 spring session 等这些高级特性，也可以采用 redisson。</p>
 <p>Redis client 在使用中，需要根据业务及运维的需要，进行相关改进。在 client 访问异常时，可以增加重试策略，在访问某个 slave 异常时，需要重试其他 slave 节点。需要增加对 Redis 主从切换、slave 扩展的支持，比如采用守护线程定期扫描 master、slave 域名，发现 IP 变更，及时切换连接。对于多个 slave 的访问，还需要增加负载均衡策略。最后，Redis client 还可以与配置中心、Redis 集群管理平台整合，从而实时感知及协调 Redis 服务的访问。</p>
-<h2 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h2><p><img src="http://image.leonote.cn/20210714222113.png" alt=""></p>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/24d8710e.html">https://liule8.github.io/post/24d8710e.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%BC%93%E5%AD%98/">缓存</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/a0be8adb.html"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">分布式缓存-Redis进阶(上)</div></div></a></div><div class="next-post pull-right"><a href="/post/3b18a742.html"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">分布式缓存-分布式Memcached实战</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/486bf242.html" title="7大缓存经典问题"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-23</div><div class="title">7大缓存经典问题</div></div></a></div><div><a href="/post/c38e39a2.html" title="分布式缓存-分布式Redis实战"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-09</div><div class="title">分布式缓存-分布式Redis实战</div></div></a></div><div><a href="/post/2dbd5aa4.html" title="分布式缓存-Memcached的原理及架构剖析"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-07</div><div class="title">分布式缓存-Memcached的原理及架构剖析</div></div></a></div><div><a href="/post/e6b50640.html" title="分布式缓存-Memcached进阶"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-07</div><div class="title">分布式缓存-Memcached进阶</div></div></a></div><div><a href="/post/a0be8adb.html" title="分布式缓存-Redis进阶(上)"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-02</div><div class="title">分布式缓存-Redis进阶(上)</div></div></a></div><div><a href="/post/b9a5bb9a.html" title="分布式缓存-Redis进阶(下)"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-09</div><div class="title">分布式缓存-Redis进阶(下)</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">358</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">46</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E5%8E%9F%E7%90%86%E3%80%81%E5%8D%8F%E8%AE%AE%E5%8F%8A%E4%BD%BF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">Redis原理、协议及使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%90%E8%A1%8C%E7%9A%84"><span class="toc-number">1.1.</span> <span class="toc-text">Redis是如何运行的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">1.1.1.</span> <span class="toc-text">Redis 基本原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">Redis 简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-%E7%89%B9%E6%80%A7"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">Redis 特性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-%E9%AB%98%E6%80%A7%E8%83%BD"><span class="toc-number">1.1.1.3.</span> <span class="toc-text">Redis 高性能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-number">1.1.1.4.</span> <span class="toc-text">Redis 持久化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86"><span class="toc-number">1.1.1.5.</span> <span class="toc-text">Redis 集群管理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Redis%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.2.</span> <span class="toc-text">如何使用Redis核心数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.2.1.</span> <span class="toc-text">Redis 数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#string-%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">string 字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#list-%E5%88%97%E8%A1%A8"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">list 列表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#set-%E9%9B%86%E5%90%88"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">set 集合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sorted-set-%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">sorted set 有序集合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#hash-%E5%93%88%E5%B8%8C"><span class="toc-number">1.2.1.5.</span> <span class="toc-text">hash 哈希</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bitmap-%E4%BD%8D%E5%9B%BE"><span class="toc-number">1.2.1.6.</span> <span class="toc-text">bitmap 位图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#hyperLogLog-%E5%9F%BA%E6%95%B0%E7%BB%9F%E8%AE%A1"><span class="toc-number">1.2.1.7.</span> <span class="toc-text">hyperLogLog 基数统计</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%8D%8F%E8%AE%AE%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E6%9C%89%E5%93%AA%E4%BA%9B%E2%80%9C%E5%A5%97%E8%B7%AF%E2%80%9D%E5%8F%AF%E5%BE%AA%EF%BC%9F"><span class="toc-number">1.3.</span> <span class="toc-text">Redis协议的请求和响应有哪些“套路”可循？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.3.1.</span> <span class="toc-text">Redis 协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">设计原则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">响应格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E5%88%86%E7%B1%BB"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">协议分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-client-%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%94%B9%E8%BF%9B"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">Redis client 的使用及改进</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE"><span class="toc-number">1.4.</span> <span class="toc-text">思维导图</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/eadb1b45.html" title="趣学设计模式之设计模式-备忘录模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-备忘录模式"/></a><div class="content"><a class="title" href="/post/eadb1b45.html" title="趣学设计模式之设计模式-备忘录模式">趣学设计模式之设计模式-备忘录模式</a><time datetime="2021-11-05T21:06:52.000Z" title="发表于 2021-11-05 21:06:52">2021-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/b3e81d06.html" title="趣学设计模式之设计模式-观察者模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-观察者模式"/></a><div class="content"><a class="title" href="/post/b3e81d06.html" title="趣学设计模式之设计模式-观察者模式">趣学设计模式之设计模式-观察者模式</a><time datetime="2021-11-05T20:30:17.000Z" title="发表于 2021-11-05 20:30:17">2021-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/296ea922.html" title="趣学设计模式之设计模式-状态模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-状态模式"/></a><div class="content"><a class="title" href="/post/296ea922.html" title="趣学设计模式之设计模式-状态模式">趣学设计模式之设计模式-状态模式</a><time datetime="2021-11-05T12:55:38.000Z" title="发表于 2021-11-05 12:55:38">2021-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/d1460625.html" title="趣学设计模式之设计模式-策略模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-策略模式"/></a><div class="content"><a class="title" href="/post/d1460625.html" title="趣学设计模式之设计模式-策略模式">趣学设计模式之设计模式-策略模式</a><time datetime="2021-11-04T21:06:21.000Z" title="发表于 2021-11-04 21:06:21">2021-11-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/6d54624c.html" title="数据结构与算法之基础篇-排序(下)"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之基础篇-排序(下)"/></a><div class="content"><a class="title" href="/post/6d54624c.html" title="数据结构与算法之基础篇-排序(下)">数据结构与算法之基础篇-排序(下)</a><time datetime="2021-11-04T19:21:30.000Z" title="发表于 2021-11-04 19:21:30">2021-11-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>
+<h2 id="思维导图">思维导图</h2>
+<p><img src="http://image.leonote.cn/20210714222113.png" alt=""></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/24d8710e.html">https://liule8.github.io/post/24d8710e.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%BC%93%E5%AD%98/">缓存</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/a0be8adb.html"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">分布式缓存-Redis进阶(上)</div></div></a></div><div class="next-post pull-right"><a href="/post/3b18a742.html"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">分布式缓存-分布式Memcached实战</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/486bf242.html" title="7大缓存经典问题"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-23</div><div class="title">7大缓存经典问题</div></div></a></div><div><a href="/post/c38e39a2.html" title="分布式缓存-分布式Redis实战"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-09</div><div class="title">分布式缓存-分布式Redis实战</div></div></a></div><div><a href="/post/2dbd5aa4.html" title="分布式缓存-Memcached的原理及架构剖析"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-07</div><div class="title">分布式缓存-Memcached的原理及架构剖析</div></div></a></div><div><a href="/post/e6b50640.html" title="分布式缓存-Memcached进阶"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-07</div><div class="title">分布式缓存-Memcached进阶</div></div></a></div><div><a href="/post/a0be8adb.html" title="分布式缓存-Redis进阶(上)"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-02</div><div class="title">分布式缓存-Redis进阶(上)</div></div></a></div><div><a href="/post/b9a5bb9a.html" title="分布式缓存-Redis进阶(下)"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-09</div><div class="title">分布式缓存-Redis进阶(下)</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">358</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">46</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">Redis原理、协议及使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%90%E8%A1%8C%E7%9A%84"><span class="toc-number">1.1.</span> <span class="toc-text">Redis是如何运行的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">1.1.1.</span> <span class="toc-text">Redis 基本原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">Redis 简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-%E7%89%B9%E6%80%A7"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">Redis 特性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-%E9%AB%98%E6%80%A7%E8%83%BD"><span class="toc-number">1.1.1.3.</span> <span class="toc-text">Redis 高性能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-number">1.1.1.4.</span> <span class="toc-text">Redis 持久化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86"><span class="toc-number">1.1.1.5.</span> <span class="toc-text">Redis 集群管理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Redis%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.2.</span> <span class="toc-text">如何使用Redis核心数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.2.1.</span> <span class="toc-text">Redis 数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#string-%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">string 字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#list-%E5%88%97%E8%A1%A8"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">list 列表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#set-%E9%9B%86%E5%90%88"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">set 集合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sorted-set-%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">sorted set 有序集合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#hash-%E5%93%88%E5%B8%8C"><span class="toc-number">1.2.1.5.</span> <span class="toc-text">hash 哈希</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bitmap-%E4%BD%8D%E5%9B%BE"><span class="toc-number">1.2.1.6.</span> <span class="toc-text">bitmap 位图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#hyperLogLog-%E5%9F%BA%E6%95%B0%E7%BB%9F%E8%AE%A1"><span class="toc-number">1.2.1.7.</span> <span class="toc-text">hyperLogLog 基数统计</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%8D%8F%E8%AE%AE%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E6%9C%89%E5%93%AA%E4%BA%9B%E2%80%9C%E5%A5%97%E8%B7%AF%E2%80%9D%E5%8F%AF%E5%BE%AA%EF%BC%9F"><span class="toc-number">1.3.</span> <span class="toc-text">Redis协议的请求和响应有哪些“套路”可循？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.3.1.</span> <span class="toc-text">Redis 协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">设计原则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">响应格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E5%88%86%E7%B1%BB"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">协议分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis-client-%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%94%B9%E8%BF%9B"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">Redis client 的使用及改进</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE"><span class="toc-number">1.4.</span> <span class="toc-text">思维导图</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/eadb1b45.html" title="趣学设计模式之设计模式-备忘录模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-备忘录模式"/></a><div class="content"><a class="title" href="/post/eadb1b45.html" title="趣学设计模式之设计模式-备忘录模式">趣学设计模式之设计模式-备忘录模式</a><time datetime="2021-11-05T21:06:52.000Z" title="发表于 2021-11-05 21:06:52">2021-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/b3e81d06.html" title="趣学设计模式之设计模式-观察者模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-观察者模式"/></a><div class="content"><a class="title" href="/post/b3e81d06.html" title="趣学设计模式之设计模式-观察者模式">趣学设计模式之设计模式-观察者模式</a><time datetime="2021-11-05T20:30:17.000Z" title="发表于 2021-11-05 20:30:17">2021-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/296ea922.html" title="趣学设计模式之设计模式-状态模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-状态模式"/></a><div class="content"><a class="title" href="/post/296ea922.html" title="趣学设计模式之设计模式-状态模式">趣学设计模式之设计模式-状态模式</a><time datetime="2021-11-05T12:55:38.000Z" title="发表于 2021-11-05 12:55:38">2021-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/d1460625.html" title="趣学设计模式之设计模式-策略模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-策略模式"/></a><div class="content"><a class="title" href="/post/d1460625.html" title="趣学设计模式之设计模式-策略模式">趣学设计模式之设计模式-策略模式</a><time datetime="2021-11-04T21:06:21.000Z" title="发表于 2021-11-04 21:06:21">2021-11-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/6d54624c.html" title="数据结构与算法之基础篇-排序(下)"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之基础篇-排序(下)"/></a><div class="content"><a class="title" href="/post/6d54624c.html" title="数据结构与算法之基础篇-排序(下)">数据结构与算法之基础篇-排序(下)</a><time datetime="2021-11-04T19:21:30.000Z" title="发表于 2021-11-04 19:21:30">2021-11-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.css"><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', '', 'katex-wrap')
+  })
+})()</script></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>
