@@ -1,0 +1,208 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>趣学设计模式之设计模式-策略模式 | Leo's notes</title><meta name="keywords" content="设计模式"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="策略模式：如何解决不同活动策略的营销推荐场景？前面我们学习了模板方法模式。模板方法模式能帮助我们进行公有方法的抽取，起到快速复用和扩展的作用。今天，我们接着学习另外一种可以快速复用和扩展代码的行为型模式：策略模式。 策略模式在实际的开发中很常用，最常见的应用场景是利用它来替换过多的 if-else 嵌套的逻辑判断。除此之外，它还能结合工厂模式给客户端提供非常灵活的使用体验。 模式原理分析策略模式的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="趣学设计模式之设计模式-策略模式">
+<meta property="og:url" content="https://liule8.github.io/post/d1460625.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="策略模式：如何解决不同活动策略的营销推荐场景？前面我们学习了模板方法模式。模板方法模式能帮助我们进行公有方法的抽取，起到快速复用和扩展的作用。今天，我们接着学习另外一种可以快速复用和扩展代码的行为型模式：策略模式。 策略模式在实际的开发中很常用，最常见的应用场景是利用它来替换过多的 if-else 嵌套的逻辑判断。除此之外，它还能结合工厂模式给客户端提供非常灵活的使用体验。 模式原理分析策略模式的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://liule8.github.io/images/posts/cover/designPatterns.png">
+<meta property="article:published_time" content="2021-11-04T21:06:21.000Z">
+<meta property="article:modified_time" content="2021-11-05T12:22:14.441Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://liule8.github.io/images/posts/cover/designPatterns.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/d1460625"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-11-05 12:22:14'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">358</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">46</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/images/posts/cover/designPatterns.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">趣学设计模式之设计模式-策略模式</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-11-04T21:06:21.000Z" title="发表于 2021-11-04 21:06:21">2021-11-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-11-05T12:22:14.441Z" title="更新于 2021-11-05 12:22:14">2021-11-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="趣学设计模式之设计模式-策略模式"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="策略模式：如何解决不同活动策略的营销推荐场景？"><a href="#策略模式：如何解决不同活动策略的营销推荐场景？" class="headerlink" title="策略模式：如何解决不同活动策略的营销推荐场景？"></a>策略模式：如何解决不同活动策略的营销推荐场景？</h1><p>前面我们学习了模板方法模式。模板方法模式能帮助我们进行公有方法的抽取，起到快速复用和扩展的作用。今天，我们接着学习另外一种可以快速复用和扩展代码的行为型模式：策略模式。</p>
+<p>策略模式在实际的开发中很常用，最常见的应用场景是<strong>利用它来替换过多的 if-else 嵌套的逻辑判断</strong>。除此之外，它还能结合工厂模式给客户端提供非常灵活的使用体验。</p>
+<h2 id="模式原理分析"><a href="#模式原理分析" class="headerlink" title="模式原理分析"></a>模式原理分析</h2><p>策略模式的原始定义是：定义一系列算法，封装每个算法，并使它们可以互换。策略让算法独立于使用它的客户端而变化。</p>
+<p>在这个定义中，策略模式明确表示应当<strong>由客户端自己决定在什么样的情况下使用哪些具体的策略</strong>。也就是说，服务端是作为一个策略的整体调控者，具体选择运行哪些策略其实是要交给客户端来决定的。比如，压缩文件的时候，你应该会提供一系列的不同压缩策略，比如，gzip、zip 等，至于客户端在什么时候使用 gzip，由客户端自行去决定。同时，gzip 还可以被替换为其他的压缩策略。</p>
+<p>我们来看看策略模式 UML 图的结构：</p>
+<p><img src="http://image.leonote.cn/20211104212756.png" alt="image-20211104212756844"></p>
+<p>从该 UML 图中，我们能看出策略模式包含了三个关键角色。</p>
+<ul>
+<li><strong>上下文信息类（Context）</strong>：用于存放和执行需要使用的具体策略类以及客户端调用的逻辑。</li>
+<li><strong>抽象策略类（Strategy）</strong>：定义策略的共有方法。</li>
+<li><strong>具体策略类（StrategyA 等）</strong>：实现抽象策略类定义的共有方法。</li>
+</ul>
+<p>下面我们再来看看 UML 对应的代码实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Context</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">request</span><span class="params">(Strategy s)</span> </span>&#123;</span><br><span class="line">        s.operation();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Strategy</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">operation</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StrategyA</span> <span class="keyword">implements</span> <span class="title">Strategy</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;=== 执行策略 A ......&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StrategyB</span> <span class="keyword">implements</span> <span class="title">Strategy</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;=== 执行策略 B ......&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从上面的代码实现我们能看出，<strong>策略模式的本质就是通过上下文信息类来作为中心控制单元，对不同的策略进行调度分配</strong>。</p>
+<h2 id="使用场景分析"><a href="#使用场景分析" class="headerlink" title="使用场景分析"></a>使用场景分析</h2><p>策略模式常见的使用场景有以下几种。</p>
+<ul>
+<li><p>系统中需要动态切换几种算法的场景。</p>
+</li>
+<li><p>使用多重的条件选择语句来实现的业务场景。</p>
+</li>
+<li><p>只希望客户端选择已经封装好的算法场景而不用关心算法实现细节。</p>
+</li>
+<li><p>分离使用策略和创建策略的场景。</p>
+</li>
+</ul>
+<p>为了帮助你更好地理解策略模式的使用场景，下面我们还是通过一个简单的例子来演示说明。在日常的网上购物中，我们都希望购买到价格实惠的商品，而网站通常也会定期搞一些促销活动，比如，满 XXX 元减 XX 元、N 折扣、M 元秒杀等。这些活动通常是运营部门来制定的，运营希望能通过商品编号来推荐不同的促销活动。这时，作为系统的开发者，我们就需要开发针对一系列的营销策略进行推荐的系统功能。</p>
+<p>那具体该怎么来实现呢？</p>
+<p>首先，我们来定义策略 API——PromotionStrategy，每一种促销策略的算法都要实现该接口。该接口有一个 recommand 方法，接收并返回一个 int 对象，返回的就是推荐后可以参加的促销活动。实际上，推荐返回的可能是一个活动对象，这里我用简单的数字代替。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PromotionStrategy</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 返回1 代表 可以参加 满减活动</span></span><br><span class="line"><span class="comment">     * 返回2 代表 可以参加 N折优惠活动</span></span><br><span class="line"><span class="comment">     * 返回3 代表 可以参加 M元秒杀活动</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">recommand</span><span class="params">(String skuId)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们有三个类实现了 PromotionStrategy 接口，分别代表满减策略、N 折扣优惠活动策略和 M 元秒杀活动策略，类分别是 FullReduceStrategy、NPriceDiscountStrategy 和 MSpikeStrategy。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FullReduceStrategy</span> <span class="keyword">implements</span> <span class="title">PromotionStrategy</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">recommand</span><span class="params">(String skuId)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;=== 执行 满减活动&quot;</span>);</span><br><span class="line">        <span class="comment">//推荐算法和逻辑写这里</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NPriceDiscountStrategy</span> <span class="keyword">implements</span> <span class="title">PromotionStrategy</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">recommand</span><span class="params">(String skuId)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;=== 执行 N 折扣优惠活动&quot;</span>);</span><br><span class="line">        <span class="comment">//推荐算法和逻辑写这里</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MSpikeStrategy</span> <span class="keyword">implements</span> <span class="title">PromotionStrategy</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">recommand</span><span class="params">(String skuId)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;=== 执行 M 元秒杀活动&quot;</span>);</span><br><span class="line">        <span class="comment">//推荐算法和逻辑写这里</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">3</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在我们可以动手实现促销推荐的上下文信息类 Promotional，这里是存储和使用策略的地方。类中有一个 recommand 方法，用于执行推荐策略。它的构造函数有一个 PromotionStrategy 参数，可以在运行期间使用该参数决定使用哪种促销策略。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Promotional</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> PromotionStrategy strategy;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Promotional</span><span class="params">(PromotionStrategy strategy)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.strategy = strategy;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">recommand</span><span class="params">(String skuId)</span> </span>&#123;</span><br><span class="line">        strategy.recommand(skuId);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后，我们通过一个简单的单元测试代码来看下具体的运行结果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Promotional fullReducePromotional = <span class="keyword">new</span> Promotional(<span class="keyword">new</span> FullReduceStrategy());</span><br><span class="line">        fullReducePromotional.recommand(<span class="string">&quot;1122334455&quot;</span>);</span><br><span class="line">        Promotional nPriceDiscountPromotional = <span class="keyword">new</span> Promotional(<span class="keyword">new</span> NPriceDiscountStrategy());</span><br><span class="line">        nPriceDiscountPromotional.recommand(<span class="string">&quot;6677889900&quot;</span>);</span><br><span class="line">        Promotional mSpikePromotional = <span class="keyword">new</span> Promotional(<span class="keyword">new</span> MSpikeStrategy());</span><br><span class="line">        mSpikePromotional.recommand(<span class="string">&quot;11335577&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;输出结果</span><br><span class="line">&#x3D;&#x3D;&#x3D; 执行 满减活动</span><br><span class="line">&#x3D;&#x3D;&#x3D; 执行 n折扣优惠活动</span><br><span class="line">&#x3D;&#x3D;&#x3D; 执行 m元秒杀活动</span><br></pre></td></tr></table></figure>
+
+<p>以上代码演示了一个使用策略模式的基本流程，在实际的开发中，策略类可能会包含复杂的逻辑，这里就不再展开详细讲述了。</p>
+<h2 id="为什么使用策略模式？"><a href="#为什么使用策略模式？" class="headerlink" title="为什么使用策略模式？"></a>为什么使用策略模式？</h2><p>分析完策略模式的原理和使用场景后，我们再来说说使用策略模式的原因，主要有以下三个。</p>
+<p><strong>第一个，为了提升代码的可维护性</strong>。 在实际开发中，有许多算法可以实现某一功能，如查找、排序等，通过 if-else 等条件判断语句来进行选择非常方便。但是这就会带来一个问题：当在这个算法类中封装了大量查找算法时，该类的代码就会变得非常复杂，维护也会突然就变得非常困难。虽然策略模式看上去比较笨重，但实际上在每一次新增策略时都通过新增类来进行隔离，短期虽然不如直接写 if-else 来得效率高，但长期来看，维护单一的简单类耗费的时间其实远远低于维护一个超大的复杂类。</p>
+<p><strong>第二个，为了动态快速地替换更多的算法</strong>。 从上面的分析你会发现，策略模式最大的作用在于分离使用算法的逻辑和算法自身实现的逻辑，这样就意味着当我们想要优化算法自身的实现逻辑时就变得非常便捷，一方面可以采用最新的算法实现逻辑，另一方面可以直接弃用旧算法而采用新算法。使用策略模式能够很方便地进行替换。</p>
+<p><strong>第三个，为了应对需要频繁更换策略的场景</strong>。 比如，用户推荐类场景。特别是对于一些 C 端产品来说，在获取了用户的反馈数据后，会根据用户的特性制定不同的运营策略，这时如果采用 if-else 的方式编码，那么每一次的策略变化都会导致系统代码的修改，从运营的角度看是不可接受的，而采用策略模式就能很容易地解决这个问题。</p>
+<h2 id="收益什么？损失什么？"><a href="#收益什么？损失什么？" class="headerlink" title="收益什么？损失什么？"></a>收益什么？损失什么？</h2><p>通过上面的分析，我们可以得出使用策略模式主要有以下几个优点。</p>
+<ul>
+<li><strong>提供良好的代码扩展性</strong>。 每一个策略都是对应生成一个新的具体策略类，满足开闭原则，同时满足里氏替换原则，可以任意替换相同的策略，这样用户可以在不修改原有系统的基础上选择算法或行为，同时也可以灵活地增加新的算法或行为。</li>
+<li><strong>提供了一种管理多个不同算法策略的办法</strong>。 策略模式提供了一种很好的思路，可以将算法的实现和使用算法的代码隔离开来，这样就能很好地管理不同的算法。</li>
+<li><strong>提供使用组合替换继承的办法</strong>。 策略模式使用组合的方式来替代继承，避免了子类出现异常而影响父类。</li>
+<li><strong>能够降低使用多重条件（if-else）嵌套语句的理解难度</strong>。 在实际的开发中，使用 if-else 是非常常见的编程方法，但是随着业务逻辑变得越来越复杂，如果一味地增加 if-else，会让代码变得非常难以理解和维护，使用策略模式则能避免这些问题的出现。</li>
+<li><strong>在运行时动态切换算法，提升代码灵活性</strong>。 由于策略模式将算法的选择权交给了客户端，那么客户端可以根据自身的需求灵活地切换算法。</li>
+</ul>
+<p>同样，策略模式也不是万能的，它也有一些缺点。</p>
+<ul>
+<li><strong>客户端的学习成本变高</strong>。 虽然策略模式让客户端自行决定使用哪一个策略，看上去很自由，但实际上隐含着客户必须要知道所有的策略才能做选择的事实。一旦新增或修改策略，客户端都需要知道。</li>
+<li><strong>具体策略类的数量会剧增，增加维护成本</strong>。 由于每一个策略都对应一个具体策略类，所以当策略比较庞大时，需要维护的类数量也会激增。</li>
+<li><strong>不如函数式编程简洁</strong>。 现在有很多编程语言都支持函数式——允许在一组匿名函数中实现不同版本的算法。对于一些小型的策略来说，使用函数式编程就能解决问题，但使用策略模式反而过于复杂。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>策略模式最大的用处是能在运行时改变代码的算法行为，同时给使用者提供一种可以根据情况来选择算法的途径。</p>
+<p>虽然策略模式是一个比较容易理解和使用的设计模式，但是却增加了使用者的难度，因为你可能需要在了解了所有的策略后才能做出决策。即便是类似排序这样简单的算法，不同使用者的选择也可能完全不同，如果交给使用者来选择，就意味着使用者需要了解不同排序算法的优劣，才能更好地做出选择。</p>
+<p>不过，<strong>策略模式对算法起到了很好的封装作用</strong>，通过使用算法和创建算法的分离，将算法实现的复杂性放到了子类去解决。同时，策略模式还可以随时进行替换，对于一些老旧的算法，可以很方便地进行替换和升级。</p>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>在你所参与过的项目中，都是怎样使用策略模式的？有没有替换策略模式的其他办法？</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/d1460625.html">https://liule8.github.io/post/d1460625.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></div><div class="post_share"><div class="social-share" data-image="/images/posts/cover/designPatterns.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/296ea922.html"><img class="prev-cover" src="/images/posts/cover/designPatterns.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">趣学设计模式之设计模式-状态模式</div></div></a></div><div class="next-post pull-right"><a href="/post/6d54624c.html"><img class="next-cover" src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">数据结构与算法之基础篇-排序(下)</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/364ea8cc.html" title="设计模式"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-08</div><div class="title">设计模式</div></div></a></div><div><a href="/post/3de10f44.html" title="趣学设计模式之编程思维-分层思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-26</div><div class="title">趣学设计模式之编程思维-分层思维</div></div></a></div><div><a href="/post/19cb0842.html" title="趣学设计模式之编程思维-学习思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-26</div><div class="title">趣学设计模式之编程思维-学习思维</div></div></a></div><div><a href="/post/4a488f3.html" title="趣学设计模式之编程思维-对象思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-27</div><div class="title">趣学设计模式之编程思维-对象思维</div></div></a></div><div><a href="/post/f50b517d.html" title="趣学设计模式之编程思维-组合思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-26</div><div class="title">趣学设计模式之编程思维-组合思维</div></div></a></div><div><a href="/post/fad392b1.html" title="趣学设计模式之编程思维-迭代思维"><img class="cover" src="/images/posts/cover/designPatterns.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-28</div><div class="title">趣学设计模式之编程思维-迭代思维</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">358</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">46</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E4%B8%8D%E5%90%8C%E6%B4%BB%E5%8A%A8%E7%AD%96%E7%95%A5%E7%9A%84%E8%90%A5%E9%94%80%E6%8E%A8%E8%8D%90%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">策略模式：如何解决不同活动策略的营销推荐场景？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">模式原理分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">使用场景分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%EF%BC%9F"><span class="toc-number">1.3.</span> <span class="toc-text">为什么使用策略模式？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B6%E7%9B%8A%E4%BB%80%E4%B9%88%EF%BC%9F%E6%8D%9F%E5%A4%B1%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.4.</span> <span class="toc-text">收益什么？损失什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83"><span class="toc-number">1.6.</span> <span class="toc-text">思考</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/eadb1b45.html" title="趣学设计模式之设计模式-备忘录模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-备忘录模式"/></a><div class="content"><a class="title" href="/post/eadb1b45.html" title="趣学设计模式之设计模式-备忘录模式">趣学设计模式之设计模式-备忘录模式</a><time datetime="2021-11-05T21:06:52.000Z" title="发表于 2021-11-05 21:06:52">2021-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/b3e81d06.html" title="趣学设计模式之设计模式-观察者模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-观察者模式"/></a><div class="content"><a class="title" href="/post/b3e81d06.html" title="趣学设计模式之设计模式-观察者模式">趣学设计模式之设计模式-观察者模式</a><time datetime="2021-11-05T20:30:17.000Z" title="发表于 2021-11-05 20:30:17">2021-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/296ea922.html" title="趣学设计模式之设计模式-状态模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-状态模式"/></a><div class="content"><a class="title" href="/post/296ea922.html" title="趣学设计模式之设计模式-状态模式">趣学设计模式之设计模式-状态模式</a><time datetime="2021-11-05T12:55:38.000Z" title="发表于 2021-11-05 12:55:38">2021-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/d1460625.html" title="趣学设计模式之设计模式-策略模式"><img src="/images/posts/cover/designPatterns.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="趣学设计模式之设计模式-策略模式"/></a><div class="content"><a class="title" href="/post/d1460625.html" title="趣学设计模式之设计模式-策略模式">趣学设计模式之设计模式-策略模式</a><time datetime="2021-11-04T21:06:21.000Z" title="发表于 2021-11-04 21:06:21">2021-11-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/6d54624c.html" title="数据结构与算法之基础篇-排序(下)"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之基础篇-排序(下)"/></a><div class="content"><a class="title" href="/post/6d54624c.html" title="数据结构与算法之基础篇-排序(下)">数据结构与算法之基础篇-排序(下)</a><time datetime="2021-11-04T19:21:30.000Z" title="发表于 2021-11-04 19:21:30">2021-11-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>
