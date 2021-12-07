@@ -1,0 +1,547 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Java并发编程(二) | Leo's notes</title><meta name="keywords" content="Java,并发编程,线程"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Java并发编程(二) Java并发包（JUC）     功能      java.lang.* 最基础， Integer&#x2F;String JDK 公开 API，所有 JDK 都需要实现   java.io.* IO读写，文件操作    java.util.* 工具类，集合&#x2F;日期    java.math.* 数学计算，BigInteger    java.net.* 网络编程，Socket">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发编程(二)">
+<meta property="og:url" content="https://liule8.github.io/post/da59c978.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="Java并发编程(二) Java并发包（JUC）     功能      java.lang.* 最基础， Integer&#x2F;String JDK 公开 API，所有 JDK 都需要实现   java.io.* IO读写，文件操作    java.util.* 工具类，集合&#x2F;日期    java.math.* 数学计算，BigInteger    java.net.* 网络编程，Socket">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-12-06T20:31:07.000Z">
+<meta property="article:modified_time" content="2021-12-06T13:34:04.024Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="并发编程">
+<meta property="article:tag" content="线程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/da59c978"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-12-06 13:34:04'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">428</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">84</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">51</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Java并发编程(二)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-12-06T20:31:07.000Z" title="发表于 2021-12-06 20:31:07">2021-12-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-12-06T13:34:04.024Z" title="更新于 2021-12-06 13:34:04">2021-12-06</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Java并发编程(二)"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>Java并发编程(二)</h1>
+<h2 id="Java并发包（JUC）">Java并发包（JUC）</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>功能</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>java.lang.*</td>
+<td>最基础， Integer/String</td>
+<td>JDK 公开 API，所有 JDK 都需要实现</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://java.io">java.io</a>.*</td>
+<td>IO读写，文件操作</td>
+<td></td>
+</tr>
+<tr>
+<td>java.util.*</td>
+<td>工具类，集合/日期</td>
+<td></td>
+</tr>
+<tr>
+<td>java.math.*</td>
+<td>数学计算，BigInteger</td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://java.net">java.net</a>.*</td>
+<td>网络编程，Socket</td>
+<td></td>
+</tr>
+<tr>
+<td>java.rmi.*</td>
+<td>Java 内置的远程调用</td>
+<td></td>
+</tr>
+<tr>
+<td>java.sql.*</td>
+<td>JDBC 操作数据库</td>
+<td></td>
+</tr>
+<tr>
+<td>javax.*</td>
+<td>Java 拓展 API</td>
+<td>sun 的JDK 实现包</td>
+</tr>
+<tr>
+<td>sun.*</td>
+<td>Java 拓展 API</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="java-util-concurrency">java.util.concurrency</h3>
+<ul>
+<li><strong>锁机制类 Locks</strong>：Lock，Condition，ReadWriteLock</li>
+<li><strong>原子操作类 Atomic</strong>：AtomicInteger</li>
+<li><strong>线程池相关类 Executer</strong>：Future，Callable，Executor</li>
+<li><strong>信号量三组工具类 Tools</strong>：CountDownLatch，CyclicBarrier，Semaphor</li>
+<li><strong>并发集合类 Collections</strong>：CopyOnWriteArrayList，ConcurrentMap</li>
+</ul>
+<h2 id="到底什么是锁">到底什么是锁*</h2>
+<h3 id="为什么需要显示的-Lock">为什么需要显示的 Lock</h3>
+<ul>
+<li>synchronized 可以加锁；</li>
+<li>wait/notify 可以看做加锁和解锁</li>
+</ul>
+<p>那为什么还需要一个显式的锁呢？</p>
+<p>synchronized 方式的问题：</p>
+<ol>
+<li>同步块的阻塞无法中断（不能 Interruptibly）</li>
+<li>同步块的阻塞无法控制超时（无法自动解锁）</li>
+<li>同步块无法异步处理锁（即不能立即知道是否可以拿到锁）</li>
+<li>同步块无法根据条件灵活的加锁解锁（即只能跟同步块范围一致）</li>
+</ol>
+<h3 id="更自由的锁：Lock">更自由的锁：Lock</h3>
+<ol>
+<li>使用方式灵活可控</li>
+<li>性能开销小</li>
+<li>锁工具包: java.util.concurrent.locks</li>
+</ol>
+<p><img src="http://image.leonote.cn/20211206205043.png" alt="image-20211206205043574"></p>
+<p><strong>思考: Lock 的性能比 synchronized 高吗？</strong></p>
+<p>Lock 接口设计：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.支持中断的 API</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lockInterruptibly</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"><span class="comment">// 2.支持超时的 API</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> time, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"><span class="comment">// 3.支持非阻塞获取锁的 API</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">()</span>；</span></span><br></pre></td></tr></table></figure>
+<h3 id="基础接口-Lock">基础接口 Lock</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">重要方法</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">void lock();</td>
+<td style="text-align:center">获取锁; 类比 synchronized (lock)</td>
+</tr>
+<tr>
+<td style="text-align:center">void lockInterruptibly() throws InterruptedException;</td>
+<td style="text-align:center">获取锁; 允许打断;</td>
+</tr>
+<tr>
+<td style="text-align:center">boolean tryLock(long time, TimeUnit unit) throws InterruptedException;</td>
+<td style="text-align:center">尝试获取锁; 成功则返回 true; 超时则退出</td>
+</tr>
+<tr>
+<td style="text-align:center">boolean tryLock();</td>
+<td style="text-align:center">尝试【无等待】获取锁; 成功则返回 true</td>
+</tr>
+<tr>
+<td style="text-align:center">void unlock();</td>
+<td style="text-align:center">解锁；要求当前线程已获得锁; 类比同步块结束</td>
+</tr>
+<tr>
+<td style="text-align:center">Condition newCondition();</td>
+<td style="text-align:center">新增一个绑定到当前Lock的条件； 示例: （类比: Object monitor） <br/>final Lock lock = new ReentrantLock(); <br/>final Condition notFull = lock.newCondition(); <br/>final Condition notEmpty = lock.newCondition();</td>
+</tr>
+</tbody>
+</table>
+<h4 id="Lock-示例">Lock 示例</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LockCounter</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">  <span class="comment">// 可重入锁+公平锁</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Lock lock = <span class="keyword">new</span> ReentrantLock(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">addAndGet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      lock.lock();</span><br><span class="line">      <span class="keyword">return</span> ++sum;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSum</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 测试代码</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testLockCounter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> loopNum = <span class="number">100_0000</span>;</span><br><span class="line">  LockCounter counter = <span class="keyword">new</span> LockCounter();</span><br><span class="line">  IntStream.range(<span class="number">0</span>, loopNum).parallel().forEach(i -&gt; counter.incrAndGet());</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p><strong>思考：什么是可重入锁？第二次进入时是否阻塞？什么是公平锁？</strong></p>
+<ol>
+<li>公平锁意味着排队靠前的优先</li>
+<li>非公平锁则是都是同样机会</li>
+</ol>
+<h3 id="读写锁-–-接口与实现">读写锁 – 接口与实现</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">重要方法</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Lock readLock();</td>
+<td style="text-align:center">获取读锁; 共享锁</td>
+</tr>
+<tr>
+<td style="text-align:center">Lock writeLock();</td>
+<td style="text-align:center">获取写锁; 独占锁(也排斥读锁)</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 构造方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ReentrantReadWriteLock</span><span class="params">(<span class="keyword">boolean</span> fair)</span> </span>&#123;</span><br><span class="line">    sync = fair ? <span class="keyword">new</span> FairSync() : <span class="keyword">new</span> NonfairSync();</span><br><span class="line">    readerLock = <span class="keyword">new</span> ReadLock(<span class="keyword">this</span>);</span><br><span class="line">    writerLock = <span class="keyword">new</span> WriteLock(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadWriteLockCounter</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">  <span class="comment">// 可重入-读写锁-公平锁</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> ReadWriteLock lock = <span class="keyword">new</span> ReentrantReadWriteLock(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">incrAndGet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      lock.writeLock().lock(); <span class="comment">// 写锁; 独占锁; 被读锁排斥</span></span><br><span class="line">      <span class="keyword">return</span> ++sum;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      lock.writeLock().unlock();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSum</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      lock.readLock().lock(); <span class="comment">// 读锁; //共享锁; 保证可见性</span></span><br><span class="line">      <span class="keyword">return</span> ++sum;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      lock.readLock().unlock();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：ReadWriteLock 管理一组锁，一个读锁，一个写锁。</p>
+<ul>
+<li>读锁可以在没有写锁的时候被多个线程同时持有，写锁是独占的。</li>
+<li>所有读写锁的实现必须确保写操作对读操作的内存影响。每次只能有一个写线程，但是 同时可以有多个线程并发地读数据。ReadWriteLock 适用于读多写少的并发情况。</li>
+</ul>
+</blockquote>
+<h3 id="基础接口-Condition">基础接口 - Condition</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">重要方法</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">void await() throws  InterruptedException;</td>
+<td style="text-align:center">等待信号; 类比 Object#wait()</td>
+</tr>
+<tr>
+<td style="text-align:center">void awaitUninterruptibly();</td>
+<td style="text-align:center">等待信号;</td>
+</tr>
+<tr>
+<td style="text-align:center">boolean await(long time, TimeUnit unit) throws InterruptedException;</td>
+<td style="text-align:center">等待信号; 超时则返回 false</td>
+</tr>
+<tr>
+<td style="text-align:center">boolean awaitUntil(Date deadline) throws InterruptedException;</td>
+<td style="text-align:center">等待信号; 超时则返回 false</td>
+</tr>
+<tr>
+<td style="text-align:center">void signal();</td>
+<td style="text-align:center">给一个等待线程发送唤醒信号; 类比 Object#notify ()</td>
+</tr>
+<tr>
+<td style="text-align:center">void signalAll();</td>
+<td style="text-align:center">给<strong>所有</strong>等待线程发送唤醒信号; 类比 Object#notifyAll()</td>
+</tr>
+</tbody>
+</table>
+<p>通过 Lock.newCondition()创建。</p>
+<p>可以看做是 Lock 对象上的信号。类似于 wait/notify。</p>
+<h3 id="LockSupport–锁当前线程">LockSupport–锁当前线程</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">park</span><span class="params">(Object blocker)</span></span>;<span class="comment">// 暂停当前线程</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">parkNanos</span><span class="params">(Object blocker, <span class="keyword">long</span> nanos)</span></span>; <span class="comment">// 暂停当前线程，不过有超时时间的限制</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">parkUntil</span><span class="params">(Object blocker, <span class="keyword">long</span> deadline)</span></span>; <span class="comment">// 暂停当前线程，直到某个时间</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">park</span><span class="params">()</span></span>; <span class="comment">//无期限暂停当前线程</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">parkNanos</span><span class="params">(<span class="keyword">long</span> nanos)</span></span>; <span class="comment">//暂停当前线程，不过有超时时间的限制</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">parkUntil</span><span class="params">(<span class="keyword">long</span> deadline)</span></span>; <span class="comment">//暂停当前线程，直到某个时间</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">unpark</span><span class="params">(Thread thread)</span></span>; <span class="comment">//恢复当前线程</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getBlocker</span><span class="params">(Thread t)</span></span>; </span><br></pre></td></tr></table></figure>
+<p>LockSupport 类似于 Thread 类的静态方法，专门处理（执行这个代码的）本线程的。</p>
+<p><strong>思考：为什么 unpark 需要加一个线程作为参数？</strong></p>
+<p>因为一个 park 的线程，无法自己唤醒自己，所以需要其他线程来唤醒。</p>
+<h3 id="用锁的最佳实践">用锁的最佳实践</h3>
+<p>Doug Lea《Java 并发编程：设计原则与模式》一书中， 推荐的三个用锁的最佳实践，它们分别是：</p>
+<ol>
+<li>永远只在更新对象的成员变量时加锁</li>
+<li>永远只在访问可变的成员变量时加锁</li>
+<li>永远不在调用其他对象的方法时加锁</li>
+</ol>
+<p>KK总结-最小使用锁：</p>
+<ol>
+<li>降低锁范围：锁定代码的范围/作用域</li>
+<li>细分锁粒度：讲一个大锁，拆分成多个小锁</li>
+</ol>
+<h2 id="并发原子类">并发原子类*</h2>
+<h3 id="Atomic-工具类">Atomic 工具类</h3>
+<p>原子类工具包：java.util.concurrent.atomic</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用示例</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicCounter</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> AtomicInteger sum = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">incrAndGet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sum.incrementAndGet();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSum</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sum.get();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://image.leonote.cn/20211206211503.png" alt="image-20211206211502788"></p>
+<p>对比前面讲的，int sum，sum++线程不安全的例子。</p>
+<h3 id="无锁技术-–-Atomic-工具类">无锁技术 – Atomic 工具类</h3>
+<p>无锁技术的底层实现原理</p>
+<ul>
+<li>Unsafe API - Compare-And-Swap</li>
+<li>CPU 硬件指令支持: CAS 指令</li>
+</ul>
+<p>核心实现原理：</p>
+<ol>
+<li>volatile 保证读写操作都可见（注意不保证原子）；</li>
+<li>使用 CAS 指令，作为乐观锁实现，通过自旋重试保证写入。</li>
+</ol>
+<h3 id="锁与无锁之争">锁与无锁之争</h3>
+<p><strong>思考：到底是有锁好，还是无锁好？</strong></p>
+<p>什么情况下有锁好</p>
+<p>什么情况下无锁好</p>
+<p>乐观锁、悲观锁、数据库事务锁</p>
+<p>CAS 本质上没有使用锁。</p>
+<p>并发压力跟锁性能的关系：</p>
+<ol>
+<li>压力非常小，性能本身要求就不高；</li>
+<li>压力一般的情况下，无锁更快，大部分都一次写入；</li>
+<li>压力非常大时，自旋导致重试过多，资源消耗很大。</li>
+</ol>
+<h3 id="LongAdder-对-AtomicLong-的改进">LongAdder 对 AtomicLong 的改进</h3>
+<p>通过分段思想改进原子类， 大家想想，还有哪些是用这个思想？</p>
+<p>多路归并的思想：</p>
+<ul>
+<li>快排</li>
+<li>G1 GC</li>
+<li>ConcurrentHashMap</li>
+</ul>
+<p>LongAdder 的改进思路：</p>
+<ol>
+<li>AtomicInteger 和 AtomicLong 里的 value 是所有 线程竞争读写的热点数据；</li>
+<li>将单个 value 拆分成跟线程一样多的数组 Cell[]；</li>
+<li>每个线程写自己的 Cell[i]++，最后对数组求和。</li>
+</ol>
+<p>还记得我们讲的爬山，做一个大项目，都需要加里程碑，也是分段</p>
+<h2 id="并发工具类详解">并发工具类详解*</h2>
+<h3 id="什么是并发工具类">什么是并发工具类</h3>
+<p><strong>思考： 多个线程之间怎么相互协作？</strong></p>
+<p>前面讲到的：</p>
+<ol>
+<li>wait/notify</li>
+<li>Lock/Condition</li>
+</ol>
+<p>可以作为简单的协作机制，但是更复杂的，需要这些线程 满足某些条件（数量，时间）。</p>
+<p>更复杂的应用场景，比如</p>
+<ul>
+<li>我们需要控制实际并发访问资源的并发数量</li>
+<li>我们需要多个线程在某个时间同时开始运行</li>
+<li>我们需要指定数量线程到达某个状态再继续处理</li>
+</ul>
+<h3 id="AQS">AQS</h3>
+<ul>
+<li>
+<p><strong>AbstractQueuedSynchronizer</strong>，即队列同步器。它是构建锁或者其他同步组件的基础（ 如Semaphore、CountDownLatch、ReentrantLock、ReentrantReadWriteLock）， 是JUC并发包中的核心基础组件。</p>
+<p><img src="http://image.leonote.cn/20211206212025.png" alt="image-20211206212025324"></p>
+</li>
+<li>
+<p><strong>AbstractQueuedSynchronizer</strong>：抽象队列式的同步器</p>
+</li>
+<li>
+<p>两种资源共享方式：独占 | 共享，子类负责实现公平 OR 非公平</p>
+</li>
+</ul>
+<h3 id="Semaphore-信号量">Semaphore - 信号量</h3>
+<ol>
+<li>准入数量 N</li>
+<li>N =1 则等价于独占锁</li>
+</ol>
+<p>使用场景：同一时间控制并发线程数</p>
+<p><img src="http://image.leonote.cn/20211206212156.png" alt="image-20211206212156496"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SemaphoreCounter</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Semaphore readSemaphore = <span class="keyword">new</span> Semaphore(<span class="number">100</span>, <span class="keyword">true</span>);</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Semaphore writeSemaphore = <span class="keyword">new</span> Semaphore(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">incrAndGet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      writeSemaphore.acquireUninterruptibly();</span><br><span class="line">      <span class="keyword">return</span> ++sum;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      writeSemaphore.release();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSum</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      readSemaphore.acquireUninterruptibly();</span><br><span class="line">      <span class="keyword">return</span> sum;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      readSemaphore.release();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="CountdownLatch">CountdownLatch</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">重要方法</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">public CountDownLatch(int count)</td>
+<td style="text-align:center">构造方法（总数）</td>
+</tr>
+<tr>
+<td style="text-align:center">void await() throws InterruptedException</td>
+<td style="text-align:center">等待数量归0</td>
+</tr>
+<tr>
+<td style="text-align:center">boolean await(long timeout, TimeUnit unit)</td>
+<td style="text-align:center">限时等待</td>
+</tr>
+<tr>
+<td style="text-align:center">void countDown()</td>
+<td style="text-align:center">等待数减1</td>
+</tr>
+<tr>
+<td style="text-align:center">long getCount()</td>
+<td style="text-align:center">返回剩余数量</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://image.leonote.cn/20211206212304.png" alt="image-20211206212304372"></p>
+<p>场景: Master 线程等待 Worker 线程把任务执行完</p>
+<p>示例: 等所有人干完手上的活，一起去吃饭。</p>
+<h4 id="CountDownLatch-示例">CountDownLatch 示例</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">CountDownLatchTask</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> CountDownLatch latch;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CountDownLatchTask</span><span class="params">(CountDownLatch latch)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">this</span>.latch = latch;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">int</span> millis = <span class="keyword">new</span> Random().nextInt(<span class="number">10000</span>);</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        TimeUnit.MILLISECONDS.sleep(millis);</span><br><span class="line">        <span class="keyword">this</span>.latch.countDown();</span><br><span class="line">        System.out.println(<span class="string">&quot;我的任务OK了:&quot;</span> + Thread.currentThread().getName());</span><br><span class="line">      &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 使用示例</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> num = <span class="number">100</span>;</span><br><span class="line">    CountDownLatch latch = <span class="keyword">new</span> CountDownLatch(num);</span><br><span class="line">    List&lt;CompletableFuture&lt;Void&gt;&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;(num);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; num; i++) &#123;</span><br><span class="line">      CompletableFuture&lt;Void&gt; future = CompletableFuture.runAsync(<span class="keyword">new</span> CountDownLatchTask(latch));</span><br><span class="line">      list.add(future);</span><br><span class="line">    &#125;</span><br><span class="line">    latch.await();</span><br><span class="line">    <span class="keyword">for</span> (CompletableFuture&lt;Void&gt; future : list) &#123;</span><br><span class="line">      future.get();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="CyclicBarrier">CyclicBarrier</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">重要方法</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">public CyclicBarrier(int parties)</td>
+<td style="text-align:center">构造方法（需要等待的数量）</td>
+</tr>
+<tr>
+<td style="text-align:center">public CyclicBarrier(int parties, Runnable barrierAction)</td>
+<td style="text-align:center">构造方法（需要等待的数量, 需要执行的任务）</td>
+</tr>
+<tr>
+<td style="text-align:center">int await()</td>
+<td style="text-align:center">任务内部使用; 等待大家都到齐</td>
+</tr>
+<tr>
+<td style="text-align:center">int await(long timeout, TimeUnit unit)</td>
+<td style="text-align:center">任务内部使用; 限时等待到齐</td>
+</tr>
+<tr>
+<td style="text-align:center">void reset()</td>
+<td style="text-align:center">重新一轮</td>
+</tr>
+</tbody>
+</table>
+<p>场景: 任务执行到一定阶段, 等待其他任务对齐。</p>
+<p>示例: 等待所有人都到达，再一起开吃。</p>
+<p><img src="http://image.leonote.cn/20211206212844.png" alt="image-20211206212844409"></p>
+<h4 id="CyclicBarrier-示例">CyclicBarrier 示例</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">CyclicBarrierTask</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> CyclicBarrier barrier;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CyclicBarrierTask</span><span class="params">(CyclicBarrier barrier)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">this</span>.barrier = barrier;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">int</span> millis = <span class="keyword">new</span> Random().nextInt(<span class="number">10000</span>);</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        TimeUnit.MILLISECONDS.sleep(millis);</span><br><span class="line">        <span class="keyword">this</span>.barrier.await(); <span class="comment">// 线程阻塞</span></span><br><span class="line">        System.out.println(<span class="string">&quot;开吃:&quot;</span> + Thread.currentThread().getName());</span><br><span class="line">        TimeUnit.MILLISECONDS.sleep(millis);</span><br><span class="line">      &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 使用</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> num = <span class="number">2</span>; <span class="comment">// 如果数量过大会发生什么情况?</span></span><br><span class="line">    CyclicBarrier barrier = <span class="keyword">new</span> CyclicBarrier(num);</span><br><span class="line">    List&lt;CompletableFuture&lt;Void&gt;&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;(num);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; num; i++) &#123;</span><br><span class="line">      CompletableFuture&lt;Void&gt; future = CompletableFuture.runAsync(<span class="keyword">new</span> CyclicBarrierTask(barrier));</span><br><span class="line">      list.add(future);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (CompletableFuture&lt;Void&gt; future : list) &#123;</span><br><span class="line">      future.get();</span><br><span class="line">    &#125;</span><br><span class="line">    barrier.reset();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="CountDownLatch-与-CyclicBarrier-比较">CountDownLatch 与 CyclicBarrier 比较</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">CountDownLatch</th>
+<th style="text-align:center">CyclicBarrier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">减计数方式</td>
+<td style="text-align:center">加计数方式</td>
+</tr>
+<tr>
+<td style="text-align:center">计算为0时释放所有等待的线程</td>
+<td style="text-align:center">计数达到指定值时释放所有等待线程</td>
+</tr>
+<tr>
+<td style="text-align:center">计数为0时，无法重置</td>
+<td style="text-align:center">计数达到指定值时，计数置为0重新开始</td>
+</tr>
+<tr>
+<td style="text-align:center">调用countDown()方法计数减1，调用await()方式只进行阻塞，对计数没任何影响</td>
+<td style="text-align:center">调用await()方法计数加1，若加1后的值不等于构造方法的值，则线程阻塞</td>
+</tr>
+<tr>
+<td style="text-align:center">不可重复利用</td>
+<td style="text-align:center">可重复利用</td>
+</tr>
+</tbody>
+</table>
+<h2 id="总结">总结</h2>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/da59c978.html">https://liule8.github.io/post/da59c978.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">并发编程</a><a class="post-meta__tags" href="/tags/%E7%BA%BF%E7%A8%8B/">线程</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/post/a50eaa86.html"><img class="next-cover" src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">数据结构与算法之高级篇-位图</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/2a257066.html" title="Java并发编程之AQS框架-AQS 在 CountDownLatch 等类中的应用原理是什么？"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-30</div><div class="title">Java并发编程之AQS框架-AQS 在 CountDownLatch 等类中的应用原理是什么？</div></div></a></div><div><a href="/post/4dc46dd1.html" title="Java并发编程之AQS框架-AQS 的内部原理是什么样的？"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-30</div><div class="title">Java并发编程之AQS框架-AQS 的内部原理是什么样的？</div></div></a></div><div><a href="/post/d441b533.html" title="Java并发编程之AQS框架-为什么需要 AQS？AQS 的作用和重要性是什么？"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-30</div><div class="title">Java并发编程之AQS框架-为什么需要 AQS？AQS 的作用和重要性是什么？</div></div></a></div><div><a href="/post/488d5376.html" title="Java并发编程之CAS-CAS 和乐观锁的关系，什么时候会用到 CAS？"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-28</div><div class="title">Java并发编程之CAS-CAS 和乐观锁的关系，什么时候会用到 CAS？</div></div></a></div><div><a href="/post/648d6da1.html" title="Java并发编程之CAS-CAS 有什么缺点？"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-28</div><div class="title">Java并发编程之CAS-CAS 有什么缺点？</div></div></a></div><div><a href="/post/fa8fc5b2.html" title="Java并发编程之CAS-你知道什么是 CAS 吗？"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-28</div><div class="title">Java并发编程之CAS-你知道什么是 CAS 吗？</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">428</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">84</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">51</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">Java并发编程(二)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java%E5%B9%B6%E5%8F%91%E5%8C%85%EF%BC%88JUC%EF%BC%89"><span class="toc-number">1.1.</span> <span class="toc-text">Java并发包（JUC）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#java-util-concurrency"><span class="toc-number">1.1.1.</span> <span class="toc-text">java.util.concurrency</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E6%98%AF%E9%94%81"><span class="toc-number">1.2.</span> <span class="toc-text">到底什么是锁*</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%98%BE%E7%A4%BA%E7%9A%84-Lock"><span class="toc-number">1.2.1.</span> <span class="toc-text">为什么需要显示的 Lock</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E8%87%AA%E7%94%B1%E7%9A%84%E9%94%81%EF%BC%9ALock"><span class="toc-number">1.2.2.</span> <span class="toc-text">更自由的锁：Lock</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E6%8E%A5%E5%8F%A3-Lock"><span class="toc-number">1.2.3.</span> <span class="toc-text">基础接口 Lock</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Lock-%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">Lock 示例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%86%99%E9%94%81-%E2%80%93-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.4.</span> <span class="toc-text">读写锁 – 接口与实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E6%8E%A5%E5%8F%A3-Condition"><span class="toc-number">1.2.5.</span> <span class="toc-text">基础接口 - Condition</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LockSupport%E2%80%93%E9%94%81%E5%BD%93%E5%89%8D%E7%BA%BF%E7%A8%8B"><span class="toc-number">1.2.6.</span> <span class="toc-text">LockSupport–锁当前线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E9%94%81%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.2.7.</span> <span class="toc-text">用锁的最佳实践</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E5%8E%9F%E5%AD%90%E7%B1%BB"><span class="toc-number">1.3.</span> <span class="toc-text">并发原子类*</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Atomic-%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="toc-number">1.3.1.</span> <span class="toc-text">Atomic 工具类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E9%94%81%E6%8A%80%E6%9C%AF-%E2%80%93-Atomic-%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="toc-number">1.3.2.</span> <span class="toc-text">无锁技术 – Atomic 工具类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E4%B8%8E%E6%97%A0%E9%94%81%E4%B9%8B%E4%BA%89"><span class="toc-number">1.3.3.</span> <span class="toc-text">锁与无锁之争</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LongAdder-%E5%AF%B9-AtomicLong-%E7%9A%84%E6%94%B9%E8%BF%9B"><span class="toc-number">1.3.4.</span> <span class="toc-text">LongAdder 对 AtomicLong 的改进</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%B1%BB%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.4.</span> <span class="toc-text">并发工具类详解*</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="toc-number">1.4.1.</span> <span class="toc-text">什么是并发工具类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AQS"><span class="toc-number">1.4.2.</span> <span class="toc-text">AQS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Semaphore-%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="toc-number">1.4.3.</span> <span class="toc-text">Semaphore - 信号量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CountdownLatch"><span class="toc-number">1.4.4.</span> <span class="toc-text">CountdownLatch</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#CountDownLatch-%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">CountDownLatch 示例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CyclicBarrier"><span class="toc-number">1.4.5.</span> <span class="toc-text">CyclicBarrier</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#CyclicBarrier-%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.4.5.1.</span> <span class="toc-text">CyclicBarrier 示例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CountDownLatch-%E4%B8%8E-CyclicBarrier-%E6%AF%94%E8%BE%83"><span class="toc-number">1.4.6.</span> <span class="toc-text">CountDownLatch 与 CyclicBarrier 比较</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/da59c978.html" title="Java并发编程(二)"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java并发编程(二)"/></a><div class="content"><a class="title" href="/post/da59c978.html" title="Java并发编程(二)">Java并发编程(二)</a><time datetime="2021-12-06T20:31:07.000Z" title="发表于 2021-12-06 20:31:07">2021-12-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/a50eaa86.html" title="数据结构与算法之高级篇-位图"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之高级篇-位图"/></a><div class="content"><a class="title" href="/post/a50eaa86.html" title="数据结构与算法之高级篇-位图">数据结构与算法之高级篇-位图</a><time datetime="2021-12-06T19:59:30.000Z" title="发表于 2021-12-06 19:59:30">2021-12-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/accf4e02.html" title="数据结构与算法之高级篇-最短路径"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之高级篇-最短路径"/></a><div class="content"><a class="title" href="/post/accf4e02.html" title="数据结构与算法之高级篇-最短路径">数据结构与算法之高级篇-最短路径</a><time datetime="2021-12-04T13:03:30.000Z" title="发表于 2021-12-04 13:03:30">2021-12-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/4233c11f.html" title="数据结构与算法之高级篇-拓扑排序"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之高级篇-拓扑排序"/></a><div class="content"><a class="title" href="/post/4233c11f.html" title="数据结构与算法之高级篇-拓扑排序">数据结构与算法之高级篇-拓扑排序</a><time datetime="2021-12-04T12:25:30.000Z" title="发表于 2021-12-04 12:25:30">2021-12-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/c24b527c.html" title="数据结构与算法之基础篇-动态规划实战"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之基础篇-动态规划实战"/></a><div class="content"><a class="title" href="/post/c24b527c.html" title="数据结构与算法之基础篇-动态规划实战">数据结构与算法之基础篇-动态规划实战</a><time datetime="2021-12-02T19:39:46.000Z" title="发表于 2021-12-02 19:39:46">2021-12-02</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.css"><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', '', 'katex-wrap')
+  })
+})()</script></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>
