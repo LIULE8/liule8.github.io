@@ -52,7 +52,7 @@
   isHome: true,
   isHighlightShrink: false,
   isToc: false,
-  postUpdate: '2021-12-10 14:18:11'
+  postUpdate: '2023-01-14 08:37:20'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -134,157 +134,261 @@
           document.documentElement.classList.remove('hide-aside')
         }
       }
-    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">432</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">84</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">51</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">Leo's notes</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/3c338cec.html" title="Spring Data JPA之基础知识-Entity 注解">     <img class="post_bg" src="/images/posts/cover/springDataJpa.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Data JPA之基础知识-Entity 注解"></a></div><div class="recent-post-info"><a class="article-title" href="/post/3c338cec.html" title="Spring Data JPA之基础知识-Entity 注解">Spring Data JPA之基础知识-Entity 注解</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-16T12:52:59.000Z" title="发表于 2020-10-16 12:52:59">2020-10-16</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Spring/">Spring</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/">Spring Data</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/Spring-Data-Jpa/">Spring Data Jpa</a></span></div><div class="content">Spring Data JPA 的 Entity 注解
-JPA 协议中关于 Entity 的相关规定
-JPA 协议里面关于实体做了一些规定。（推荐一个查看 JPA 协议的官方地址）
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">416</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">91</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">Leo's notes</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/a256d26f.html" title="Spring Transaction">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Transaction"></a></div><div class="recent-post-info"><a class="article-title" href="/post/a256d26f.html" title="Spring Transaction">Spring Transaction</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-08T10:28:59.000Z" title="发表于 2020-09-08 10:28:59">2020-09-08</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Transaction/">Transaction</a></span></div><div class="content">只读事务设置
 
 
-实体是直接进行数据库持久化操作的领域对象（即一个简单的 POJO，可以按照业务领域划分），必须通过 @Entity 注解进行标示。
+JDBC 指定只读事务的设置：connection.setReadOnly(true)
 
 
-实体必须有一个 public 或者 protected 的无参数构造方法。
+Hibernate 只读事务的设置：session.setFlushMode(FlushMode.NEVER)
 
 
-持久化映射的注解可以标示在 Entity 的字段 field 上，如下所示：
-12@Column(length = 20, nullable = false)private String userName;
-
-
-除此之外，也可以将持久化注解运用在 Entity 里面的 get/set 方法上，通常我们是放在 get 方法中，如下所示：
-1234@Column(length = 20, nullable = false)public String getUserName()&#123;    return userName;&#125;
-
-概括起来，就是 Entity 里面的注解生效只有两种方 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/4446e8e.html" title="Spring Data JPA之基础知识-Jackson 注解">     <img class="post_bg" src="/images/posts/cover/springDataJpa.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Data JPA之基础知识-Jackson 注解"></a></div><div class="recent-post-info"><a class="article-title" href="/post/4446e8e.html" title="Spring Data JPA之基础知识-Jackson 注解">Spring Data JPA之基础知识-Jackson 注解</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-16T12:52:59.000Z" title="发表于 2020-10-16 12:52:59">2020-10-16</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Spring/">Spring</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/">Spring Data</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/Spring-Data-Jpa/">Spring Data Jpa</a></span></div><div class="content">Jackson 注解在实体里面如何应用？常见的死循环问题如何解决？
-Jackson 基本语法
-我们先看一下我们项目里面的依赖。
-
-从中可以看到，当我们用 spring boot starter 的时候就会默认加载 fasterxml 相关的 jar 包模块，包括核心模块以及 jackson 提供的一些扩展 jar 包，下面详细介绍。
-核心模块有三个
-jackson-core：核心包，提供基于“流模式”解析的相关 API，它包括 JsonPaser 和 JsonGenerator。Jackson 内部实现正是通过高性能的流模式 API 的 JsonGenerator 和 JsonParser 来生成和解析 json。
-jackson-annotations：注解包，提供标准注解功能。
-jackson-databind：数据绑定包，提供基于“对象绑定”解析的相关 API（ ObjectMapper ） 和“树模型”解析的相关 API（JsonNode）；基于“对象绑定”解析的 API 和“树模型”解析的 API 依赖基于“流模式”解析的 API。如下图中一些标准的类型转换：
-
-jackso ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/eeca750d.html" title="Spring Data JPA之高级用法-JpaSpecificationExecutor">     <img class="post_bg" src="/images/posts/cover/springDataJpa.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Data JPA之高级用法-JpaSpecificationExecutor"></a></div><div class="recent-post-info"><a class="article-title" href="/post/eeca750d.html" title="Spring Data JPA之高级用法-JpaSpecificationExecutor">Spring Data JPA之高级用法-JpaSpecificationExecutor</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-16T12:52:59.000Z" title="发表于 2020-10-16 12:52:59">2020-10-16</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Spring/">Spring</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/">Spring Data</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/Spring-Data-Jpa/">Spring Data Jpa</a></span></div><div class="content">JpaSpecificationExecutor 解决了哪些问题？
-我们先来看看除了我们讲解的 Define Query Method 和 @Query 之外，还有哪些查询方法。首先看一个简单的 QueryByExampleExecutor 用法。
-QueryByExampleExecutor用法
-QueryByExampleExecutor（QBE）是一种用户友好的查询技术，具有简单的接口，它允许动态查询创建，并且不需要编写包含字段名称的查询。
-下面是一个 UML 图，你可以看到 QueryByExampleExecutor 是 JpaRepository 的父接口，也就是 JpaRespository 里面继承了 QueryByExampleExecutor 的所有方法。
-
-QBE 的基本语法
-QBE 的基本语法可以分为下述几种。
-1234567891011121314public interface QueryByExampleExecutor&lt;T&gt; &#123;    //根据“实体”查询条件，查找一个对象    &lt;S extends T&gt; S find ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/58391339.html" title="Spring Data JPA之基础知识-Entity之间的关联关系">     <img class="post_bg" src="/images/posts/cover/springDataJpa.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Data JPA之基础知识-Entity之间的关联关系"></a></div><div class="recent-post-info"><a class="article-title" href="/post/58391339.html" title="Spring Data JPA之基础知识-Entity之间的关联关系">Spring Data JPA之基础知识-Entity之间的关联关系</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-16T12:52:59.000Z" title="发表于 2020-10-16 12:52:59">2020-10-16</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Spring/">Spring</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/">Spring Data</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/Spring-Data-Jpa/">Spring Data Jpa</a></span></div><div class="content">@Entity 之间的关联关系注解如何正确使用？
-实体与实体之间的关联关系，这和数据的表与表之间的外键关系类似，我们为之为映射。
-实体与实体之间的关联关系一共分为四种，分别为 OneToOne、OneToMany、ManyToOne 和 ManyToMany；而实体之间的关联关系又分为双向的和单向的。实体之间的关联关系是在 JPA 使用中最容易发生问题的地方，接下来我将一一揭晓并解释。我们先看一下 OneToOne，即一对一的关联关系。
-@OneToOne 关联关系
-@OneToOne 一般表示对象之间一对一的关联关系，它可以放在 field 上面，也可以放在 get/set 方法上面。其中 JPA 协议有规定，如果是配置双向关联，维护关联关系的是拥有外键的一方，而另一方必须配置 mappedBy；如果是单项关联，直接配置在拥有外键的一方即可。
-举个例子：user 表是用户的主信息，user_info 是用户的扩展信息，两者之间是一对一的关系。user_info 表里面有一个 user_id 作为关联关系的外键，如果是单项关联，我们的写法如下：
-12345678910111213141 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/441a882f.html" title="Spring Data JPA之基础知识-@Query的使用">     <img class="post_bg" src="/images/posts/cover/springDataJpa.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Data JPA之基础知识-@Query的使用"></a></div><div class="recent-post-info"><a class="article-title" href="/post/441a882f.html" title="Spring Data JPA之基础知识-@Query的使用">Spring Data JPA之基础知识-@Query的使用</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-13T20:42:59.000Z" title="发表于 2020-10-13 20:42:59">2020-10-13</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Spring/">Spring</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/">Spring Data</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/Spring-Data-Jpa/">Spring Data Jpa</a></span></div><div class="content">Spring Data JPA @Query的使用
-
-
-快速体验 @Query 的方法、
-JpaQueryLookupStrategy 关键源码剖析、
-@Query 的基本用法、
-@Query 之 Projections 应用返回指定 DTO、
-@Query 动态查询解决方法
-
-
-快速体验 @Query 的方法
-12345678910package com.example.jpa.example1;import org.springframework.data.jpa.repository.JpaRepository;import org.springframework.data.jpa.repository.Query;import org.springframework.data.repository.query.Param;public interface UserDtoRepository extends JpaRepository&lt;User,Long&gt; &#123;   //通过query注解根据name查询user信息   @Query(&quot;From U ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/feb0b826.html" title="Spring Data JPA之高级用法-DataSource 加载过程">     <img class="post_bg" src="/images/posts/cover/springDataJpa.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Data JPA之高级用法-DataSource 加载过程"></a></div><div class="recent-post-info"><a class="article-title" href="/post/feb0b826.html" title="Spring Data JPA之高级用法-DataSource 加载过程">Spring Data JPA之高级用法-DataSource 加载过程</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-13T20:42:59.000Z" title="发表于 2020-10-13 20:42:59">2020-10-13</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Spring/">Spring</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/">Spring Data</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/Spring-Data-Jpa/">Spring Data Jpa</a></span></div><div class="content">DataSource 为何物？加载过程是怎样的？
-数据源是什么？
-当我们用第三方工具去连接数据库（Mysql，Oracle 等）的时候，一般都会让我们选择数据源，如下图所示：
-
-以 MySQL 为例，当选择 MySQL 的时候就会弹出如下图显示的界面：
-
-其中，我们在选择了 Driver（驱动）和 Host、User、Password 等之后，就可以创建一个 Connection，然后连接到数据库里面了。
-同样的道理，在 Java 里面我们也需要用到 DataSource 去连接数据库，而 Java 定义了一套 JDBC 的协议标准，其中有一个 javax.sql.DataSource 接口类，通过实现此类就可以进行数据库连接，我们通过源码来分析一下。
-DataSource 源码分析
-DataSource 接口里面主要的代码如下所示：
-1234public interface DataSource extends CommonDataSource, Wrapper &#123;  Connection getConnection() throws SQLException;  Conn ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/444c90ea.html" title="缓存的原理、引入与设计">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="缓存的原理、引入与设计"></a></div><div class="recent-post-info"><a class="article-title" href="/post/444c90ea.html" title="缓存的原理、引入与设计">缓存的原理、引入与设计</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-13T20:42:59.000Z" title="发表于 2020-10-13 20:42:59">2020-10-13</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E7%BC%93%E5%AD%98/">缓存</a></span></div><div class="content">缓存的原理、引入与设计
-业务数据访问性能太低怎么办
-
-缓存的基本思想
-缓存的优点
-缓存的代价
-
-缓存的定义
-
-
-缓存最初的含义，是指用于加速 CPU 数据交换的 RAM，即随机存取存储器，通常这种存储器使用更昂贵但快速的静态 RAM（SRAM）技术，用以对 DRAM 进行加速。这是一个狭义缓存的定义。
-
-
-而广义缓存的定义则更宽泛，任何可以用于数据高速交换的存储介质都是缓存，可以是硬件也可以是软件。
+Spring 只读事务设置：
+@Transactional(readOnly = true)
+&lt;tx:method name=&quot;search*&quot; read-only=&quot;true&quot; /&gt;
 
 
 
+read-only 并不是所有数据库都支持的，不同的数据库下会有不同的结果（例如：对 Mysql 生效，对 Oracle 不生效）。
+设置了read-only 后，connection 都会被赋予 read-only（希望数据库驱动开启只读优化，不一定生效） ，不应该把 read-only作为打开只读事务的判断。
+在ORM框架中，设置了read-only会赋予一些额外的优化，例如在 Hibernate 中，会被禁止 flush 等。
 
-缓存存在的意义就是通过开辟一个新的数据交换缓冲区，来解决原始数据获取代价太大的问题，让数据得到更快的访问。目前讲的缓存主要是指广义缓存，特别是互联网产品大量使用的各种缓存组件和技术。
+Oracle 11.2 的文档中表明Oracle JDBC Driver 不支持 read ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/96bdb2a7.html" title="JDK 内置注解">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JDK 内置注解"></a></div><div class="recent-post-info"><a class="article-title" href="/post/96bdb2a7.html" title="JDK 内置注解">JDK 内置注解</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-08T09:23:59.000Z" title="发表于 2020-09-08 09:23:59">2020-09-08</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%B3%A8%E8%A7%A3/">注解</a></span></div><div class="content">@SuppressWarnings
+范围：类、字段、方法、参数、构造方法，以及局部变量上。
+作用：告诉编译器忽略指定的警告，不用在编译完成后出现警告信息。
+参数：
 
-缓存原理
-缓存的基本思想
+deprecation：忽略过时
+rawtypes：忽略类型安全
+unused：忽略不使用
+unchecked：忽略安全检查
+null：忽略空指针
+all：忽略所有
 
-缓存构建的基本思想是利用时间局限性原理，通过空间换时间来达到加速数据获取的目的，同时由于缓存空间的成本较高，在实际设计架构中还要考虑访问延迟和成本的权衡问题。这里面有 3 个关键点。
+例子：@SuppressWarnings(&quot;unchecked&quot;, &quot;deprecation&quot;)
+</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/969d9481.html" title="CAS">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CAS"></a></div><div class="recent-post-info"><a class="article-title" href="/post/969d9481.html" title="CAS">CAS</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-06T12:47:26.000Z" title="发表于 2020-09-06 12:47:26">2020-09-06</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E9%94%81/">锁</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E9%94%81/%E4%B9%90%E8%A7%82%E9%94%81/">乐观锁</a></span></div><div class="content">CAS
+什么是CAS
 
+CAS 全称 compare and swap (比较并替换)，是用在线程并发算法里常见的一种思想
+CAS 是原子操作，保证并发安全，但不保证并发同步
 
-时间局限性原理，即被获取过一次的数据在未来会被多次引用，比如一条微博被一个人感兴趣并阅读后，它大概率还会被更多人阅读，当然如果变成热门微博后，会被数以百万/千万计算的更多用户查看。
+CAS原理
+CAS 就是将内存值更新为需要的值时，设置一个条件，内存值必须与期望值相同
 
+期望值 E、内存值M、更新值U，当E == M的时候将M更新为U
 
- ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/7b59e5b8.html" title="CollectionUtils工具类">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CollectionUtils工具类"></a></div><div class="recent-post-info"><a class="article-title" href="/post/7b59e5b8.html" title="CollectionUtils工具类">CollectionUtils工具类</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-13T14:26:00.000Z" title="发表于 2020-10-13 14:26:00">2020-10-13</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%B7%A5%E5%85%B7%E7%B1%BB/">工具类</a></span></div><div class="content">CollectionUtils工具类
-Apache Commons Collections 使操作集合时，代码更加简洁
-常用API
-元素不为null时，向集合添加元素
-1CollectionUtils.addIgnoreNull(targetList, targetObject);
-将两个已排序的集合a和b合并为一个已排序的列表，保留元素的自然顺序
-1CollectionUtils.collate(Iterable&lt;? extends O&gt; a, Iterable&lt;? extends O&gt; b)
-将两个已排序的集合a和b合并到一个已排序的列表中，根据比较器顺序
-1CollectionUtils.collate(Iterable&lt;? extends O&gt; a, Iterable&lt;? extends O&gt; b, Comparator&lt;? super O&gt; c)
-如果参数是null，则返回不可变的空集合（new EmptyList&lt;&gt;()），否则返回参数本身
-1CollectionUtils.emptyIfNull(Co ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/bc1a3b.html" title="Spring Data JPA之基础知识-自定义返回值">     <img class="post_bg" src="/images/posts/cover/springDataJpa.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Data JPA之基础知识-自定义返回值"></a></div><div class="recent-post-info"><a class="article-title" href="/post/bc1a3b.html" title="Spring Data JPA之基础知识-自定义返回值">Spring Data JPA之基础知识-自定义返回值</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-26T18:33:59.000Z" title="发表于 2020-09-26 18:33:59">2020-09-26</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Spring/">Spring</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/">Spring Data</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/Spring-Data-Jpa/">Spring Data Jpa</a></span></div><div class="content">Spring Data JPA 自定义返回值
-打开 SimpleJpaRepository 直接看它的 Structure ，从它实现的方法以及父类接口的方法看到，返回类型包括：Optional、Iterable、List、Page、Long、Boolean、Entity 等，如下图所示：
+CAS应用
 
-而实际上支持的返回类型还要多一些。
-由于 Repository 里面支持 Iterable，所以 java 标准的 List、Set 都可以作为返回结果，并且也会支持其子类。
-查询结果的返回值
-Streamable
-Spring Data 里面定义了一个特殊的子类 Streamable，Streamable 可以替代 Iterable 或任何集合类型。它还提供了方便的方法来访问 Stream，可以直接在元素上进行 ….filter(…) 和 ….map(…) 操作，并将 Streamable 连接到其他元素。
-我们看个关于 UserRepository 直接继承 JpaRepository 的例子
-12public interface UserRepository extends JpaRepos ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/331b4811.html" title="Oracle的基础知识">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Oracle的基础知识"></a></div><div class="recent-post-info"><a class="article-title" href="/post/331b4811.html" title="Oracle的基础知识">Oracle的基础知识</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-21T16:59:59.000Z" title="发表于 2020-09-21 16:59:59">2020-09-21</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Oracle/">Oracle</a></span></div><div class="content">Oracle 的基础知识
-数据库设计
+数据库常见的乐观锁实现方式，使用版本号version
+JAVA里的原子类
 
-数据库设计是画出数据库的ER图，通过ER图生成 sql 建库代码(DDL)
-生成的建库代码的约束都是追加的，方便到时删除
-
-SQL类型
-
-DQL：数据查询语言，关键字 select， 功能：查询
-DML：数据操作语言，关键字 insert、delete、update，功能：操作数据
-DDL：数据定义语言，关键字 create、drop、alter，功能：操作数据库对象
-DCL：数据控制语言，关键字 grant、revoke，功能：用户授权撤权
-TCL：事务控制语言，关键字 commit、rollback、savepoint，功能：事务处理
-
-查询
-12345select [distinct]&#123;* | &lt;字段名&gt; | 表名.*&#125; from &lt;表名&gt;-- 1. 给表一个别名select * from emp e;-- 2. 给返回字段一个别名select emp.ename as 员工名 from emp;
-条件查询
-where 关键字
-查询运算符
-对比运算符
+CAS优缺点
+优点
+用来实现非阻塞的轻量级的乐观锁，通过CPU指令实现，在资源竞争不激烈的情况下性能高
+缺点
 
 
+ABA 问题：线程C、D，线程D将A修改为B后又修改为A，此时C线程以为A没有改变过
+JAVA的原子类AtomicStampedReference，通过控制变量值的版本来保证CAS的正确性（其他情况也可以通过增加版本号来解决ABA问题）
 
-运算符
-说明
+
+自旋时间过长(一直不能更新)，消耗CPU资源， 如果资源竞争激烈，多线程自旋长时间消耗资源
+
+
+</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/5f15bd9e.html" title="JPA用法">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JPA用法"></a></div><div class="recent-post-info"><a class="article-title" href="/post/5f15bd9e.html" title="JPA用法">JPA用法</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-06T12:47:26.000Z" title="发表于 2020-09-06 12:47:26">2020-09-06</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Spring/">Spring</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/">Spring Data</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/Spring-Data-Jpa/">Spring Data Jpa</a></span></div><div class="content">查询用法
+实体
+12345678910111213141516@Entity@Datapublic class Employee implements Serializable &#123;    @Id    @GeneratedValue(strategy = GenerationType.IDENTITY)    private Long id;    // 拥有级联维护的一方，参考http://westerly-lzh.github.io/cn/2014/12/JPA-CascadeType-Explaining/    @OneToOne(cascade = CascadeType.ALL)     @JoinColumn(foreignKey = @ForeignKey(name = &quot;none&quot;, value = ConstraintMode.NO_CONSTRAINT))    private EmployeeDetail detail;    @ManyToOne(fetch = FetchType.LAZY)     // 设置外键的问题，参考h ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/93ac284c.html" title="事务">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="事务"></a></div><div class="recent-post-info"><a class="article-title" href="/post/93ac284c.html" title="事务">事务</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-06T12:47:26.000Z" title="发表于 2020-09-06 12:47:26">2020-09-06</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E4%BA%8B%E5%8A%A1/">事务</a></span></div><div class="content">事务
+什么是事务
+
+所谓的事务，它是一个操作序列，这些操作要么都执行，要么都不执行，是一个不可分割的工作单位。
+事务是数据库维护数据一致性的单位，在每个事务结束时，都能保持数据一致性。
+
+事务的四个特性
+Atomic 原子性
+不同对象之间对于原子性定义不同：
+
+
+事务性数据库(ACID语境下)：**原子性是指一组对数据库的改变，要么最终成功执行完成，要不就全部回滚。**这就要求数据库系统要实现某种==回滚的机制==，比如redo/undo log。
+
+
+对于支持并发的编程语言(Java、C++等)：原子性是指一组指令被执行时，不受其他指令的干扰。比如”给一个整型变量赋值是原子的“等等。
+
+
+一些NoSQL的数据库(Redis)： 事务的原子性的意思更接近于***“一组指令被执行时，不受其他指令的干扰”***，而不是“可以回滚”。
+
+
+Consistency 一致性
+不同的环境下有着不同的含义：
+
+多副本的一致性
+一致性hash
+CAP理论的一致性
+ACID里的一致性
+
+ACID语境下的一致性
+AID 都是数据库的特征，也就是依赖数据库的具体实现。但是唯独C不一样，它需要依赖于应用层，也 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/f6e7b558.html" title="数据库锁">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据库锁"></a></div><div class="recent-post-info"><a class="article-title" href="/post/f6e7b558.html" title="数据库锁">数据库锁</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-06T12:47:26.000Z" title="发表于 2020-09-06 12:47:26">2020-09-06</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E9%94%81/">锁</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E9%94%81/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></span></div><div class="content">数据库锁
+锁的分类
+按获取锁的方式：
+
+排他锁
+共享锁
+
+按系统并发：
+
+悲观锁
+乐观锁
+
+按保护对象：
+
+DML锁：
+
+TX行锁
+TM表锁
+
+
+DDL锁：
+
+DDL排他锁
+DDL共享锁
+DDL可分解解析锁
+
+
+系统锁：
+
+闩锁Latch
+互斥锁Mutexes
+内部锁：
+
+字典缓存锁
+文件和日志管理锁
+表空间和撤销段锁
 
 
 
 
-=
-等号；orac ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/39/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/#content-inner">39</a><span class="page-number current">40</span><a class="page-number" href="/page/41/#content-inner">41</a><span class="space">&hellip;</span><a class="page-number" href="/page/44/#content-inner">44</a><a class="extend next" rel="next" href="/page/41/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">432</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">84</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">51</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/3cab608e.html" title="数据结构与算法之高级篇-搜索"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之高级篇-搜索"/></a><div class="content"><a class="title" href="/post/3cab608e.html" title="数据结构与算法之高级篇-搜索">数据结构与算法之高级篇-搜索</a><time datetime="2021-12-09T21:00:59.000Z" title="发表于 2021-12-09 21:00:59">2021-12-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/45603f6e.html" title="数据结构与算法之高级篇-B+树"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之高级篇-B+树"/></a><div class="content"><a class="title" href="/post/45603f6e.html" title="数据结构与算法之高级篇-B+树">数据结构与算法之高级篇-B+树</a><time datetime="2021-12-09T20:18:14.000Z" title="发表于 2021-12-09 20:18:14">2021-12-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/45d57e2.html" title="数据结构与算法之高级篇-向量空间"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之高级篇-向量空间"/></a><div class="content"><a class="title" href="/post/45d57e2.html" title="数据结构与算法之高级篇-向量空间">数据结构与算法之高级篇-向量空间</a><time datetime="2021-12-09T19:54:09.000Z" title="发表于 2021-12-09 19:54:09">2021-12-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/74b028f0.html" title="数据结构与算法之高级篇-概率统计"><img src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构与算法之高级篇-概率统计"/></a><div class="content"><a class="title" href="/post/74b028f0.html" title="数据结构与算法之高级篇-概率统计">数据结构与算法之高级篇-概率统计</a><time datetime="2021-12-08T18:41:19.000Z" title="发表于 2021-12-08 18:41:19">2021-12-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/da59c978.html" title="Java并发编程(二)"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java并发编程(二)"/></a><div class="content"><a class="title" href="/post/da59c978.html" title="Java并发编程(二)">Java并发编程(二)</a><time datetime="2021-12-06T20:31:07.000Z" title="发表于 2021-12-06 20:31:07">2021-12-06</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+
+
+乐观锁 和 悲观锁 是一种思想
+实现形式可能不一样：如 Java的原子类，数据库的version字段
+
+悲观锁
+顾名思义，就是很悲观，它对于数据被外界修改持保守态度，认为数据随时会修改，所以整个数据处理中需要将数据加锁。悲观锁一般都是依靠关系数据库提供的锁机制，事实上关系数据库中的行锁，表锁不论是读写锁都是悲观锁。
+悲观锁按照使用性质划分
+共享锁(S锁)
+
+多个事务可以同时读，但不能有写操作
+
+读锁，事务A对对象T加S锁，其他事务也只能对T加S，直到A释放S锁。
+排它锁(X锁)
+
+只有一个事务可以操作，其他事务等待
+
+写锁，事务A对对象T加X锁以后，其他事务不能对T加任何锁，只有事务A可以读写对象T直到A释放X锁。
+更新锁(U锁)
+用来预定要对此对象施加X锁 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/7f4954fa.html" title="Vue Mixin">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Vue Mixin"></a></div><div class="recent-post-info"><a class="article-title" href="/post/7f4954fa.html" title="Vue Mixin">Vue Mixin</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-08-25T15:21:59.000Z" title="发表于 2020-08-25 15:21:59">2020-08-25</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Vue/">Vue</a></span></div><div class="content">参考连接
+局部 mixin
+当多个组件都需要用到相同得到方法或者data有相同的属性，就可以使用mixin进行封装
+需要封装的方法和属性 --&gt; mixin.js （名字根据业务定义）
+1234567891011121314151617181920212223export default &#123;	name: &#x27;Mixin&#x27;,	 data() &#123;	   return &#123;         message: &#x27;hello&#x27;       &#125;	 &#125;,     //可以添加钩子函数     created() &#123;       console.log(&#x27;我是 mixins 中的 created&#x27;)     &#125;,	 methods: &#123;	    show(num) &#123;          console.log(num)  // mixins的函数可以接收组件传的参数。        &#125;,        foo() &#123;         ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/2e3b7557.html" title="防抖动">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="防抖动"></a></div><div class="recent-post-info"><a class="article-title" href="/post/2e3b7557.html" title="防抖动">防抖动</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-08-20T15:48:59.000Z" title="发表于 2020-08-20 15:48:59">2020-08-20</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/JavaScript/">JavaScript</a></span></div><div class="content">参考的连接
+什么是防抖
+所谓防抖，就是指触发事件后在n秒内只能执行一次，如果在n秒内触发事件的，则会重新计算函数执行事件
+防抖的两种状态
+立即执行
+触发事件后函数立即执行
+非立即执行
+触发事件后函数不会立即执行，而是在n秒后开始执行
+防抖使用场景
+
+防抖函数常用来进行处理某些频繁触发的请求事件（或者前端计算的事件）
+
+window滚动条事件 scroll
+window的resize
+鼠标的mouse move
+下拉框的远程模糊搜索
+表单组件输入内容验证
+防止多次点击导致表单多次提交
+
+目的：限制函数触发频率；对性能优化，减少服务器负担；
+实现核心：维护一个setTimeout，在冷却时间内再次触发函数则清空原setTimeout重新计算一个setTimeout推入队列等待执行
+
+lodash的方法
+1_.debounce(func, [wait=0], [options=&#123;&#125;])
+参数
+
+func (Function): 要防抖动的函数。
+[wait=0] (number): 需要延迟的毫秒数。
+[options=&#123;&#125;] (Object): 选项 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/efefa7a7.html" title="Pageable分页">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pageable分页"></a></div><div class="recent-post-info"><a class="article-title" href="/post/efefa7a7.html" title="Pageable分页">Pageable分页</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-08-19T15:48:59.000Z" title="发表于 2020-08-19 15:48:59">2020-08-19</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Spring/">Spring</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/">Spring Data</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/Spring/Spring-Data/Spring-Data-Jpa/">Spring Data Jpa</a></span></div><div class="content">JpaRepository提供了两个和分页和排序有关的查询
+List findAll(Sort sort): 按照指定顺序排序返回所有实体
+List findAll(Pageable pageable): 分页查询
+Sort
+Sort 对象用来指示排序，默认采用升序排序
+Sort sort = new Sort(&quot;id&quot;); // id 是 属性名
+Sort sort = new Sort(Direction.DESC,&quot;id&quot;);
+Page
+Page接口可以获得
+
+
+当前页面的记录
+
+
+总页数
+
+
+总记录数
+
+
+是否有上一页或下一页等
+123int getTotalPages() 总的页数long getTotalElements() 返回总数List getContent() 返回此次查询的结果集
+
+
+Spring Data 分页查询总是返回Page对象
+Pageable
+Pageable 接口用于构造翻页查询，PageRequest 是其实现类，它不仅仅支持分页，还支持排序(单字段/多字段均支持)
+public static PageReq ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/a2531ee5.html" title="Wake On Lan 配置远程启动电脑">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Wake On Lan 配置远程启动电脑"></a></div><div class="recent-post-info"><a class="article-title" href="/post/a2531ee5.html" title="Wake On Lan 配置远程启动电脑">Wake On Lan 配置远程启动电脑</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-07-03T22:00:00.000Z" title="发表于 2020-07-03 22:00:00">2020-07-03</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/WOL/">WOL</a></span></div><div class="content">前提
+远程控制电脑开机。
+
+本人笔记本是合起来放在书架后面的，每次开机都要把它拿出来打开，非常麻烦，所以想要通过其他方式唤醒电脑。
+
+解决思路
+
+使用Wake On Lan通过网卡控制电脑开机。
+
+什么是Wake On Lan
+Wake-On-LAN 简称 WOL，是一种电源管理功能；它是由IBM公司提出的网络唤醒标准，目前该标准已被大多数主板厂商支持。支持该标准的主板允许从远程通过网络唤醒计算机，也就是远程开机。
+如何实现远程开机
+打开你的网络设置
+方式1：我的电脑-&gt;右键-&gt;管理-&gt;设备管理器-&gt;网络适配器-&gt;找到自己的网卡-&gt;右键-&gt;属性
+
+方式2：打开网络和Internet设置-&gt;网络共享中心-&gt;更改适配器设置-&gt;找到自己的网卡-&gt;右键-&gt;属性-&gt;配置
+
+
+
+选择网卡唤醒
+
+
+设置防火墙策略
+防火墙和网络保护-&gt; 高级设置
+
+
+
+
+
+
+在路由器设置里将PC的MAC地址和网线的IP绑定
+
+PC安装测试软件
+https://www.depicus.com/wake-on-lan/wake-on-la ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/39/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/#content-inner">39</a><span class="page-number current">40</span><a class="page-number" href="/page/41/#content-inner">41</a><a class="page-number" href="/page/42/#content-inner">42</a><a class="extend next" rel="next" href="/page/41/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">416</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">91</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/0.html" title="无题"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="无题"/></a><div class="content"><a class="title" href="/post/0.html" title="无题">无题</a><time datetime="2023-01-14T08:35:47.197Z" title="发表于 2023-01-14 08:35:47">2023-01-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/6ad73390.html" title="Java并发编程需要注意的问题"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java并发编程需要注意的问题"/></a><div class="content"><a class="title" href="/post/6ad73390.html" title="Java并发编程需要注意的问题">Java并发编程需要注意的问题</a><time datetime="2022-03-15T10:12:56.000Z" title="发表于 2022-03-15 10:12:56">2022-03-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/ede52282.html" title="ThreadLocal 学习笔记"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ThreadLocal 学习笔记"/></a><div class="content"><a class="title" href="/post/ede52282.html" title="ThreadLocal 学习笔记">ThreadLocal 学习笔记</a><time datetime="2022-02-11T14:13:31.000Z" title="发表于 2022-02-11 14:13:31">2022-02-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/69c3279c.html" title="Git"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Git"/></a><div class="content"><a class="title" href="/post/69c3279c.html" title="Git">Git</a><time datetime="2022-01-24T09:17:45.000Z" title="发表于 2022-01-24 09:17:45">2022-01-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/fa358471.html" title="Java 反射"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java 反射"/></a><div class="content"><a class="title" href="/post/fa358471.html" title="Java 反射">Java 反射</a><time datetime="2022-01-13T13:54:26.000Z" title="发表于 2022-01-13 13:54:26">2022-01-13</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
             <i class="fas fa-folder-open"></i>
             <span>分类</span>
             <a class="card-more-btn" href="/categories/" title="查看更多">
     <i class="fas fa-angle-right"></i></a>
             </div>
             <ul class="card-category-list" id="aside-cat-list">
-            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JDK/"><span class="card-category-list-name">JDK</span><span class="card-category-list-count">4</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JDK/JDK8/"><span class="card-category-list-name">JDK8</span><span class="card-category-list-count">4</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JVM/"><span class="card-category-list-name">JVM</span><span class="card-category-list-count">6</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java/"><span class="card-category-list-name">Java</span><span class="card-category-list-count">84</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><span class="card-category-list-name">多线程</span><span class="card-category-list-count">82</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JavaScript/"><span class="card-category-list-name">JavaScript</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/MQ/"><span class="card-category-list-name">MQ</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/MyBatis/"><span class="card-category-list-name">MyBatis</span><span class="card-category-list-count">4</span></a></li>
-            </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/Spring/" style="font-size: 1.41em; color: rgb(119, 150, 33)">Spring</a><a href="/tags/JPA/" style="font-size: 1.15em; color: rgb(157, 146, 101)">JPA</a><a href="/tags/Spring-Data/" style="font-size: 1.33em; color: rgb(25, 199, 134)">Spring Data</a><a href="/tags/Vue/" style="font-size: 1.17em; color: rgb(127, 178, 86)">Vue</a><a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/" style="font-size: 1.15em; color: rgb(117, 176, 144)">面向对象设计原则</a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 1.17em; color: rgb(138, 35, 68)">架构</a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.39em; color: rgb(18, 150, 173)">算法</a><a href="/tags/UML/" style="font-size: 1.17em; color: rgb(106, 88, 173)">UML</a><a href="/tags/%E9%94%81/" style="font-size: 1.17em; color: rgb(76, 6, 74)">锁</a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 1.15em; color: rgb(29, 64, 26)">集合</a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 1.17em; color: rgb(4, 152, 82)">并发</a><a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 1.21em; color: rgb(57, 128, 149)">注解</a><a href="/tags/Spring-Data-Jpa/" style="font-size: 1.35em; color: rgb(52, 102, 61)">Spring Data Jpa</a><a href="/tags/JVM/" style="font-size: 1.23em; color: rgb(198, 53, 19)">JVM</a><a href="/tags/Java/" style="font-size: 1.45em; color: rgb(86, 10, 181)">Java</a><a href="/tags/CompletableFuture/" style="font-size: 1.15em; color: rgb(15, 126, 165)">CompletableFuture</a><a href="/tags/Future/" style="font-size: 1.15em; color: rgb(7, 27, 48)">Future</a><a href="/tags/JavaScript/" style="font-size: 1.15em; color: rgb(80, 179, 25)">JavaScript</a><a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 1.43em; color: rgb(25, 60, 164)">并发编程</a><a href="/tags/%E7%BA%BF%E7%A8%8B/" style="font-size: 1.43em; color: rgb(70, 47, 51)">线程</a><a href="/tags/MySQL/" style="font-size: 1.31em; color: rgb(18, 159, 119)">MySQL</a><a href="/tags/I-O%E6%A8%A1%E5%9E%8B/" style="font-size: 1.37em; color: rgb(67, 147, 191)">I\O模型</a><a href="/tags/Netty/" style="font-size: 1.37em; color: rgb(160, 178, 159)">Netty</a><a href="/tags/Socket%E7%BC%96%E7%A8%8B/" style="font-size: 1.37em; color: rgb(124, 45, 8)">Socket编程</a><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 1.17em; color: rgb(43, 147, 60)">数据库</a><a href="/tags/Oracle/" style="font-size: 1.17em; color: rgb(40, 106, 8)">Oracle</a><a href="/tags/SQL/" style="font-size: 1.17em; color: rgb(86, 144, 109)">SQL</a><a href="/tags/pageable/" style="font-size: 1.15em; color: rgb(11, 169, 128)">pageable</a><a href="/tags/RestTemplate/" style="font-size: 1.15em; color: rgb(133, 100, 182)">RestTemplate</a><a href="/tags/Spark/" style="font-size: 1.29em; color: rgb(18, 103, 22)">Spark</a><a href="/tags/String/" style="font-size: 1.27em; color: rgb(73, 104, 148)">String</a><a href="/tags/Springboot/" style="font-size: 1.19em; color: rgb(146, 38, 36)">Springboot</a><a href="/tags/Annotation/" style="font-size: 1.17em; color: rgb(14, 77, 183)">Annotation</a><a href="/tags/JpaSpecificationExecutor/" style="font-size: 1.19em; color: rgb(132, 168, 34)">JpaSpecificationExecutor</a><a href="/tags/%E4%B9%90%E8%A7%82%E9%94%81/" style="font-size: 1.15em; color: rgb(6, 129, 32)">乐观锁</a><a href="/tags/Spring-Security/" style="font-size: 1.25em; color: rgb(89, 40, 150)">Spring Security</a><a href="/tags/Transaction/" style="font-size: 1.15em; color: rgb(86, 118, 161)">Transaction</a><a href="/tags/redis/" style="font-size: 1.15em; color: rgb(16, 30, 151)">redis</a><a href="/tags/Join/" style="font-size: 1.15em; color: rgb(137, 44, 121)">Join</a><a href="/tags/Time/" style="font-size: 1.15em; color: rgb(159, 3, 57)">Time</a></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span><a class="card-more-btn" href="/archives/" title="查看更多">
-    <i class="fas fa-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/12/"><span class="card-archive-list-date">十二月 2021</span><span class="card-archive-list-count">12</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/11/"><span class="card-archive-list-date">十一月 2021</span><span class="card-archive-list-count">79</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/10/"><span class="card-archive-list-date">十月 2021</span><span class="card-archive-list-count">105</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/09/"><span class="card-archive-list-date">九月 2021</span><span class="card-archive-list-count">106</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/08/"><span class="card-archive-list-date">八月 2021</span><span class="card-archive-list-count">27</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/07/"><span class="card-archive-list-date">七月 2021</span><span class="card-archive-list-count">21</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/06/"><span class="card-archive-list-date">六月 2021</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/04/"><span class="card-archive-list-date">四月 2021</span><span class="card-archive-list-count">1</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">432</div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">1388.2k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2021-12-10T14:18:06.370Z"></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function subtitleType () {
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Git/"><span class="card-category-list-name">Git</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JDK/"><span class="card-category-list-name">JDK</span><span class="card-category-list-count">4</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JDK/JDK8/"><span class="card-category-list-name">JDK8</span><span class="card-category-list-count">4</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JVM/"><span class="card-category-list-name">JVM</span><span class="card-category-list-count">6</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java/"><span class="card-category-list-name">Java</span><span class="card-category-list-count">89</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><span class="card-category-list-name">多线程</span><span class="card-category-list-count">86</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java-SE/"><span class="card-category-list-name">Java SE</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JavaScript/"><span class="card-category-list-name">JavaScript</span><span class="card-category-list-count">3</span></a></li>
+            </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/Spring/" style="font-size: 1.38em; color: rgb(48, 89, 94)">Spring</a><a href="/tags/JPA/" style="font-size: 1.15em; color: rgb(29, 95, 40)">JPA</a><a href="/tags/Spring-Data/" style="font-size: 1.31em; color: rgb(183, 37, 3)">Spring Data</a><a href="/tags/XML/" style="font-size: 1.17em; color: rgb(14, 159, 92)">XML</a><a href="/tags/Vue/" style="font-size: 1.17em; color: rgb(31, 32, 104)">Vue</a><a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/" style="font-size: 1.15em; color: rgb(75, 115, 143)">面向对象设计原则</a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 1.17em; color: rgb(41, 34, 191)">架构</a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.4em; color: rgb(79, 195, 16)">算法</a><a href="/tags/UML/" style="font-size: 1.17em; color: rgb(73, 79, 50)">UML</a><a href="/tags/%E9%94%81/" style="font-size: 1.17em; color: rgb(180, 85, 117)">锁</a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 1.17em; color: rgb(91, 105, 154)">并发</a><a href="/tags/Git/" style="font-size: 1.15em; color: rgb(20, 169, 115)">Git</a><a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 1.22em; color: rgb(120, 168, 137)">注解</a><a href="/tags/Spring-Data-Jpa/" style="font-size: 1.33em; color: rgb(102, 102, 76)">Spring Data Jpa</a><a href="/tags/JVM/" style="font-size: 1.24em; color: rgb(44, 74, 144)">JVM</a><a href="/tags/Java/" style="font-size: 1.45em; color: rgb(29, 71, 108)">Java</a><a href="/tags/CompletableFuture/" style="font-size: 1.15em; color: rgb(165, 99, 170)">CompletableFuture</a><a href="/tags/Future/" style="font-size: 1.15em; color: rgb(87, 106, 177)">Future</a><a href="/tags/%E5%8F%8D%E5%B0%84/" style="font-size: 1.15em; color: rgb(159, 145, 78)">反射</a><a href="/tags/%E5%B7%A5%E5%85%B7%E7%B1%BB/" style="font-size: 1.15em; color: rgb(198, 148, 91)">工具类</a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 1.15em; color: rgb(134, 198, 160)">集合</a><a href="/tags/lambda/" style="font-size: 1.2em; color: rgb(114, 9, 44)">lambda</a><a href="/tags/%E9%9B%86%E5%90%88%E7%B1%BB/" style="font-size: 1.15em; color: rgb(68, 69, 69)">集合类</a><a href="/tags/JavaScript/" style="font-size: 1.15em; color: rgb(64, 106, 85)">JavaScript</a><a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 1.43em; color: rgb(21, 120, 5)">并发编程</a><a href="/tags/%E7%BA%BF%E7%A8%8B/" style="font-size: 1.43em; color: rgb(24, 125, 46)">线程</a><a href="/tags/%E6%A1%86%E6%9E%B6/" style="font-size: 1.2em; color: rgb(16, 169, 44)">框架</a><a href="/tags/MySQL/" style="font-size: 1.29em; color: rgb(90, 16, 4)">MySQL</a><a href="/tags/I-O%E6%A8%A1%E5%9E%8B/" style="font-size: 1.36em; color: rgb(53, 59, 166)">I\O模型</a><a href="/tags/Netty/" style="font-size: 1.36em; color: rgb(182, 5, 15)">Netty</a><a href="/tags/Socket%E7%BC%96%E7%A8%8B/" style="font-size: 1.36em; color: rgb(89, 196, 141)">Socket编程</a><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 1.17em; color: rgb(65, 69, 200)">数据库</a><a href="/tags/Oracle/" style="font-size: 1.17em; color: rgb(171, 165, 66)">Oracle</a><a href="/tags/SQL/" style="font-size: 1.2em; color: rgb(178, 28, 186)">SQL</a><a href="/tags/pageable/" style="font-size: 1.15em; color: rgb(98, 8, 12)">pageable</a><a href="/tags/RestTemplate/" style="font-size: 1.15em; color: rgb(25, 166, 40)">RestTemplate</a><a href="/tags/String/" style="font-size: 1.27em; color: rgb(47, 59, 71)">String</a><a href="/tags/Springboot/" style="font-size: 1.2em; color: rgb(25, 130, 34)">Springboot</a><a href="/tags/Annotation/" style="font-size: 1.17em; color: rgb(54, 159, 136)">Annotation</a><a href="/tags/JpaSpecificationExecutor/" style="font-size: 1.2em; color: rgb(47, 181, 121)">JpaSpecificationExecutor</a></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span><a class="card-more-btn" href="/archives/" title="查看更多">
+    <i class="fas fa-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/01/"><span class="card-archive-list-date">一月 2023</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/03/"><span class="card-archive-list-date">三月 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/02/"><span class="card-archive-list-date">二月 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/01/"><span class="card-archive-list-date">一月 2022</span><span class="card-archive-list-count">6</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/12/"><span class="card-archive-list-date">十二月 2021</span><span class="card-archive-list-count">24</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/11/"><span class="card-archive-list-date">十一月 2021</span><span class="card-archive-list-count">53</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/10/"><span class="card-archive-list-date">十月 2021</span><span class="card-archive-list-count">105</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/09/"><span class="card-archive-list-date">九月 2021</span><span class="card-archive-list-count">106</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">416</div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">1330.9k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2023-01-14T08:37:16.465Z"></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a><br/>
+<img style="vertical-align: middle; padding-bottom: 5px;" src="https://haiyong.site/img/icp.png">
+<a href="https://beian.miit.gov.cn/#/Integrated/index"  style="color:white" target="_blank">粤ICP备20009586号</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function subtitleType () {
   fetch('https://api.btstu.cn/yan/api.php?charset=utf-8&encode=json')
     .then(response => response.json())
     .then(data => {

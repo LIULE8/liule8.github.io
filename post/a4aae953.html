@@ -1,0 +1,366 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Java并发编程(三) | Leo's notes</title><meta name="keywords" content="Java,并发编程,线程"><meta name="author" content="Leo Liu"><meta name="copyright" content="Leo Liu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Java并发编程(三) 常用线程安全类型* JDK 基础数据类型与集合类 线性数据结构都源于 Collection 接口，并且拥有迭代器   List：ArrayList、LinkedList、Vector、Stack（类）   Set：LinkedSet、HashSet、TreeSet   Queue（接口）： Deque、LinkedList   非线性数据结构   Map：HashMap、L">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发编程(三)">
+<meta property="og:url" content="https://liule8.github.io/post/a4aae953.html">
+<meta property="og:site_name" content="Leo&#39;s notes">
+<meta property="og:description" content="Java并发编程(三) 常用线程安全类型* JDK 基础数据类型与集合类 线性数据结构都源于 Collection 接口，并且拥有迭代器   List：ArrayList、LinkedList、Vector、Stack（类）   Set：LinkedSet、HashSet、TreeSet   Queue（接口）： Deque、LinkedList   非线性数据结构   Map：HashMap、L">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-12-17T20:19:07.000Z">
+<meta property="article:modified_time" content="2023-01-14T08:35:50.236Z">
+<meta property="article:author" content="Leo Liu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="并发编程">
+<meta property="article:tag" content="线程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://liule8.github.io/post/a4aae953"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-01-14 08:35:50'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">416</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">91</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Leo's notes</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Java并发编程(三)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-12-17T20:19:07.000Z" title="发表于 2021-12-17 20:19:07">2021-12-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-01-14T08:35:50.236Z" title="更新于 2023-01-14 08:35:50">2023-01-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Java并发编程(三)"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>Java并发编程(三)</h1>
+<h2 id="常用线程安全类型">常用线程安全类型*</h2>
+<h3 id="JDK-基础数据类型与集合类">JDK 基础数据类型与集合类</h3>
+<p>线性数据结构都源于 Collection 接口，并且拥有迭代器</p>
+<ul>
+<li>
+<p>List：ArrayList、LinkedList、Vector、Stack（类）</p>
+</li>
+<li>
+<p>Set：LinkedSet、HashSet、TreeSet</p>
+</li>
+<li>
+<p>Queue（接口）： Deque、LinkedList</p>
+</li>
+</ul>
+<p>非线性数据结构</p>
+<ul>
+<li>
+<p>Map：HashMap、LinkedHashMap、TreeMap</p>
+</li>
+<li>
+<p>Dictionary：HashTable、Properties</p>
+</li>
+</ul>
+<blockquote>
+<p>Properties 的 getProperty(key) 方法 只能拿 value 是 String 类型的，如果不是 String 类型的，会返回 null；解决方法是直接用</p>
+<p>get(key) 方法因为 Properties 是继承 HashTable 的。</p>
+</blockquote>
+<p>原生类型，数组类型，对象引用类型</p>
+<h3 id="ArrayList">ArrayList</h3>
+<p>基本特点：基于数组，便于按 index 访问（随机访问），超过数组需要扩容，扩容成本较高</p>
+<p>用途：大部分情况下操作一组数据都可以用 ArrayList</p>
+<p>原理：使用数组模拟列表，<strong>默认大小10，扩容 x 1.5</strong>，newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1)</p>
+<p>安全问题：</p>
+<ol>
+<li>写冲突：两个写，相互操作冲突</li>
+<li>读写冲突：读，特别是 iterator 的时候，数据个数变了，拿到了非预期数据或者报错，产生ConcurrentModificationException</li>
+</ol>
+<p><img src="http://image.leonote.cn/20211217202757.png" alt="image-20211217202757682"></p>
+<h3 id="LinkedList">LinkedList</h3>
+<p>基本特点：使用链表实现，无需扩容</p>
+<p>用途：不知道容量，插入变动多的情况</p>
+<p>原理：使用双向指针将所有节点连起来</p>
+<p>安全问题：</p>
+<ol>
+<li>写冲突：两个写，相互操作冲突</li>
+<li>读写冲突：读，特别是 iterator 的时候，数据个数变了 ，拿到了非预期数据或者报错产生 ConcurrentModificationException</li>
+</ol>
+<p><img src="http://image.leonote.cn/20211217203031.png" alt="image-20211217203031569"><br>
+<img src="http://image.leonote.cn/20211217203139.png" alt="image-20211217203139240"></p>
+<h3 id="List-线程安全的简单办法">List 线程安全的简单办法</h3>
+<p>既然线程安全是<strong>写冲突</strong>和<strong>读写冲突</strong>导致的最简单办法就是，读写都加锁。</p>
+<p>例如：</p>
+<ol>
+<li>ArrayList 的方法都加上 synchronized -&gt; Vector</li>
+<li>Collections.synchronizedList，强制将 List 的操作加上同步</li>
+<li>Arrays.asList，不允许添加删除，但是可以 set 替换元素</li>
+<li>Collections.unmodifiableList，不允许修改内容，包括添加删除和 set</li>
+</ol>
+<p><img src="http://image.leonote.cn/20211217204035.png" alt="image-20211217204035494"><br>
+<img src="http://image.leonote.cn/20211217204058.png" alt="image-20211217204058589"></p>
+<h3 id="CopyOnWriteArrayList">CopyOnWriteArrayList</h3>
+<p>核心改进原理：</p>
+<ol>
+<li>写加锁，保证不会写混乱</li>
+<li>写在一个 Copy 副本上，而不是原始数据上 （GC young 区用复制，old 区用本区内的移动）</li>
+</ol>
+<p>读写分离，保证最终一致</p>
+<p><img src="http://image.leonote.cn/20211217204327.png" alt="image-20211217204327687"></p>
+<h4 id="add-方法">add 方法</h4>
+<p><img src="http://image.leonote.cn/20211217204605.png" alt="image-20211217204605545"></p>
+<p>插入元素时，在新副本操作，不影响旧引用，why?</p>
+<h4 id="remove-方法">remove 方法</h4>
+<p><img src="http://image.leonote.cn/20211217204845.png" alt="image-20211217204845065"></p>
+<p>删除元素时，有两种情况：</p>
+<ol>
+<li>删除末尾元素，直接使用前 N-1 个元素创建一个新数组，再切换引用。</li>
+<li>删除其他位置元素，创建新数组，将剩余元素复制到新数组，再切换引用。</li>
+</ol>
+<h4 id="get-方法">get 方法</h4>
+<p>读取不需要加锁，why？</p>
+<p><img src="http://image.leonote.cn/20211217205259.png" alt="image-20211217205258959"></p>
+<h4 id="迭代器">迭代器</h4>
+<p><img src="http://image.leonote.cn/20211217205753.png" alt="image-20211217205753768"></p>
+<p>使用迭代器的时候，直接拿当前的数组对象做一个快照，此后的 List 元素变动，就跟这次迭代没关系了。</p>
+<p>想想：淘宝商品 item 的快照。商品价格会变，每次下单都会生成一个当时商品信息的快照。</p>
+<h3 id="HashMap">HashMap</h3>
+<p>基本特点：空间换时间，哈希冲突不大的情况下查找数据性能很高O(1)</p>
+<p>用途：存放指定 key 的对象，缓存对象</p>
+<p>原理：使用 hash 原理，存 k-v 数据，<strong>初始容量 16，扩容 x 2</strong>，负载因子 0.75，JDK8 以后，在链表长度到 8 &amp; 数组长度到 64 时，使用红黑树。</p>
+<p>安全问题：</p>
+<ol>
+<li>写冲突</li>
+<li>读写问题，可能会死循环</li>
+<li>keys() 无序问题</li>
+</ol>
+<h3 id="LinkedHashMap">LinkedHashMap</h3>
+<p>基本特点：继承自 HashMap，对 Entry 集合添加了一个双向链表</p>
+<p>用途：保证有序，特别是 Java8 stream 操作的 toMap 时使用</p>
+<p>原理：同 LinkedList，包括插入顺序和访问顺序（默认是按插入顺序访问）</p>
+<p>安全问题：同 HashMap</p>
+<h3 id="ConcurrentHashMap">ConcurrentHashMap</h3>
+<h4 id="Java-7-分段锁">Java 7 分段锁</h4>
+<p>默认 16 个 Segment，降低锁粒度。</p>
+<p>concurrentLevel = 16，并发级别，可以让16个线程并发访问</p>
+<p>每个Segment里面就是真正的hashMap</p>
+<p><img src="http://image.leonote.cn/20211217210301.png" alt="image-20211217210301528"></p>
+<p>想想：</p>
+<p>Segment[] ~ 分库</p>
+<p>HashEntry[] ~ 分表</p>
+<p><img src="http://image.leonote.cn/20211217210340.png" alt="image-20211217210340690"></p>
+<h4 id="Java-8-红黑树">Java 8 红黑树</h4>
+<p><img src="http://image.leonote.cn/20211217210413.png" alt="image-20211217210413250"></p>
+<p><img src="http://image.leonote.cn/20211217210518.png" alt="image-20211217210518775"></p>
+<p>Java 7 为实现并行访问，引入了 Segment 这一结构，实现了分段锁， 理论上最大并发度与 Segment 个数相等</p>
+<p>Java 8 为进一步提高并发性，摒弃了分段锁的方案，而是直接使用一个大的数组，why?</p>
+<h3 id="并发集合类总结">并发集合类总结</h3>
+<p>ArrayList、LinkedList 并发读写不安全</p>
+<ul>
+<li>使用副本改进，适用于读多写少场景。CopyOnWriteArrayList</li>
+<li>加锁。Collections.synchronizedList / Vector</li>
+</ul>
+<p>HashMap、LinkedHashMap 并发读写不安全</p>
+<ul>
+<li>使用分段锁或者CAS。ConcurrentHashMap</li>
+</ul>
+<h2 id="并发编程相关内容">并发编程相关内容</h2>
+<h3 id="线程安全操作利器-ThreadLocal">线程安全操作利器 - ThreadLocal</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">重要方法</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">public ThreadLocal()</td>
+<td style="text-align:center">构造方法</td>
+</tr>
+<tr>
+<td style="text-align:center">protected T initialValue()</td>
+<td style="text-align:center">覆写-设置初始默认值</td>
+</tr>
+<tr>
+<td style="text-align:center">void set(T value)</td>
+<td style="text-align:center">设置本线程对应的值</td>
+</tr>
+<tr>
+<td style="text-align:center">void remove()</td>
+<td style="text-align:center">清理本线程对应的值</td>
+</tr>
+<tr>
+<td style="text-align:center">T get()</td>
+<td style="text-align:center">获取本线程对应的值</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>线程本地变量</li>
+<li>场景: 每个线程一个副本</li>
+<li>不改方法签名静默传参</li>
+<li>及时进行清理</li>
+</ul>
+<p>可以看做是 Context 模式，减少显式传递参数（当前线程的全局变量）</p>
+<h3 id="四两拨千斤-并行-Stream">四两拨千斤 - 并行 Stream</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">  List&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">  IntStream.range(<span class="number">1</span>, <span class="number">10000</span>).forEach(list::add);</span><br><span class="line">  BlockingQueue&lt;Long&gt; blockingQueue = <span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;(<span class="number">10000</span>);</span><br><span class="line">  List&lt;Long&gt; longList =</span><br><span class="line">      list.stream().parallel().map(Integer::longValue).sorted().collect(Collectors.toList());</span><br><span class="line">  <span class="comment">// 并行</span></span><br><span class="line">  longList.stream()</span><br><span class="line">      .parallel()</span><br><span class="line">      .forEach(</span><br><span class="line">          i -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">              blockingQueue.put(i);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">              e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;);</span><br><span class="line">  System.out.println(<span class="string">&quot;blockingQueue&quot;</span> + blockingQueue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>多线程执行，只需要加个 parallel 即可</p>
+<h3 id="伪并发问题">伪并发问题</h3>
+<p>跟并发冲突问题类似的场景很多，比如浏览器端，表单的重复提交问题</p>
+<ol>
+<li>客户端控制（调用方），点击后按钮不可用，跳转到其他页。（或者直接加个防抖就行了，多少毫秒内只能提交一次）</li>
+<li>服务器端控制（处理端），给每个表单生成一个编号，提交时判断重复</li>
+</ol>
+<h3 id="分布式下的锁和计数器">分布式下的锁和计数器</h3>
+<p>分布式环境下，多个机器的操作，超出了线程的协作机制，一定是并行的</p>
+<ol>
+<li>例如某个任务只能由一个应用处理，部署了多个机器，怎么控制</li>
+<li>例如针对用户的限流是每分钟60次计数，API 服务器有3台，用户可能随机访问到任何 一台，怎么控制？（秒杀场景是不是很像？库存固定且有限。）</li>
+</ol>
+<h2 id="并发编程经验总结">并发编程经验总结*</h2>
+<h3 id="加锁需要考虑的问题">加锁需要考虑的问题</h3>
+<ol>
+<li>粒度</li>
+<li>性能</li>
+<li>重入</li>
+<li>公平</li>
+<li>自旋锁（spinlock）</li>
+<li>场景：<strong>脱离业务场景谈性能都是耍流氓</strong>，就像治病，对症下药。</li>
+</ol>
+<blockquote>
+<p>保证最终一致性，就像玩王者荣耀，有一个月没玩了，中间王者荣耀更新了三次，那么只需要更新最后一次的版本即可，不需要更新三次。</p>
+</blockquote>
+<h3 id="线程间协作与通信">线程间协作与通信</h3>
+<ol>
+<li>线程间共享：
+<ul>
+<li>static / 实例变量(堆内存)</li>
+<li>Lock</li>
+<li>synchronized</li>
+</ul>
+</li>
+<li>线程间协作：
+<ul>
+<li>Thread#join()</li>
+<li>Object#wait/notify/notifyAll</li>
+<li>Future/Callable</li>
+<li>CountdownLatch</li>
+<li>CyclicBarrier</li>
+</ul>
+</li>
+</ol>
+<p>可以思考：不同进程之间有哪些方式通信</p>
+<p>操作系统的信号量，管道</p>
+<h2 id="并发编程常见面试题">并发编程常见面试题*</h2>
+<h2 id="总结">总结</h2>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Leo Liu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://liule8.github.io/post/a4aae953.html">https://liule8.github.io/post/a4aae953.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://liule8.github.io" target="_blank">Leo's notes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">并发编程</a><a class="post-meta__tags" href="/tags/%E7%BA%BF%E7%A8%8B/">线程</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/25bb8911.html"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Java相关框架(1)</div></div></a></div><div class="next-post pull-right"><a href="/post/6f0ba4c6.html"><img class="next-cover" src="/images/posts/cover/dataStructuresAndAlgorithms.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">数据结构与算法之实战篇-算法实战(五)</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/2a257066.html" title="Java并发编程之AQS框架-AQS 在 CountDownLatch 等类中的应用原理是什么？"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-30</div><div class="title">Java并发编程之AQS框架-AQS 在 CountDownLatch 等类中的应用原理是什么？</div></div></a></div><div><a href="/post/4dc46dd1.html" title="Java并发编程之AQS框架-AQS 的内部原理是什么样的？"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-30</div><div class="title">Java并发编程之AQS框架-AQS 的内部原理是什么样的？</div></div></a></div><div><a href="/post/d441b533.html" title="Java并发编程之AQS框架-为什么需要 AQS？AQS 的作用和重要性是什么？"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-30</div><div class="title">Java并发编程之AQS框架-为什么需要 AQS？AQS 的作用和重要性是什么？</div></div></a></div><div><a href="/post/488d5376.html" title="Java并发编程之CAS-CAS 和乐观锁的关系，什么时候会用到 CAS？"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-28</div><div class="title">Java并发编程之CAS-CAS 和乐观锁的关系，什么时候会用到 CAS？</div></div></a></div><div><a href="/post/648d6da1.html" title="Java并发编程之CAS-CAS 有什么缺点？"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-28</div><div class="title">Java并发编程之CAS-CAS 有什么缺点？</div></div></a></div><div><a href="/post/fa8fc5b2.html" title="Java并发编程之CAS-你知道什么是 CAS 吗？"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-28</div><div class="title">Java并发编程之CAS-你知道什么是 CAS 吗？</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leo Liu</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">416</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">91</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/liule8"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LIULE8" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:leo.liu.scau@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">Java并发编程(三)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.1.</span> <span class="toc-text">常用线程安全类型*</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#JDK-%E5%9F%BA%E7%A1%80%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%8E%E9%9B%86%E5%90%88%E7%B1%BB"><span class="toc-number">1.1.1.</span> <span class="toc-text">JDK 基础数据类型与集合类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList"><span class="toc-number">1.1.2.</span> <span class="toc-text">ArrayList</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedList"><span class="toc-number">1.1.3.</span> <span class="toc-text">LinkedList</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#List-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E7%AE%80%E5%8D%95%E5%8A%9E%E6%B3%95"><span class="toc-number">1.1.4.</span> <span class="toc-text">List 线程安全的简单办法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CopyOnWriteArrayList"><span class="toc-number">1.1.5.</span> <span class="toc-text">CopyOnWriteArrayList</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#add-%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.5.1.</span> <span class="toc-text">add 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#remove-%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.5.2.</span> <span class="toc-text">remove 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#get-%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.5.3.</span> <span class="toc-text">get 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="toc-number">1.1.5.4.</span> <span class="toc-text">迭代器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap"><span class="toc-number">1.1.6.</span> <span class="toc-text">HashMap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashMap"><span class="toc-number">1.1.7.</span> <span class="toc-text">LinkedHashMap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ConcurrentHashMap"><span class="toc-number">1.1.8.</span> <span class="toc-text">ConcurrentHashMap</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Java-7-%E5%88%86%E6%AE%B5%E9%94%81"><span class="toc-number">1.1.8.1.</span> <span class="toc-text">Java 7 分段锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java-8-%E7%BA%A2%E9%BB%91%E6%A0%91"><span class="toc-number">1.1.8.2.</span> <span class="toc-text">Java 8 红黑树</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88%E7%B1%BB%E6%80%BB%E7%BB%93"><span class="toc-number">1.1.9.</span> <span class="toc-text">并发集合类总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9"><span class="toc-number">1.2.</span> <span class="toc-text">并发编程相关内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%93%8D%E4%BD%9C%E5%88%A9%E5%99%A8-ThreadLocal"><span class="toc-number">1.2.1.</span> <span class="toc-text">线程安全操作利器 - ThreadLocal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E4%B8%A4%E6%8B%A8%E5%8D%83%E6%96%A4-%E5%B9%B6%E8%A1%8C-Stream"><span class="toc-number">1.2.2.</span> <span class="toc-text">四两拨千斤 - 并行 Stream</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%AA%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98"><span class="toc-number">1.2.3.</span> <span class="toc-text">伪并发问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8B%E7%9A%84%E9%94%81%E5%92%8C%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-number">1.2.4.</span> <span class="toc-text">分布式下的锁和计数器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.</span> <span class="toc-text">并发编程经验总结*</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E9%94%81%E9%9C%80%E8%A6%81%E8%80%83%E8%99%91%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.3.1.</span> <span class="toc-text">加锁需要考虑的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E9%97%B4%E5%8D%8F%E4%BD%9C%E4%B8%8E%E9%80%9A%E4%BF%A1"><span class="toc-number">1.3.2.</span> <span class="toc-text">线程间协作与通信</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="toc-number">1.4.</span> <span class="toc-text">并发编程常见面试题*</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/0.html" title="无题"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="无题"/></a><div class="content"><a class="title" href="/post/0.html" title="无题">无题</a><time datetime="2023-01-14T08:35:47.197Z" title="发表于 2023-01-14 08:35:47">2023-01-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/6ad73390.html" title="Java并发编程需要注意的问题"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java并发编程需要注意的问题"/></a><div class="content"><a class="title" href="/post/6ad73390.html" title="Java并发编程需要注意的问题">Java并发编程需要注意的问题</a><time datetime="2022-03-15T10:12:56.000Z" title="发表于 2022-03-15 10:12:56">2022-03-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/ede52282.html" title="ThreadLocal 学习笔记"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ThreadLocal 学习笔记"/></a><div class="content"><a class="title" href="/post/ede52282.html" title="ThreadLocal 学习笔记">ThreadLocal 学习笔记</a><time datetime="2022-02-11T14:13:31.000Z" title="发表于 2022-02-11 14:13:31">2022-02-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/69c3279c.html" title="Git"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Git"/></a><div class="content"><a class="title" href="/post/69c3279c.html" title="Git">Git</a><time datetime="2022-01-24T09:17:45.000Z" title="发表于 2022-01-24 09:17:45">2022-01-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/fa358471.html" title="Java 反射"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java 反射"/></a><div class="content"><a class="title" href="/post/fa358471.html" title="Java 反射">Java 反射</a><time datetime="2022-01-13T13:54:26.000Z" title="发表于 2022-01-13 13:54:26">2022-01-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Leo Liu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a><br/>
+<img style="vertical-align: middle; padding-bottom: 5px;" src="https://haiyong.site/img/icp.png">
+<a href="https://beian.miit.gov.cn/#/Integrated/index"  style="color:white" target="_blank">粤ICP备20009586号</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.css"><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', '', 'katex-wrap')
+  })
+})()</script></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false});</script></body></html>
